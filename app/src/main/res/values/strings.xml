@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FinalProject</string>
+    <string name="home">首页</string>
+    <string name="create">发布</string>
+    <string name="notification">通知</string>
+    <string name="profile">我的</string>
 </resources>
+

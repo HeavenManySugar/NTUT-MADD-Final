@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.FinalProject" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- 应用的基础主题 -->
+    <style name="Theme.FinalProject" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- 自定义颜色 -->
+        <item name="android:colorPrimary">#3F51B5</item>
+        <item name="android:colorPrimaryDark">#303F9F</item>
+        <item name="android:colorAccent">#FF4081</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 </resources>
+
