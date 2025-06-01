@@ -41,6 +41,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 
 @Serializable
 object SignInRoute
@@ -75,7 +76,6 @@ private fun SignInScreenContent(
 ) {
     var email by remember { mutableStateOf(if (isPreview) "test@example.com" else "") }
     var password by remember { mutableStateOf(if (isPreview) "12345678" else "") }
-
 
     // 事件 lambda
     val onEmailChange: (String) -> Unit = { email = it }
@@ -128,117 +128,35 @@ private fun SignInScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth(0.85f) // 跟輸入框一樣寬
-                ) {
-                    Text(
-                        text = "電子信箱",
-                        fontSize = 20.sp,
-                        color = Color(0xFF000000),
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .offset(x = 12.dp, y = 0.dp) // ✅ 對齊下方 box 的內部 padding
-                    )
-                }
+                InputFieldLabel(
+                    text = "電子信箱",
+                    modifier = Modifier.fillMaxWidth(0.85f)
+                )
 
                 Spacer(Modifier.height(4.dp))
 
                 // Email
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .height(64.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color(0xFFEAECEF),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .background(
-                            color = Color(0xFFF8F9FA),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(top = 12.dp, start = 12.dp, end = 12.dp, bottom = 8.dp),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    Column {
-
-                        BasicTextField(
-                            value = email,
-                            onValueChange = onEmailChange,
-                            textStyle = LocalTextStyle.current.copy(
-                                color = Color.Black,
-                                fontSize = 14.sp
-                            ),
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth(),
-                            decorationBox = { innerTextField ->
-                                if (email.isEmpty()) {
-                                    Text(
-                                        text = "請輸入您的電子郵件",
-                                        color = Color(0xFFB0B0B0),
-                                        fontSize = 20.sp
-                                    )
-                                }
-                                innerTextField()
-                            }
-                        )
-                    }
-                }
+                LabeledInputBox(
+                    value = email,
+                    onValueChange = onEmailChange,
+                    placeholder = "請輸入您的電子郵件",
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
 
                 Spacer(Modifier.height(16.dp))
 
-                Box(modifier = Modifier
-                    .fillMaxWidth(0.85f) // 跟輸入框一樣寬
-                ) {
-                    Text(
-                        text = "密碼",
-                        fontSize = 20.sp,
-                        color = Color(0xFF000000),
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .offset(x = 12.dp, y = 0.dp) // ✅ 對齊下方 box 的內部 padding
-                    )
-                }
+                InputFieldLabel(
+                    text = "密碼",
+                    modifier = Modifier.fillMaxWidth(0.85f)
+                )
 
                 // Password
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .height(64.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color(0xFFEAECEF),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .background(
-                            color = Color(0xFFF8F9FA),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(top = 12.dp, start = 12.dp, end = 12.dp, bottom = 8.dp),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    // 左上角浮標籤
-                    Column {
-                        if (password.isEmpty()) {
-                            Text(
-                                text = "請輸入你的密碼",
-                                color = Color(0xFFB0B0B0),
-                                fontSize = 20.sp
-                            )
-                        }
-
-                        BasicTextField(
-                            value = password,
-                            onValueChange = onPasswordChange,
-                            textStyle = LocalTextStyle.current.copy(
-                                color = Color.Black,
-                                fontSize = 14.sp
-                            ),
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
+                LabeledInputBox(
+                    value = password,
+                    onValueChange = onPasswordChange,
+                    placeholder = "請輸入您的密碼",
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(0.8f),
@@ -351,6 +269,82 @@ private fun DividerWithText(
             modifier = Modifier.padding(horizontal = 8.dp)
         )
         Divider(Modifier.weight(1f), color = textColor)
+    }
+}
+
+/* 中間可以輸入的電子信箱 😍🥰😘 */
+
+@Composable
+fun LabeledInputBox(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 20.sp
+) {
+    Box(
+        modifier = modifier
+            .height(64.dp)
+            .border(
+                width = 1.dp,
+                color = Color(0xFFEAECEF),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .background(
+                color = Color(0xFFF8F9FA),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(top = 12.dp, start = 12.dp, end = 12.dp, bottom = 8.dp),
+        contentAlignment = Alignment.TopStart
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.CenterStart // ✅ 垂直置中 placeholder
+        ) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                textStyle = LocalTextStyle.current.copy(
+                    color = Color.Black,
+                    fontSize = fontSize
+                ),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                decorationBox = { innerTextField ->
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            color = Color(0xFFB0B0B0),
+                            fontSize = fontSize
+                        )
+                    }
+                    innerTextField()
+                }
+            )
+        }
+    }
+}
+
+/* 左上角字體 😍🥰😘 */
+
+@Composable
+fun InputFieldLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 20.sp,
+    textColor: Color = Color.Black
+) {
+    Box(
+        modifier = modifier
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize,
+            color = textColor,
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .offset(x = 12.dp, y = 0.dp) // 對齊下方 padding 的 Box 輸入框
+        )
     }
 }
 
