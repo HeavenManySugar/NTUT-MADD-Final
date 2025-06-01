@@ -107,7 +107,7 @@ private fun SignInScreenContent(
                 Image(
                     painter = painterResource(id = R.drawable.app_icon),
                     contentDescription = "App Logo",
-                    modifier = Modifier.size(96.dp)
+                    modifier = Modifier.size(128.dp)
                 )
                 Spacer(Modifier.height(16.dp))
 
@@ -133,7 +133,7 @@ private fun SignInScreenContent(
                 ) {
                     Text(
                         text = "電子信箱",
-                        fontSize = 16.sp,
+                        fontSize = 20.sp,
                         color = Color(0xFF000000),
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
@@ -147,7 +147,7 @@ private fun SignInScreenContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .height(48.dp)
+                        .height(64.dp)
                         .border(
                             width = 1.dp,
                             color = Color(0xFFEAECEF),
@@ -176,7 +176,7 @@ private fun SignInScreenContent(
                                     Text(
                                         text = "請輸入您的電子郵件",
                                         color = Color(0xFFB0B0B0),
-                                        fontSize = 14.sp
+                                        fontSize = 20.sp
                                     )
                                 }
                                 innerTextField()
@@ -192,7 +192,7 @@ private fun SignInScreenContent(
                 ) {
                     Text(
                         text = "密碼",
-                        fontSize = 16.sp,
+                        fontSize = 20.sp,
                         color = Color(0xFF000000),
                         modifier = Modifier
                             .padding(horizontal = 4.dp)
@@ -204,7 +204,7 @@ private fun SignInScreenContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .height(48.dp)
+                        .height(64.dp)
                         .border(
                             width = 1.dp,
                             color = Color(0xFFEAECEF),
@@ -223,7 +223,7 @@ private fun SignInScreenContent(
                             Text(
                                 text = "請輸入你的密碼",
                                 color = Color(0xFFB0B0B0),
-                                fontSize = 14.sp
+                                fontSize = 20.sp
                             )
                         }
 
@@ -241,10 +241,13 @@ private fun SignInScreenContent(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(0.8f),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onForgotPasswordClick) {
+                    TextButton(
+                        onClick = onForgotPasswordClick,
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
                         Text("忘記密碼？", color = Color(0xFF5A5AFF))
                     }
                 }
@@ -359,7 +362,7 @@ private fun SignInScreenPreview() {
             openSignUpScreen = {},
             signIn = { _, _, _ -> },
             showErrorSnackbar = {},
-            isPreview = true
+            isPreview = false
         )
     }
 }
