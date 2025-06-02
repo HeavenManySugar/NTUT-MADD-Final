@@ -19,6 +19,7 @@ googleHilt = "2.51.1"
 googleKotlinKsp = "2.0.21-1.0.25"
 navigationCompose = "2.8.2"
 firebaseCrashlytics = "3.0.2"
+material3 = "1.2.1"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -45,7 +46,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 [plugins]
