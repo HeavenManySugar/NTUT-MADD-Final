@@ -33,6 +33,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.ntut.madd.finalproject.ui.signup.BirthdayInput
 
 @Serializable
 object SignInRoute
@@ -119,34 +120,20 @@ private fun SignInScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                InputFieldLabel(
-                    text = "電子信箱",
-                    modifier = Modifier.fillMaxWidth(0.85f)
-                )
-
-                Spacer(Modifier.height(4.dp))
-
                 // Email
-                LabeledInputBox(
+                LabeledField(
+                    label = "電子信箱",
                     value = email,
                     onValueChange = onEmailChange,
-                    placeholder = "請輸入您的電子郵件",
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-
-                Spacer(Modifier.height(16.dp))
-
-                InputFieldLabel(
-                    text = "密碼",
-                    modifier = Modifier.fillMaxWidth(0.85f)
+                    placeholder = "請輸入您的電子郵件"
                 )
 
                 // Password
-                LabeledInputBox(
+                LabeledField(
+                    label = "密碼",
                     value = password,
                     onValueChange = onPasswordChange,
-                    placeholder = "請輸入您的密碼",
-                    modifier = Modifier.fillMaxWidth(0.8f)
+                    placeholder = "請輸入您的密碼"
                 )
 
                 Row(

@@ -60,6 +60,17 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.text.*
+import android.app.DatePickerDialog
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Icon
+import androidx.compose.ui.platform.LocalContext
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 @Serializable
 object SignUpRoute
@@ -98,6 +109,7 @@ fun SignUpScreenContent(
     var first_name by remember { mutableStateOf("") }
     var last_name by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(false) }
+    var birthday by remember { mutableStateOf<Calendar?>(null) }
 
     // 事件 lambda
     val onEmailChange: (String) -> Unit = { email = it }
@@ -177,55 +189,43 @@ fun SignUpScreenContent(
                     )
                 }
             }
+            Spacer(Modifier.height(8.dp))
 
             // Email
-            InputFieldLabel(
-                text = "電子信箱",
-                modifier = Modifier.fillMaxWidth(0.85f)
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            LabeledInputBox(
+            LabeledField(
+                label = "電子信箱",
                 value = email,
                 onValueChange = onEmailChange,
-                placeholder = "請輸入您的電子郵件",
-                modifier = Modifier.fillMaxWidth(0.8f)
+                placeholder = "請輸入您的電子郵件"
             )
 
-            Spacer(Modifier.height(16.dp))
-
-            // Email
-            InputFieldLabel(
-                text = "手機號碼",
-                modifier = Modifier.fillMaxWidth(0.85f)
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            LabeledInputBox(
+            // Phone Number
+            LabeledField(
+                label = "手機號碼",
                 value = phone,
                 onValueChange = onPhoneChange,
-                placeholder = "請輸入您的手機號碼",
-                modifier = Modifier.fillMaxWidth(0.8f)
+                placeholder = "請輸入您的手機號碼"
             )
 
+            // Birthday
+            InputFieldLabel(
+                text = "生日",
+                modifier = Modifier.fillMaxWidth(0.85f)
+            )
+            BirthdayInput(
+                birthday = birthday,
+                onDateSelected = { birthday = it },
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
             Spacer(Modifier.height(16.dp))
 
             // Password
-            InputFieldLabel(
-                text = "密碼",
-                modifier = Modifier.fillMaxWidth(0.85f)
-            )
-
-            LabeledInputBox(
+            LabeledField(
+                label = "密碼",
                 value = password,
                 onValueChange = onPasswordChange,
-                placeholder = "請輸入您的密碼",
-                modifier = Modifier.fillMaxWidth(0.8f)
+                placeholder = "請輸入您的密碼"
             )
-
-            Spacer(Modifier.height(8.dp))
 
             // Privacy Check
             TermsCheckbox(
@@ -236,19 +236,12 @@ fun SignUpScreenContent(
             )
 
             // Check Password
-            InputFieldLabel(
-                text = "確認密碼",
-                modifier = Modifier.fillMaxWidth(0.85f)
-            )
-
-            LabeledInputBox(
+            LabeledField(
+                label = "確認密碼",
                 value = repeat_password,
                 onValueChange = onRPasswordChange,
-                placeholder = "再次確認密碼",
-                modifier = Modifier.fillMaxWidth(0.8f)
+                placeholder = "再次確認密碼"
             )
-
-            Spacer(Modifier.height(8.dp))
 
             // Sign-in button
             Button(
@@ -326,6 +319,68 @@ fun SignUpScreenContent(
         }
     }
 }
+
+@Composable
+fun BirthdayInput(
+    birthday: Calendar?,
+    onDateSelected: (Calendar) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    // 日期格式化工具（支援 API 23）
+    val formatter = remember {
+        SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+    }
+
+    val datePickerDialog = remember {
+        val cal = birthday ?: Calendar.getInstance().apply {
+            set(2000, 0, 1) // 預設生日
+        }
+
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val newCal = Calendar.getInstance()
+                newCal.set(year, month, dayOfMonth)
+                onDateSelected(newCal)
+            },
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .border(1.dp, Color(0xFFEAECEF), RoundedCornerShape(8.dp))
+            .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
+            .clickable { datePickerDialog.show() }
+            .padding(horizontal = 12.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = birthday?.let { formatter.format(it.time) } ?: "年/月/日",
+                fontSize = 16.sp,
+                color = if (birthday == null) Color.Gray else Color.Black
+            )
+
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "選擇生日",
+                tint = Color.Black
+            )
+        }
+    }
+}
+
 
 
 /* 說明隱私權  😍🥰😘 */

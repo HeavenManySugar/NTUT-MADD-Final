@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -166,4 +167,25 @@ fun LabeledInputField(
             )
         }
     }
+}
+
+@Composable
+fun LabeledField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier
+) {
+    InputFieldLabel(
+        text = label,
+        modifier = Modifier.fillMaxWidth(0.85f)
+    )
+    LabeledInputBox(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = placeholder,
+        modifier = Modifier.fillMaxWidth(0.8f)
+    )
+    Spacer(Modifier.height(8.dp))
 }
