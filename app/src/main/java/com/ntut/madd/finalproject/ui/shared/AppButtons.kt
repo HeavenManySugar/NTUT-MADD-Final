@@ -50,12 +50,17 @@ fun AuthWithGoogleButton(@StringRes label: Int, onButtonClick: () -> Unit) {
 fun StandardButton(
     @StringRes label: Int, 
     onButtonClick: () -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
     OutlinedButton(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+        modifier = modifier
+            .then(
+                if (modifier == Modifier) Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                else Modifier
+            )
             .background(
                 brush = if (enabled) purpleGradient else SolidColor(Color.Gray),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
@@ -69,6 +74,36 @@ fun StandardButton(
             disabledContentColor = Color.White
         ),
         border = BorderStroke(1.dp, if (enabled) Color.Transparent else Color.Gray),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = stringResource(label),
+            fontSize = 16.sp,
+            modifier = Modifier.padding(vertical = 6.dp)
+        )
+    }
+}
+
+@Composable
+fun SecondaryButton(
+    @StringRes label: Int,
+    onButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        modifier = modifier
+            .then(
+                if (modifier == Modifier) Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                else Modifier
+            ),
+        onClick = onButtonClick,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.White,
+            contentColor = Color.Gray
+        ),
+        border = BorderStroke(1.dp, Color.Gray.copy(alpha = 0.5f)),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
     ) {
         Text(

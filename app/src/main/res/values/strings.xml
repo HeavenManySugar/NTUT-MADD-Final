@@ -57,4 +57,16 @@
     <string name="district_label">區域</string>
     <string name="district_placeholder">例：信義區、板橋區</string>
     <string name="next_step">下一步</string>
+    <string name="previous_step">上一步</string>
+    
+    <!-- Setup 2 Screen -->
+    <string name="setup_2">Setup 2</string>
+    <string name="setup2_progress">2/6</string>
+    <string name="career_icon">👔</string>
+    <string name="career_question">您的職業</string>
+    <string name="career_description">分享您的工作讓其他人更了解您</string>
+    <string name="position_label">職位</string>
+    <string name="position_placeholder">例：軟體工程師、設計師、老師</string>
+    <string name="company_label">公司/機構</string>
+    <string name="company_placeholder">例：Google、台積電、自由工作者</string>
 </resources>

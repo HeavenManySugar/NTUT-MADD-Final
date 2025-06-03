@@ -25,6 +25,8 @@ import com.ntut.madd.finalproject.ui.settings.SettingsRoute
 import com.ntut.madd.finalproject.ui.settings.SettingsScreen
 import com.ntut.madd.finalproject.ui.setup.SetupRoute
 import com.ntut.madd.finalproject.ui.setup.SetupScreen
+import com.ntut.madd.finalproject.ui.setup2.Setup2Route
+import com.ntut.madd.finalproject.ui.setup2.Setup2Screen
 import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
@@ -119,7 +121,15 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                 },
                                 onNextClick = {
-                                    // 这里可以导航到下一个setup页面或者主页面
+                                    navController.navigate(Setup2Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup2Route> { Setup2Screen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    // 這裡可以導航到下一個setup頁面或者主頁面
                                     navController.navigate(TodoListRoute) { launchSingleTop = true }
                                 }
                             ) }

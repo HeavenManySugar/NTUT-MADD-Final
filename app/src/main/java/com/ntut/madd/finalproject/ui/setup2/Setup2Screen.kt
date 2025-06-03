@@ -1,7 +1,6 @@
-package com.ntut.madd.finalproject.ui.setup
+package com.ntut.madd.finalproject.ui.setup2
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,12 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,17 +26,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,25 +46,24 @@ import com.ntut.madd.finalproject.ui.setup.components.SetupHeader
 import com.ntut.madd.finalproject.ui.setup.components.SetupInputField
 import com.ntut.madd.finalproject.ui.setup.components.SetupProgressBar
 import com.ntut.madd.finalproject.ui.shared.StandardButton
+import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.DarkBlue
-import com.ntut.madd.finalproject.ui.theme.LightBlue
 import com.ntut.madd.finalproject.ui.theme.LightGray
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
-import com.ntut.madd.finalproject.ui.theme.MediumGrey
 import com.ntut.madd.finalproject.ui.theme.purpleGradient
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SetupRoute
+object Setup2Route
 
 @Composable
-fun SetupScreen(
+fun Setup2Screen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
-    viewModel: SetupViewModel = hiltViewModel()
+    viewModel: Setup2ViewModel = hiltViewModel()
 ) {
-    val selectedCity by viewModel.selectedCity.collectAsStateWithLifecycle()
-    val district by viewModel.district.collectAsStateWithLifecycle()
+    val position by viewModel.position.collectAsStateWithLifecycle()
+    val company by viewModel.company.collectAsStateWithLifecycle()
     val isFormValid by viewModel.isFormValid.collectAsStateWithLifecycle()
     val navigateToNext by viewModel.navigateToNext.collectAsStateWithLifecycle()
     
@@ -86,26 +74,26 @@ fun SetupScreen(
         }
     }
     
-    SetupScreenContent(
-        selectedCity = selectedCity,
-        district = district,
+    Setup2ScreenContent(
+        position = position,
+        company = company,
         isFormValid = isFormValid,
         onBackClick = onBackClick,
-        onCitySelected = viewModel::updateCity,
-        onDistrictChanged = viewModel::updateDistrict,
+        onPositionChanged = viewModel::updatePosition,
+        onCompanyChanged = viewModel::updateCompany,
         onNextClick = viewModel::onNextClicked
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupScreenContent(
-    selectedCity: String,
-    district: String,
+fun Setup2ScreenContent(
+    position: String,
+    company: String,
     isFormValid: Boolean,
     onBackClick: () -> Unit,
-    onCitySelected: (String) -> Unit,
-    onDistrictChanged: (String) -> Unit,
+    onPositionChanged: (String) -> Unit,
+    onCompanyChanged: (String) -> Unit,
     onNextClick: () -> Unit
 ) {
     Scaffold { innerPadding ->
@@ -119,11 +107,12 @@ fun SetupScreenContent(
             SetupHeader(onBackClick = onBackClick)
             
             // 進度條區域
-            SetupProgressBar(currentStep = 1)
+            SetupProgressBar(currentStep = 2)
 
             // 分隔線
             SetupDivider()
             
+            // 主要內容區域
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,21 +121,21 @@ fun SetupScreenContent(
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
                 
+                // 職業問題標題
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
-                        Icons.Filled.LocationOn,
-                        contentDescription = "位置",
-                        tint = Color.Red,
+                    Text(
+                        text = stringResource(R.string.career_icon),
+                        fontSize = 20.sp,
                         modifier = Modifier.size(20.dp)
                     )
                     
                     Spacer(modifier = Modifier.size(8.dp))
                     
                     Text(
-                        text = stringResource(R.string.location_question),
+                        text = stringResource(R.string.career_question),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.Black
@@ -156,15 +145,16 @@ fun SetupScreenContent(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = stringResource(R.string.location_description),
+                    text = stringResource(R.string.career_description),
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
+                // 職位輸入框
                 Text(
-                    text = stringResource(R.string.city_label),
+                    text = stringResource(R.string.position_label),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
@@ -172,25 +162,18 @@ fun SetupScreenContent(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // 城市選擇框 - 使用統一的灰色背景樣式
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF8F9FA) // 背景色 F8F9FA
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    CityDropdown(
-                        selectedCity = selectedCity,
-                        onCitySelected = onCitySelected,
-                    )
-                }
+                // 職位輸入框 - 使用重用組件
+                SetupInputField(
+                    value = position,
+                    onValueChange = onPositionChanged,
+                    placeholder = R.string.position_placeholder
+                )
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
+                // 公司/機構輸入框
                 Text(
-                    text = stringResource(R.string.district_label),
+                    text = stringResource(R.string.company_label),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
@@ -198,87 +181,37 @@ fun SetupScreenContent(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // 區域輸入框 - 使用重用組件
+                // 公司輸入框 - 使用重用組件
                 SetupInputField(
-                    value = district,
-                    onValueChange = onDistrictChanged,
-                    placeholder = R.string.district_placeholder
+                    value = company,
+                    onValueChange = onCompanyChanged,
+                    placeholder = R.string.company_placeholder
                 )
                 
                 Spacer(modifier = Modifier.height(32.dp))
                 
-                // 下一步按钮
-                StandardButton(
-                    label = R.string.next_step,
-                    onButtonClick = onNextClick,
-                    enabled = isFormValid
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun CityDropdown(
-    selectedCity: String,
-    onCitySelected: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val cities = listOf("台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市")
-    
-    Box {
-        OutlinedTextField(
-            value = selectedCity,
-            onValueChange = { },
-            readOnly = true,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.city_placeholder),
-                    color = Color.Gray.copy(alpha = 0.7f),
-                    fontSize = 14.sp
-                )
-            },
-            trailingIcon = {
-                IconButton(onClick = { expanded = true }) {
-                    Icon(
-                        Icons.Filled.ArrowDropDown,
-                        contentDescription = "下拉",
-                        tint = Color.Gray
+                // 按鈕區域
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // 上一步按鈕
+                    SecondaryButton(
+                        label = R.string.previous_step,
+                        onButtonClick = onBackClick,
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    // 下一步按鈕
+                    StandardButton(
+                        label = R.string.next_step,
+                        onButtonClick = onNextClick,
+                        enabled = isFormValid,
+                        modifier = Modifier.weight(1f)
                     )
                 }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedBorderColor = Color(0xFFEAECEF), // 框線色 EAECEF
-                focusedBorderColor = Color(0xFF6B46C1).copy(alpha = 0.5f),
-                cursorColor = Color(0xFF6B46C1)
-            )
-        )
-        
-        // Invisible clickable overlay
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clickable { expanded = true }
-        )
-        
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            cities.forEach { city ->
-                DropdownMenuItem(
-                    text = { Text(city) },
-                    onClick = {
-                        onCitySelected(city)
-                        expanded = false
-                    }
-                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
@@ -286,15 +219,15 @@ fun CityDropdown(
 
 @Composable
 @Preview(showSystemUi = true)
-fun SetupScreenPreview() {
+fun Setup2ScreenPreview() {
     MakeItSoTheme(darkTheme = false) {
-        SetupScreenContent(
-            selectedCity = "",
-            district = "",
+        Setup2ScreenContent(
+            position = "",
+            company = "",
             isFormValid = false,
             onBackClick = {},
-            onCitySelected = {},
-            onDistrictChanged = {},
+            onPositionChanged = {},
+            onCompanyChanged = {},
             onNextClick = {}
         )
     }
