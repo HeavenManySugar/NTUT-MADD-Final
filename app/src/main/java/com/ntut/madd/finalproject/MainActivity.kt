@@ -29,6 +29,8 @@ import com.ntut.madd.finalproject.ui.setup2.Setup2Route
 import com.ntut.madd.finalproject.ui.setup2.Setup2Screen
 import com.ntut.madd.finalproject.ui.setup3.Setup3Route
 import com.ntut.madd.finalproject.ui.setup3.Setup3Screen
+import com.ntut.madd.finalproject.ui.setup4.Setup4Route
+import com.ntut.madd.finalproject.ui.setup4.Setup4Screen
 import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
@@ -135,6 +137,14 @@ class MainActivity : ComponentActivity() {
                                 }
                             ) }
                             composable<Setup3Route> { Setup3Screen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    navController.navigate(Setup4Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup4Route> { Setup4Screen(
                                 onBackClick = {
                                     navController.popBackStack()
                                 },

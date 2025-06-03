@@ -90,4 +90,37 @@
     <string name="degree_master">碩士</string>
     <string name="degree_doctor">博士</string>
     <string name="degree_other">其他</string>
+    
+    <!-- Setup 4 Screen -->
+    <string name="setup_4">Setup 4</string>
+    <string name="setup4_progress">4/6</string>
+    <string name="interests_icon">❤️</string>
+    <string name="interests_question">興趣愛好</string>
+    <string name="interests_description">選擇您的興趣（至少選擇3個）</string>
+    
+    <!-- Interest options -->
+    <string name="interest_travel">🌍 旅行</string>
+    <string name="interest_food">🍕 美食</string>
+    <string name="interest_movie">🎬 電影</string>
+    <string name="interest_music">🎵 音樂</string>
+    <string name="interest_reading">📚 閱讀</string>
+    <string name="interest_sports">⚽ 運動</string>
+    <string name="interest_fitness">💪 健身</string>
+    <string name="interest_yoga">🧘 瑜伽</string>
+    <string name="interest_swimming">🏊 游泳</string>
+    <string name="interest_hiking">🏔️ 登山</string>
+    <string name="interest_photography">📷 攝影</string>
+    <string name="interest_drawing">📝 繪畫</string>
+    <string name="interest_cooking">🍳 料理</string>
+    <string name="interest_coffee">☕ 咖啡</string>
+    <string name="interest_wine">🍷 紅酒</string>
+    <string name="interest_pets">🐕 寵物</string>
+    <string name="interest_gardening">🌱 園藝</string>
+    <string name="interest_technology">💻 科技</string>
+    <string name="interest_gaming">🎮 遊戲</string>
+    <string name="interest_dancing">💃 舞蹈</string>
+    <string name="interest_instrument">🎹 樂器</string>
+    <string name="interest_crafts">✂️ 手作</string>
+    <string name="interest_investment">💰 投資</string>
+    <string name="interest_learning">📖 學習</string>
 </resources>
