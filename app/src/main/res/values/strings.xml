@@ -44,4 +44,17 @@
     <string name="delete_account_description">Are you sure you want to delete your account? This action is irreversible.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    
+    <!-- Setup Screen -->
+    <string name="setup_1">Setup 1</string>
+    <string name="setup_title">Title</string>
+    <string name="setup_subtitle">SubTitle</string>
+    <string name="setup_progress">1/6</string>
+    <string name="location_question">您住在哪裡？</string>
+    <string name="location_description">這將幫助我們為您推薦附近的人</string>
+    <string name="city_label">城市</string>
+    <string name="city_placeholder">請選擇城市</string>
+    <string name="district_label">區域</string>
+    <string name="district_placeholder">例：信義區、板橋區</string>
+    <string name="next_step">下一步</string>
 </resources>

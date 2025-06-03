@@ -23,6 +23,8 @@ import com.ntut.madd.finalproject.ui.home.HomeRoute
 import com.ntut.madd.finalproject.ui.home.HomeScreen
 import com.ntut.madd.finalproject.ui.settings.SettingsRoute
 import com.ntut.madd.finalproject.ui.settings.SettingsScreen
+import com.ntut.madd.finalproject.ui.setup.SetupRoute
+import com.ntut.madd.finalproject.ui.setup.SetupScreen
 import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
@@ -58,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = TodoListRoute,
+                            startDestination = SetupRoute,
                             modifier = Modifier.padding(innerPadding)
                         ) {
                             composable<HomeRoute> { HomeScreen(
@@ -110,6 +112,15 @@ class MainActivity : ComponentActivity() {
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
                                     scope.launch { snackbarHostState.showSnackbar(message) }
+                                }
+                            ) }
+                            composable<SetupRoute> { SetupScreen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    // 这里可以导航到下一个setup页面或者主页面
+                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
                                 }
                             ) }
                         }
