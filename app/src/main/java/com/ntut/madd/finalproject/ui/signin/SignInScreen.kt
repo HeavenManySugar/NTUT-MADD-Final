@@ -76,6 +76,7 @@ private fun SignInScreenContent(
     val onGoogleSignInClick: () -> Unit = { /* TODO: Google login */ }
     val onForgotPasswordClick: () -> Unit = { /* TODO: Forgot password */ }
     val onSignUpClick: () -> Unit = openSignUpScreen
+    var showPassword by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -136,6 +137,14 @@ private fun SignInScreenContent(
                     placeholder = "請輸入您的密碼"
                 )
 
+                PasswordInputField(
+                    password = password,
+                    onPasswordChange = { password = it },
+                    showPassword = showPassword,
+                    onTogglePasswordVisibility = { showPassword = !showPassword },
+                    modifier = Modifier.fillMaxWidth(0.85f)
+                )
+
                 Row(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     horizontalArrangement = Arrangement.End
@@ -144,32 +153,20 @@ private fun SignInScreenContent(
                         onClick = onForgotPasswordClick,
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text("忘記密碼？", color = Color(0xFF5A5AFF))
+                        Text("忘記密碼？", color = Color(0xFF5A5AFF),fontWeight = FontWeight.Medium)
                     }
                 }
 
                 Spacer(Modifier.height(8.dp))
 
                 // Sign-in button
-                Button(
+                PressButton(
+                    text = "登入",
                     onClick = onSignInClick,
                     modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7A63D2),
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = "登入",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                }
+                        .fillMaxWidth(0.85f)
+                        .height(50.dp)
+                )
 
                 Spacer(Modifier.height(8.dp))
 
@@ -208,7 +205,8 @@ private fun SignInScreenContent(
                 ) {
                     Text(
                         text = "還沒有帳號？",
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal
                     )
                     TextButton(
                         onClick = onSignUpClick,
@@ -219,7 +217,7 @@ private fun SignInScreenContent(
                             text = "立刻註冊",
                             color = Color(0xFF5A5AFF),
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }

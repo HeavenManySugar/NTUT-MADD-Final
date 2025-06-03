@@ -172,7 +172,7 @@ fun SignUpScreenContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    LabeledInputField(
+                    LabeledFieldMedium(
                         label = "名字",
                         value = first_name,
                         onValueChange = onFNameChange,
@@ -181,7 +181,7 @@ fun SignUpScreenContent(
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    LabeledInputField(
+                    LabeledFieldMedium(
                         label = "姓氏",
                         value = last_name,
                         onValueChange = onLNameChange,
@@ -227,14 +227,6 @@ fun SignUpScreenContent(
                 placeholder = "請輸入您的密碼"
             )
 
-            // Privacy Check
-            TermsCheckbox(
-                checked = isChecked,
-                onCheckedChange = onIsCheckedChange,
-                onTermsClick = { /* 開啟使用條款 */ },
-                onPrivacyClick = { /* 開啟隱私權政策 */ }
-            )
-
             // Check Password
             LabeledField(
                 label = "確認密碼",
@@ -243,27 +235,22 @@ fun SignUpScreenContent(
                 placeholder = "再次確認密碼"
             )
 
+            // Privacy Check
+            TermsCheckbox(
+                checked = isChecked,
+                onCheckedChange = onIsCheckedChange,
+                onTermsClick = { /* 開啟使用條款 */ },
+                onPrivacyClick = { /* 開啟隱私權政策 */ }
+            )
+
             // Sign-in button
-            Button(
+            PressButton(
+                text = "立即註冊",
                 onClick = onSignUpClick,
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF7A63D2),
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "立即註冊",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }
-
+                    .fillMaxWidth(0.85f)
+                    .height(50.dp)
+            )
             Spacer(Modifier.height(8.dp))
 
             DividerWithText(
@@ -301,7 +288,8 @@ fun SignUpScreenContent(
             ) {
                 Text(
                     text = "已經有帳號了嗎？",
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal
                 )
                 TextButton(
                     onClick = onSignInClick,
@@ -312,7 +300,7 @@ fun SignUpScreenContent(
                         text = "立刻登入",
                         color = Color(0xFF5A5AFF),
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -362,14 +350,14 @@ fun BirthdayInput(
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(start = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = birthday?.let { formatter.format(it.time) } ?: "年/月/日",
-                fontSize = 16.sp,
-                color = if (birthday == null) Color.Gray else Color.Black
+                fontSize = 20.sp,
+                color = if (birthday == null) Color(0xFFB0B0B0) else Color.Black
             )
 
             Icon(
