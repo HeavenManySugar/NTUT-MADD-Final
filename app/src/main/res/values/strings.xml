@@ -69,4 +69,25 @@
     <string name="position_placeholder">例：軟體工程師、設計師、老師</string>
     <string name="company_label">公司/機構</string>
     <string name="company_placeholder">例：Google、台積電、自由工作者</string>
+    
+    <!-- Setup 3 Screen -->
+    <string name="setup_3">Setup 3</string>
+    <string name="setup3_progress">3/6</string>
+    <string name="education_icon">🎓</string>
+    <string name="education_question">您的教育背景</string>
+    <string name="education_description">分享您的學歷讓其他人更了解您</string>
+    <string name="degree_label">學歷程度</string>
+    <string name="degree_placeholder">請選擇學歷程度</string>
+    <string name="school_label">學校</string>
+    <string name="school_placeholder">例：台灣大學、台北科技大學</string>
+    <string name="major_label">主修領域</string>
+    <string name="major_placeholder">例：資訊工程、企業管理、設計</string>
+    
+    <!-- Degree options -->
+    <string name="degree_high_school">高中職</string>
+    <string name="degree_college">專科</string>
+    <string name="degree_bachelor">大學</string>
+    <string name="degree_master">碩士</string>
+    <string name="degree_doctor">博士</string>
+    <string name="degree_other">其他</string>
 </resources>

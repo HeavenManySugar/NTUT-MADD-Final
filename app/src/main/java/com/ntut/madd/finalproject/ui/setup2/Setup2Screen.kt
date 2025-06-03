@@ -104,7 +104,12 @@ fun Setup2ScreenContent(
                 .verticalScroll(rememberScrollState())
         ) {
             // 紫色漸變頭部區域
-            SetupHeader(onBackClick = onBackClick)
+            SetupHeader(
+                onBackClick = onBackClick,
+                icon = "👔",
+                title = stringResource(R.string.career_question),
+                subtitle = stringResource(R.string.career_description)
+            )
             
             // 進度條區域
             SetupProgressBar(currentStep = 2)
@@ -119,44 +124,11 @@ fun Setup2ScreenContent(
                     .background(Color.White)
                     .padding(24.dp)
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // 職業問題標題
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(R.string.career_icon),
-                        fontSize = 20.sp,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    
-                    Spacer(modifier = Modifier.size(8.dp))
-                    
-                    Text(
-                        text = stringResource(R.string.career_question),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = stringResource(R.string.career_description),
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
                 // 職位輸入框
                 Text(
                     text = stringResource(R.string.position_label),
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.Black
                 )
                 
@@ -175,7 +147,7 @@ fun Setup2ScreenContent(
                 Text(
                     text = stringResource(R.string.company_label),
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.Black
                 )
                 

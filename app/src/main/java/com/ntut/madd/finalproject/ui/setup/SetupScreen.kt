@@ -116,7 +116,12 @@ fun SetupScreenContent(
                 .verticalScroll(rememberScrollState())
         ) {
             // 紫色漸變頭部區域
-            SetupHeader(onBackClick = onBackClick)
+            SetupHeader(
+                onBackClick = onBackClick,
+                icon = "📍",
+                title = stringResource(R.string.location_question),
+                subtitle = stringResource(R.string.location_description)
+            )
             
             // 進度條區域
             SetupProgressBar(currentStep = 1)
@@ -130,43 +135,10 @@ fun SetupScreenContent(
                     .background(Color.White)
                     .padding(24.dp)
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        Icons.Filled.LocationOn,
-                        contentDescription = "位置",
-                        tint = Color.Red,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    
-                    Spacer(modifier = Modifier.size(8.dp))
-                    
-                    Text(
-                        text = stringResource(R.string.location_question),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = stringResource(R.string.location_description),
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
                 Text(
                     text = stringResource(R.string.city_label),
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.Black
                 )
                 
@@ -192,7 +164,7 @@ fun SetupScreenContent(
                 Text(
                     text = stringResource(R.string.district_label),
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     color = Color.Black
                 )
                 

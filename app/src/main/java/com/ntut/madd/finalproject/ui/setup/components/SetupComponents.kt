@@ -40,7 +40,10 @@ import com.ntut.madd.finalproject.ui.theme.purpleGradient
 
 @Composable
 fun SetupHeader(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    icon: String = "",
+    title: String = "",
+    subtitle: String = ""
 ) {
     Box(
         modifier = Modifier
@@ -76,20 +79,27 @@ fun SetupHeader(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Card(
-                    modifier = Modifier.size(100.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.8f)
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    // 空的占位符
+                if (icon.isNotEmpty()) {
+                    Text(
+                        text = icon,
+                        fontSize = 60.sp,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                } else {
+                    Card(
+                        modifier = Modifier.size(100.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White.copy(alpha = 0.8f)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        // 空的占位符
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
                 
-                Spacer(modifier = Modifier.height(24.dp))
-                
                 Text(
-                    text = stringResource(R.string.setup_title),
+                    text = title.ifEmpty { stringResource(R.string.setup_title) },
                     color = Color.White,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
@@ -98,7 +108,7 @@ fun SetupHeader(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = stringResource(R.string.setup_subtitle),
+                    text = subtitle.ifEmpty { stringResource(R.string.setup_subtitle) },
                     color = Color.White.copy(alpha = 0.8f),
                     fontSize = 16.sp
                 )
