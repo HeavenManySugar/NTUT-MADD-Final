@@ -100,7 +100,7 @@ fun Setup2ScreenContent(
 ) {
     SetupPageContainer(
         currentStep = 2,
-        totalSteps = 4,
+        totalSteps = 6,
         headerIcon = "👔",
         headerTitle = stringResource(R.string.career_question),
         headerSubtitle = stringResource(R.string.career_description),

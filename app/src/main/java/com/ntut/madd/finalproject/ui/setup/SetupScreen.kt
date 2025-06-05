@@ -112,7 +112,7 @@ fun SetupScreenContent(
 ) {
     SetupPageContainer(
         currentStep = 1,
-        totalSteps = 4,
+        totalSteps = 6,
         headerIcon = "📍",
         headerTitle = stringResource(R.string.location_question),
         headerSubtitle = stringResource(R.string.location_description),

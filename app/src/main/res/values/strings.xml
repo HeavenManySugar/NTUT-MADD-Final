@@ -123,4 +123,31 @@
     <string name="interest_crafts">✂️ 手作</string>
     <string name="interest_investment">💰 投資</string>
     <string name="interest_learning">📖 學習</string>
+    
+    <!-- Setup 5 Screen -->
+    <string name="setup_5">Setup 5</string>
+    <string name="setup5_progress">5/6</string>
+    <string name="personality_icon">✨</string>
+    <string name="personality_question">個人特質</string>
+    <string name="personality_description">選擇最能描述您的特質（最多選擇5個）</string>
+    
+    <!-- Personality traits -->
+    <string name="trait_humorous">😊 幽默風趣</string>
+    <string name="trait_warm">🧡 溫柔體貼</string>
+    <string name="trait_active">😄 積極樂觀</string>
+    <string name="trait_calm">🧘 冷靜理性</string>
+    <string name="trait_creative">🎨 創意十足</string>
+    <string name="trait_honest">💪 誠實可靠</string>
+    <string name="trait_independent">🏆 獨立自主</string>
+    <string name="trait_kind">💝 善解人意</string>
+    <string name="trait_passionate">🔥 熱情洋溢</string>
+    <string name="trait_careful">🔍 細心周到</string>
+    <string name="trait_adventurous">📈 冒險精神</string>
+    <string name="trait_wise">🧠 文藝氣質</string>
+    <string name="trait_athletic">🏃 運動健將</string>
+    <string name="trait_knowledgeable">📚 知識豐富</string>
+    <string name="trait_social">🎭 社交達人</string>
+    <string name="trait_secure">😊 安靜內斂</string>
+    <string name="trait_romantic">💕 浪漫主義</string>
+    <string name="trait_practical">👔 實事求是</string>
 </resources>

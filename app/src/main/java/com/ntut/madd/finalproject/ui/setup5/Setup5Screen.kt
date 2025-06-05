@@ -1,4 +1,4 @@
-package com.ntut.madd.finalproject.ui.setup4
+package com.ntut.madd.finalproject.ui.setup5
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,21 +33,19 @@ import com.ntut.madd.finalproject.R
 import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
 import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.setup.components.SetupContentCard
-import com.ntut.madd.finalproject.ui.shared.StandardButton
-import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object Setup4Route
+object Setup5Route
 
 @Composable
-fun Setup4Screen(
+fun Setup5Screen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
-    viewModel: Setup4ViewModel = hiltViewModel()
+    viewModel: Setup5ViewModel = hiltViewModel()
 ) {
-    val selectedInterests by viewModel.selectedInterests.collectAsStateWithLifecycle()
+    val selectedTraits by viewModel.selectedTraits.collectAsStateWithLifecycle()
     val isFormValid by viewModel.isFormValid.collectAsStateWithLifecycle()
     val navigateToNext by viewModel.navigateToNext.collectAsStateWithLifecycle()
     
@@ -58,49 +56,49 @@ fun Setup4Screen(
         }
     }
 
-    Setup4ScreenContent(
-        selectedInterests = selectedInterests,
+    Setup5ScreenContent(
+        selectedTraits = selectedTraits,
         isFormValid = isFormValid,
         onBackClick = onBackClick,
-        onInterestToggle = viewModel::toggleInterest,
+        onTraitToggle = viewModel::toggleTrait,
         onNextClick = { viewModel.onNextClicked() }
     )
 }
 
 @Composable
-fun Setup4ScreenContent(
-    selectedInterests: List<String>,
+fun Setup5ScreenContent(
+    selectedTraits: List<String>,
     isFormValid: Boolean,
     onBackClick: () -> Unit,
-    onInterestToggle: (String) -> Unit,
+    onTraitToggle: (String) -> Unit,
     onNextClick: () -> Unit
 ) {
     SetupPageContainer(
-        currentStep = 4,
+        currentStep = 5,
         totalSteps = 6,
         onBackClick = onBackClick,
-        headerIcon = "❤️",
-        headerTitle = stringResource(R.string.interests_question),
-        headerSubtitle = stringResource(R.string.interests_description),
+        headerIcon = "✨",
+        headerTitle = stringResource(R.string.personality_question),
+        headerSubtitle = stringResource(R.string.personality_description),
         isFormValid = isFormValid,
         onNextClick = onNextClick
     ) {
         SetupContentCard {
-            SetupFieldLabel(text = "請選擇您感興趣的領域")
+            SetupFieldLabel(text = "個人特質")
             
-            InterestGrid(
-                selectedInterests = selectedInterests,
-                onInterestToggle = onInterestToggle
+            PersonalityTraitGrid(
+                selectedTraits = selectedTraits,
+                onTraitToggle = onTraitToggle
             )
         }
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Selected count indicator with better styling
+        // Selected count indicator
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = if (selectedInterests.size >= 3) 
+                containerColor = if (selectedTraits.isNotEmpty()) 
                     Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
             ),
             shape = RoundedCornerShape(12.dp),
@@ -113,27 +111,33 @@ fun Setup4ScreenContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (selectedInterests.size >= 3) "✅" else "⚠️",
+                    text = if (selectedTraits.isNotEmpty()) "✅" else "💡",
                     fontSize = 20.sp,
                     modifier = Modifier.padding(end = 12.dp)
                 )
                 Column {
                     Text(
-                        text = "已選擇 ${selectedInterests.size} 個興趣",
-                        color = if (selectedInterests.size >= 3) 
+                        text = "已選擇 ${selectedTraits.size} 個特質",
+                        color = if (selectedTraits.isNotEmpty()) 
                             Color(0xFF2E7D32) else Color(0xFFE65100),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-                    if (selectedInterests.size < 3) {
+                    if (selectedTraits.isEmpty()) {
                         Text(
-                            text = "還需要選擇 ${3 - selectedInterests.size} 個興趣",
+                            text = "請選擇最多5個能描述您的特質",
                             color = Color(0xFFBF360C),
+                            fontSize = 14.sp
+                        )
+                    } else if (selectedTraits.size < 5) {
+                        Text(
+                            text = "還可以選擇 ${5 - selectedTraits.size} 個特質",
+                            color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
                     } else {
                         Text(
-                            text = "太棒了！您可以繼續下一步",
+                            text = "已選擇最大數量的特質",
                             color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
@@ -146,35 +150,29 @@ fun Setup4ScreenContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun InterestGrid(
-    selectedInterests: List<String>,
-    onInterestToggle: (String) -> Unit
+fun PersonalityTraitGrid(
+    selectedTraits: List<String>,
+    onTraitToggle: (String) -> Unit
 ) {
-    val interests = listOf(
-        stringResource(R.string.interest_travel),
-        stringResource(R.string.interest_food),
-        stringResource(R.string.interest_movie),
-        stringResource(R.string.interest_music),
-        stringResource(R.string.interest_reading),
-        stringResource(R.string.interest_sports),
-        stringResource(R.string.interest_fitness),
-        stringResource(R.string.interest_yoga),
-        stringResource(R.string.interest_swimming),
-        stringResource(R.string.interest_hiking),
-        stringResource(R.string.interest_photography),
-        stringResource(R.string.interest_drawing),
-        stringResource(R.string.interest_cooking),
-        stringResource(R.string.interest_coffee),
-        stringResource(R.string.interest_wine),
-        stringResource(R.string.interest_pets),
-        stringResource(R.string.interest_gardening),
-        stringResource(R.string.interest_technology),
-        stringResource(R.string.interest_gaming),
-        stringResource(R.string.interest_dancing),
-        stringResource(R.string.interest_instrument),
-        stringResource(R.string.interest_crafts),
-        stringResource(R.string.interest_investment),
-        stringResource(R.string.interest_learning)
+    val traits = listOf(
+        stringResource(R.string.trait_humorous),
+        stringResource(R.string.trait_warm),
+        stringResource(R.string.trait_active),
+        stringResource(R.string.trait_calm),
+        stringResource(R.string.trait_creative),
+        stringResource(R.string.trait_honest),
+        stringResource(R.string.trait_independent),
+        stringResource(R.string.trait_kind),
+        stringResource(R.string.trait_passionate),
+        stringResource(R.string.trait_careful),
+        stringResource(R.string.trait_adventurous),
+        stringResource(R.string.trait_wise),
+        stringResource(R.string.trait_athletic),
+        stringResource(R.string.trait_knowledgeable),
+        stringResource(R.string.trait_social),
+        stringResource(R.string.trait_secure),
+        stringResource(R.string.trait_romantic),
+        stringResource(R.string.trait_practical)
     )
 
     FlowRow(
@@ -182,36 +180,46 @@ fun InterestGrid(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        interests.forEach { interest ->
-            val isSelected = selectedInterests.contains(interest)
+        traits.forEach { trait ->
+            val isSelected = selectedTraits.contains(trait)
+            val canSelect = selectedTraits.size < 5 || isSelected
             
             Card(
                 modifier = Modifier
-                    .clickable { onInterestToggle(interest) },
+                    .clickable(enabled = canSelect) { 
+                        if (canSelect) onTraitToggle(trait) 
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = when {
                         isSelected -> Color(0xFF6C63FF) // Modern purple
-                        else -> Color.White
+                        canSelect -> Color.White
+                        else -> Color(0xFFF5F5F5) // Disabled gray
                     }
                 ),
                 shape = RoundedCornerShape(24.dp),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = if (isSelected) 4.dp else 1.dp
+                    defaultElevation = if (isSelected) 4.dp else if (canSelect) 1.dp else 0.dp
                 )
             ) {
                 Box(
                     modifier = Modifier
                         .border(
-                            width = if (isSelected) 0.dp else 1.dp,
-                            color = if (isSelected) Color.Transparent else Color(0xFFE1E5E9),
+                            width = if (isSelected) 0.dp else if (canSelect) 1.dp else 0.dp,
+                            color = if (isSelected) Color.Transparent 
+                                   else if (canSelect) Color(0xFFE1E5E9) 
+                                   else Color.Transparent,
                             shape = RoundedCornerShape(24.dp)
                         )
                         .padding(horizontal = 20.dp, vertical = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = interest,
-                        color = if (isSelected) Color.White else Color(0xFF4A5568),
+                        text = trait,
+                        color = when {
+                            isSelected -> Color.White
+                            canSelect -> Color(0xFF4A5568)
+                            else -> Color(0xFFBDBDBD)
+                        },
                         fontSize = 14.sp,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                         lineHeight = 16.sp
@@ -224,13 +232,13 @@ fun InterestGrid(
 
 @Composable
 @Preview(showSystemUi = true)
-fun Setup4ScreenPreview() {
+fun Setup5ScreenPreview() {
     MakeItSoTheme(darkTheme = false) {
-        Setup4ScreenContent(
-            selectedInterests = listOf("🌍 旅行", "🍕 美食", "🎬 電影", "🎵 音樂"),
+        Setup5ScreenContent(
+            selectedTraits = listOf("😊 幽默風趣", "🧡 溫柔體貼", "😄 積極樂觀"),
             isFormValid = true,
             onBackClick = {},
-            onInterestToggle = {},
+            onTraitToggle = {},
             onNextClick = {}
         )
     }
@@ -239,7 +247,7 @@ fun Setup4ScreenPreview() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFAFBFC)
-fun InterestGridPreview() {
+fun PersonalityTraitGridPreview() {
     MakeItSoTheme(darkTheme = false) {
         Card(
             modifier = Modifier
@@ -255,16 +263,16 @@ fun InterestGridPreview() {
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "請選擇您感興趣的領域",
+                    text = "個人特質",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2E3440),
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 
-                InterestGrid(
-                    selectedInterests = listOf("🌍 旅行", "🍕 美食", "🎬 電影", "🎵 音樂"),
-                    onInterestToggle = {}
+                PersonalityTraitGrid(
+                    selectedTraits = listOf("😊 幽默風趣", "🧡 溫柔體貼", "😄 積極樂觀"),
+                    onTraitToggle = {}
                 )
             }
         }

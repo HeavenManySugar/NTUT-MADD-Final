@@ -105,7 +105,7 @@ fun Setup3ScreenContent(
 ) {
     SetupPageContainer(
         currentStep = 3,
-        totalSteps = 4,
+        totalSteps = 6,
         headerIcon = "🎓",
         headerTitle = stringResource(R.string.education_question),
         headerSubtitle = stringResource(R.string.education_description),
