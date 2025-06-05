@@ -1,6 +1,5 @@
 package com.ntut.madd.finalproject.ui.setup4
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,16 +9,12 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,9 +30,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntut.madd.finalproject.R
-import com.ntut.madd.finalproject.ui.setup.components.SetupDivider
-import com.ntut.madd.finalproject.ui.setup.components.SetupHeader
-import com.ntut.madd.finalproject.ui.setup.components.SetupProgressBar
+import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
+import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
+import com.ntut.madd.finalproject.ui.setup.components.SetupContentCard
 import com.ntut.madd.finalproject.ui.shared.StandardButton
 import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
@@ -80,127 +75,69 @@ fun Setup4ScreenContent(
     onInterestToggle: (String) -> Unit,
     onNextClick: () -> Unit
 ) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // Header with gradient background
-            SetupHeader(
-                onBackClick = onBackClick,
-                icon = "❤️",
-                title = stringResource(R.string.interests_question),
-                subtitle = stringResource(R.string.interests_description)
+    SetupPageContainer(
+        currentStep = 4,
+        totalSteps = 4,
+        onBackClick = onBackClick,
+        headerIcon = "❤️",
+        headerTitle = stringResource(R.string.interests_question),
+        headerSubtitle = stringResource(R.string.interests_description),
+        isFormValid = isFormValid,
+        onNextClick = onNextClick
+    ) {
+        SetupContentCard {
+            SetupFieldLabel(text = "請選擇您感興趣的領域")
+            
+            InterestGrid(
+                selectedInterests = selectedInterests,
+                onInterestToggle = onInterestToggle
             )
-            
-            // Progress bar
-            SetupProgressBar(currentStep = 4, totalSteps = 6)
-            
-            SetupDivider()
-            
-            // Content area
-            Column(
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Selected count indicator with better styling
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = if (selectedInterests.size >= 3) 
+                    Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
+            ),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(horizontal = 24.dp, vertical = 32.dp)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Interest selection section with card background
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFFAFBFC)
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
-                    ) {
+                Text(
+                    text = if (selectedInterests.size >= 3) "✅" else "⚠️",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(end = 12.dp)
+                )
+                Column {
+                    Text(
+                        text = "已選擇 ${selectedInterests.size} 個興趣",
+                        color = if (selectedInterests.size >= 3) 
+                            Color(0xFF2E7D32) else Color(0xFFE65100),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (selectedInterests.size < 3) {
                         Text(
-                            text = "請選擇您感興趣的領域",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF2E3440),
-                            modifier = Modifier.padding(bottom = 16.dp)
+                            text = "還需要選擇 ${3 - selectedInterests.size} 個興趣",
+                            color = Color(0xFFBF360C),
+                            fontSize = 14.sp
                         )
-                        
-                        InterestGrid(
-                            selectedInterests = selectedInterests,
-                            onInterestToggle = onInterestToggle
+                    } else {
+                        Text(
+                            text = "太棒了！您可以繼續下一步",
+                            color = Color(0xFF1B5E20),
+                            fontSize = 14.sp
                         )
                     }
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Selected count indicator with better styling
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (selectedInterests.size >= 3) 
-                            Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = if (selectedInterests.size >= 3) "✅" else "⚠️",
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(end = 12.dp)
-                        )
-                        Column {
-                            Text(
-                                text = "已選擇 ${selectedInterests.size} 個興趣",
-                                color = if (selectedInterests.size >= 3) 
-                                    Color(0xFF2E7D32) else Color(0xFFE65100),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            if (selectedInterests.size < 3) {
-                                Text(
-                                    text = "還需要選擇 ${3 - selectedInterests.size} 個興趣",
-                                    color = Color(0xFFBF360C),
-                                    fontSize = 14.sp
-                                )
-                            } else {
-                                Text(
-                                    text = "太棒了！您可以繼續下一步",
-                                    color = Color(0xFF1B5E20),
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // Navigation buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    SecondaryButton(
-                        label = R.string.previous_step,
-                        onButtonClick = onBackClick,
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    StandardButton(
-                        label = R.string.next_step,
-                        onButtonClick = onNextClick,
-                        modifier = Modifier.weight(1f),
-                        enabled = isFormValid
-                    )
                 }
             }
         }

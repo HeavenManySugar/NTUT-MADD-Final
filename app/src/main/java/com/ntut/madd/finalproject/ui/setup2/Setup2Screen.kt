@@ -45,6 +45,8 @@ import com.ntut.madd.finalproject.ui.setup.components.SetupDivider
 import com.ntut.madd.finalproject.ui.setup.components.SetupHeader
 import com.ntut.madd.finalproject.ui.setup.components.SetupInputField
 import com.ntut.madd.finalproject.ui.setup.components.SetupProgressBar
+import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
+import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.shared.StandardButton
 import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.DarkBlue
@@ -96,96 +98,41 @@ fun Setup2ScreenContent(
     onCompanyChanged: (String) -> Unit,
     onNextClick: () -> Unit
 ) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // 紫色漸變頭部區域
-            SetupHeader(
-                onBackClick = onBackClick,
-                icon = "👔",
-                title = stringResource(R.string.career_question),
-                subtitle = stringResource(R.string.career_description)
-            )
-            
-            // 進度條區域
-            SetupProgressBar(currentStep = 2)
-
-            // 分隔線
-            SetupDivider()
-            
-            // 主要內容區域
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(24.dp)
-            ) {
-                // 職位輸入框
-                Text(
-                    text = stringResource(R.string.position_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // 職位輸入框 - 使用重用組件
-                SetupInputField(
-                    value = position,
-                    onValueChange = onPositionChanged,
-                    placeholder = R.string.position_placeholder
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // 公司/機構輸入框
-                Text(
-                    text = stringResource(R.string.company_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // 公司輸入框 - 使用重用組件
-                SetupInputField(
-                    value = company,
-                    onValueChange = onCompanyChanged,
-                    placeholder = R.string.company_placeholder
-                )
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // 按鈕區域
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // 上一步按鈕
-                    SecondaryButton(
-                        label = R.string.previous_step,
-                        onButtonClick = onBackClick,
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    // 下一步按鈕
-                    StandardButton(
-                        label = R.string.next_step,
-                        onButtonClick = onNextClick,
-                        enabled = isFormValid,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        }
+    SetupPageContainer(
+        currentStep = 2,
+        totalSteps = 4,
+        headerIcon = "👔",
+        headerTitle = stringResource(R.string.career_question),
+        headerSubtitle = stringResource(R.string.career_description),
+        isFormValid = isFormValid,
+        onBackClick = onBackClick,
+        onNextClick = onNextClick
+    ) {
+        // 職位輸入
+        SetupFieldLabel(
+            text = stringResource(R.string.position_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        SetupInputField(
+            value = position,
+            onValueChange = onPositionChanged,
+            placeholder = R.string.position_placeholder
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // 公司輸入
+        SetupFieldLabel(
+            text = stringResource(R.string.company_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        SetupInputField(
+            value = company,
+            onValueChange = onCompanyChanged,
+            placeholder = R.string.company_placeholder
+        )
     }
 }
 

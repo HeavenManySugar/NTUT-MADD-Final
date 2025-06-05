@@ -56,6 +56,8 @@ import com.ntut.madd.finalproject.ui.setup.components.SetupDivider
 import com.ntut.madd.finalproject.ui.setup.components.SetupHeader
 import com.ntut.madd.finalproject.ui.setup.components.SetupInputField
 import com.ntut.madd.finalproject.ui.setup.components.SetupProgressBar
+import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
+import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.shared.StandardButton
 import com.ntut.madd.finalproject.ui.theme.DarkBlue
 import com.ntut.madd.finalproject.ui.theme.LightBlue
@@ -108,87 +110,46 @@ fun SetupScreenContent(
     onDistrictChanged: (String) -> Unit,
     onNextClick: () -> Unit
 ) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+    SetupPageContainer(
+        currentStep = 1,
+        totalSteps = 4,
+        headerIcon = "📍",
+        headerTitle = stringResource(R.string.location_question),
+        headerSubtitle = stringResource(R.string.location_description),
+        isFormValid = isFormValid,
+        onBackClick = onBackClick,
+        onNextClick = onNextClick,
+        showBackButton = false
+    ) {
+        // 城市選擇
+        SetupFieldLabel(
+            text = stringResource(R.string.city_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFF8F9FA)
+            ),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
-            // 紫色漸變頭部區域
-            SetupHeader(
-                onBackClick = onBackClick,
-                icon = "📍",
-                title = stringResource(R.string.location_question),
-                subtitle = stringResource(R.string.location_description)
+            CityDropdown(
+                selectedCity = selectedCity,
+                onCitySelected = onCitySelected
             )
-            
-            // 進度條區域
-            SetupProgressBar(currentStep = 1)
-
-            // 分隔線
-            SetupDivider()
-            
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(24.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.city_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // 城市選擇框 - 使用統一的灰色背景樣式
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF8F9FA) // 背景色 F8F9FA
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-                ) {
-                    CityDropdown(
-                        selectedCity = selectedCity,
-                        onCitySelected = onCitySelected,
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Text(
-                    text = stringResource(R.string.district_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // 區域輸入框 - 使用重用組件
-                SetupInputField(
-                    value = district,
-                    onValueChange = onDistrictChanged,
-                    placeholder = R.string.district_placeholder
-                )
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // 下一步按钮
-                StandardButton(
-                    label = R.string.next_step,
-                    onButtonClick = onNextClick,
-                    enabled = isFormValid
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-            }
         }
+        Spacer(modifier = Modifier.height(24.dp))
+        // 區域輸入
+        SetupFieldLabel(
+            text = stringResource(R.string.district_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        SetupInputField(
+            value = district,
+            onValueChange = onDistrictChanged,
+            placeholder = R.string.district_placeholder
+        )
     }
 }
 

@@ -46,6 +46,8 @@ import com.ntut.madd.finalproject.ui.setup.components.SetupDivider
 import com.ntut.madd.finalproject.ui.setup.components.SetupHeader
 import com.ntut.madd.finalproject.ui.setup.components.SetupInputField
 import com.ntut.madd.finalproject.ui.setup.components.SetupProgressBar
+import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
+import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.shared.StandardButton
 import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.DarkBlue
@@ -101,103 +103,54 @@ fun Setup3ScreenContent(
     onMajorChange: (String) -> Unit,
     onNextClick: () -> Unit
 ) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            // Header with gradient background
-            SetupHeader(
-                onBackClick = onBackClick,
-                icon = "🎓",
-                title = stringResource(R.string.education_question),
-                subtitle = stringResource(R.string.education_description)
-            )
-            
-            // Progress bar
-            SetupProgressBar(currentStep = 3, totalSteps = 6)
-            
-            SetupDivider()
-            
-            // Content area
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(horizontal = 24.dp, vertical = 32.dp)
-            ) {
-                // Degree selection dropdown
-                Text(
-                    text = stringResource(R.string.degree_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                
-                DegreeOptionButtons(
-                    selectedDegree = selectedDegree,
-                    onDegreeSelected = onDegreeChange
-                )
-                
-                Spacer(modifier = Modifier.height(20.dp))
-                
-                // School input
-                Text(
-                    text = stringResource(R.string.school_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                
-                SetupInputField(
-                    value = school,
-                    onValueChange = onSchoolChange,
-                    placeholder = R.string.school_placeholder
-                )
-                
-                Spacer(modifier = Modifier.height(20.dp))
-                
-                // Major input
-                Text(
-                    text = stringResource(R.string.major_label),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                
-                SetupInputField(
-                    value = major,
-                    onValueChange = onMajorChange,
-                    placeholder = R.string.major_placeholder
-                )
-                
-                Spacer(modifier = Modifier.height(40.dp))
-                
-                // Navigation buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    SecondaryButton(
-                        label = R.string.previous_step,
-                        onButtonClick = onBackClick,
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    StandardButton(
-                        label = R.string.next_step,
-                        onButtonClick = onNextClick,
-                        modifier = Modifier.weight(1f),
-                        enabled = isFormValid
-                    )
-                }
-            }
-        }
+    SetupPageContainer(
+        currentStep = 3,
+        totalSteps = 4,
+        headerIcon = "🎓",
+        headerTitle = stringResource(R.string.education_question),
+        headerSubtitle = stringResource(R.string.education_description),
+        isFormValid = isFormValid,
+        onBackClick = onBackClick,
+        onNextClick = onNextClick
+    ) {
+        // 學歷選擇
+        SetupFieldLabel(
+            text = stringResource(R.string.degree_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        DegreeOptionButtons(
+            selectedDegree = selectedDegree,
+            onDegreeSelected = onDegreeChange
+        )
+        
+        Spacer(modifier = Modifier.height(20.dp))
+        
+        // 學校輸入
+        SetupFieldLabel(
+            text = stringResource(R.string.school_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        SetupInputField(
+            value = school,
+            onValueChange = onSchoolChange,
+            placeholder = R.string.school_placeholder
+        )
+        
+        Spacer(modifier = Modifier.height(20.dp))
+        
+        // 主修輸入
+        SetupFieldLabel(
+            text = stringResource(R.string.major_label),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        
+        SetupInputField(
+            value = major,
+            onValueChange = onMajorChange,
+            placeholder = R.string.major_placeholder
+        )
     }
 }
 
