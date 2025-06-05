@@ -33,6 +33,8 @@ import com.ntut.madd.finalproject.ui.setup4.Setup4Route
 import com.ntut.madd.finalproject.ui.setup4.Setup4Screen
 import com.ntut.madd.finalproject.ui.setup5.Setup5Route
 import com.ntut.madd.finalproject.ui.setup5.Setup5Screen
+import com.ntut.madd.finalproject.ui.setup6.Setup6Route
+import com.ntut.madd.finalproject.ui.setup6.Setup6Screen
 import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
@@ -159,8 +161,16 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                 },
                                 onNextClick = {
-                                    // 導航到下一個setup頁面或者主頁面
+                                    navController.navigate(Setup6Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup6Route> { Setup6Screen(
+                                onNext = {
+                                    // 完成設定，導航到主頁面
                                     navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                },
+                                onBack = {
+                                    navController.popBackStack()
                                 }
                             ) }
                         }

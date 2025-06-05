@@ -150,4 +150,15 @@
     <string name="trait_secure">😊 安靜內斂</string>
     <string name="trait_romantic">💕 浪漫主義</string>
     <string name="trait_practical">👔 實事求是</string>
+    
+    <!-- Setup 6 Screen -->
+    <string name="setup_6">Setup 6</string>
+    <string name="setup6_progress">6/6</string>
+    <string name="setup6_title">個人簡介</string>
+    <string name="setup6_about_me_title">關於我</string>
+    <string name="setup6_about_me_placeholder">介紹一下自己，讓其他人更了解您...</string>
+    <string name="setup6_looking_for_title">我在尋找</string>
+    <string name="setup6_looking_for_placeholder">描述您希望找到什麼樣的人或關係...</string>
+    <string name="setup6_hint">至少填寫其中一個欄位以繼續</string>
+    <string name="setup6_complete_button">完成設定</string>
 </resources>
