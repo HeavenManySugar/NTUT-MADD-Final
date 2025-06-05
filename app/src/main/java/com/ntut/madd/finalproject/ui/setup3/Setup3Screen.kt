@@ -135,7 +135,11 @@ fun Setup3ScreenContent(
         SetupInputField(
             value = school,
             onValueChange = onSchoolChange,
-            placeholder = R.string.school_placeholder
+            placeholder = R.string.school_placeholder,
+            errorMessage = if (school.isNotBlank() && school.length < 2) "學校名稱至少需要2個字符" else null,
+            hasError = school.isNotBlank() && school.length < 2,
+            showSuccess = school.length >= 2,
+            maxLength = 100
         )
         
         Spacer(modifier = Modifier.height(20.dp))
@@ -149,7 +153,11 @@ fun Setup3ScreenContent(
         SetupInputField(
             value = major,
             onValueChange = onMajorChange,
-            placeholder = R.string.major_placeholder
+            placeholder = R.string.major_placeholder,
+            errorMessage = if (major.isNotBlank() && major.length < 2) "科系名稱至少需要2個字符" else null,
+            hasError = major.isNotBlank() && major.length < 2,
+            showSuccess = major.length >= 2,
+            maxLength = 100
         )
     }
 }

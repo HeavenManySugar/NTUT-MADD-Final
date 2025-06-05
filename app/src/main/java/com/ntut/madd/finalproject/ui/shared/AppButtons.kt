@@ -3,13 +3,18 @@ package com.ntut.madd.finalproject.ui.shared
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -51,6 +56,7 @@ fun StandardButton(
     @StringRes label: Int, 
     onButtonClick: () -> Unit,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     OutlinedButton(
@@ -62,25 +68,38 @@ fun StandardButton(
                 else Modifier
             )
             .background(
-                brush = if (enabled) purpleGradient else SolidColor(Color.Gray),
+                brush = if (enabled && !isLoading) purpleGradient else SolidColor(Color.Gray),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
             ),
         onClick = onButtonClick,
-        enabled = enabled,
+        enabled = enabled && !isLoading,
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
             contentColor = Color.White,
             disabledContainerColor = Color.Transparent,
             disabledContentColor = Color.White
         ),
-        border = BorderStroke(1.dp, if (enabled) Color.Transparent else Color.Gray),
+        border = BorderStroke(1.dp, if (enabled && !isLoading) Color.Transparent else Color.Gray),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
     ) {
-        Text(
-            text = stringResource(label),
-            fontSize = 16.sp,
-            modifier = Modifier.padding(vertical = 6.dp)
-        )
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = stringResource(label),
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(vertical = 6.dp)
+                )
+            }
+        }
     }
 }
 

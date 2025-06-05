@@ -1,7 +1,12 @@
 package com.ntut.madd.finalproject.ui.setup4
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,15 +17,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +48,8 @@ import com.ntut.madd.finalproject.R
 import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
 import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.setup.components.SetupContentCard
+import com.ntut.madd.finalproject.ui.setup.components.EnhancedInterestButton
+import com.ntut.madd.finalproject.ui.setup.components.SuccessMessageCard
 import com.ntut.madd.finalproject.ui.shared.StandardButton
 import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
@@ -100,8 +117,11 @@ fun Setup4ScreenContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = if (selectedInterests.size >= 3) 
-                    Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
+                containerColor = when {
+                    selectedInterests.size >= 3 -> Color(0xFFE8F5E8) // 綠色背景表示達到要求
+                    selectedInterests.size > 0 -> Color(0xFFFFF3E0) // 橙色背景表示部分完成
+                    else -> Color(0xFFFFF3E0) // 默認橙色背景
+                }
             ),
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -110,34 +130,62 @@ fun Setup4ScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = if (selectedInterests.size >= 3) "✅" else "⚠️",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(end = 12.dp)
-                )
-                Column {
-                    Text(
-                        text = "已選擇 ${selectedInterests.size} 個興趣",
-                        color = if (selectedInterests.size >= 3) 
-                            Color(0xFF2E7D32) else Color(0xFFE65100),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    if (selectedInterests.size < 3) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 圓形數字指示器
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                color = if (selectedInterests.size >= 3) Color(0xFF4CAF50) else Color(
+                                    0xFFFF9800
+                                ),
+                                shape = androidx.compose.foundation.shape.CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = "還需要選擇 ${3 - selectedInterests.size} 個興趣",
-                            color = Color(0xFFBF360C),
-                            fontSize = 14.sp
+                            text = selectedInterests.size.toString(),
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                    } else {
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
                         Text(
-                            text = "太棒了！您可以繼續下一步",
-                            color = Color(0xFF1B5E20),
+                            text = "已選擇 ${selectedInterests.size} 個興趣",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+
+                        Text(
+                            text = if (selectedInterests.size >= 3)
+                                "太棒了！您可以繼續下一步"
+                            else "至少需要選擇 3 個興趣（還需 ${3 - selectedInterests.size} 個）",
+                            color = if (selectedInterests.size >= 3) Color(0xFF1B5E20) else Color(
+                                0xFFF57C00
+                            ),
                             fontSize = 14.sp
                         )
                     }
+                }
+
+                // 狀態圖標
+                if (selectedInterests.size >= 3) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                        contentDescription = "完成",
+                        tint = Color(0xFF4CAF50),
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             }
         }
@@ -177,47 +225,37 @@ fun InterestGrid(
         stringResource(R.string.interest_learning)
     )
 
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        interests.forEach { interest ->
-            val isSelected = selectedInterests.contains(interest)
-            
-            Card(
-                modifier = Modifier
-                    .clickable { onInterestToggle(interest) },
-                colors = CardDefaults.cardColors(
-                    containerColor = when {
-                        isSelected -> Color(0xFF6C63FF) // Modern purple
-                        else -> Color.White
-                    }
-                ),
-                shape = RoundedCornerShape(24.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = if (isSelected) 4.dp else 1.dp
+    var showSuccessMessage by remember { mutableStateOf(false) }
+    
+    // Show success message when reaching minimum requirement
+    LaunchedEffect(selectedInterests.size) {
+        if (selectedInterests.size >= 3 && selectedInterests.size <= 3) {
+            showSuccessMessage = true
+        }
+    }
+
+    Column {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            interests.forEach { interest ->
+                EnhancedInterestButton(
+                    interest = interest,
+                    isSelected = selectedInterests.contains(interest),
+                    onToggle = { onInterestToggle(interest) }
                 )
-            ) {
-                Box(
-                    modifier = Modifier
-                        .border(
-                            width = if (isSelected) 0.dp else 1.dp,
-                            color = if (isSelected) Color.Transparent else Color(0xFFE1E5E9),
-                            shape = RoundedCornerShape(24.dp)
-                        )
-                        .padding(horizontal = 20.dp, vertical = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = interest,
-                        color = if (isSelected) Color.White else Color(0xFF4A5568),
-                        fontSize = 14.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                        lineHeight = 16.sp
-                    )
-                }
             }
+        }
+        
+        // Success message
+        if (showSuccessMessage && selectedInterests.size >= 3) {
+            Spacer(modifier = Modifier.height(16.dp))
+            SuccessMessageCard(
+                message = "太棒了！您已選擇了 ${selectedInterests.size} 個興趣領域",
+                visible = showSuccessMessage
+            )
         }
     }
 }

@@ -117,7 +117,11 @@ fun Setup2ScreenContent(
         SetupInputField(
             value = position,
             onValueChange = onPositionChanged,
-            placeholder = R.string.position_placeholder
+            placeholder = R.string.position_placeholder,
+            errorMessage = if (position.isNotBlank() && position.length < 2) "職位名稱至少需要2個字符" else null,
+            hasError = position.isNotBlank() && position.length < 2,
+            showSuccess = position.length >= 2,
+            maxLength = 50
         )
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -131,7 +135,11 @@ fun Setup2ScreenContent(
         SetupInputField(
             value = company,
             onValueChange = onCompanyChanged,
-            placeholder = R.string.company_placeholder
+            placeholder = R.string.company_placeholder,
+            errorMessage = if (company.isNotBlank() && company.length < 2) "公司名稱至少需要2個字符" else null,
+            hasError = company.isNotBlank() && company.length < 2,
+            showSuccess = company.length >= 2,
+            maxLength = 100
         )
     }
 }
