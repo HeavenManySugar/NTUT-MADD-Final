@@ -24,7 +24,7 @@ class Setup2ViewModel @Inject constructor() : BaseSetupViewModel() {
     val company: StateFlow<String> = _company.asStateFlow()
     
     override val isFormValid: StateFlow<Boolean> = combine(_position, _company) { position, company ->
-        position.isNotBlank() && company.isNotBlank()
+        position.isNotBlank() && position.length >= 2 && company.isNotBlank() && company.length >= 2
     }.stateIn(
         scope = viewModelScope,
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),

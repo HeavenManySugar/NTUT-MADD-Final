@@ -27,7 +27,7 @@ class Setup3ViewModel @Inject constructor() : BaseSetupViewModel() {
     val major: StateFlow<String> = _major.asStateFlow()
     
     override val isFormValid: StateFlow<Boolean> = combine(_selectedDegree, _school, _major) { degree, school, major ->
-        degree.isNotEmpty() && school.trim().isNotEmpty() && major.trim().isNotEmpty()
+        degree.isNotEmpty() && school.trim().isNotEmpty() && school.trim().length >= 2 && major.trim().isNotEmpty() && major.trim().length >= 2
     }.stateIn(
         scope = viewModelScope,
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
