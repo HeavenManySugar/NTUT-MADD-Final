@@ -95,7 +95,7 @@ fun TodoListScreenContent(
                 action = openSettingsScreen,
                 scrollBehavior = scrollBehavior
             )
-        },        ) { innerPadding ->
+        }) { innerPadding ->
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
