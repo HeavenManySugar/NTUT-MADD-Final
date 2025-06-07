@@ -212,7 +212,7 @@ fun SetupInputField(
             elevation = CardDefaults.cardElevation(defaultElevation = elevation),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Box(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
+            Box {
                 OutlinedTextField(
                     value = value,
                     onValueChange = { newValue ->
@@ -250,7 +250,9 @@ fun SetupInputField(
                     visible = showSuccess,
                     enter = scaleIn() + fadeIn(),
                     exit = scaleOut() + fadeOut(),
-                    modifier = Modifier.align(Alignment.CenterEnd)
+                    modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.CheckCircle,
@@ -321,6 +323,8 @@ fun SetupPageContainer(
     onNextClick: () -> Unit,
     showBackButton: Boolean = true,
     nextButtonText: Int = R.string.next_step,
+    isLoading: Boolean = false,
+    loadingText: String = "處理中...",
     content: @Composable () -> Unit
 ) {
     Scaffold { innerPadding ->
@@ -337,16 +341,16 @@ fun SetupPageContainer(
                 title = headerTitle,
                 subtitle = headerSubtitle
             )
-            
+
             // 統一的進度條
             SetupProgressBar(
                 currentStep = currentStep,
                 totalSteps = totalSteps
             )
-            
+
             // 分隔線
             SetupDivider()
-            
+
             // 主要內容區域 - 統一樣式
             Column(
                 modifier = Modifier
@@ -354,21 +358,68 @@ fun SetupPageContainer(
                     .background(Color.White)
                     .padding(horizontal = 24.dp, vertical = 32.dp)
             ) {
-                // 使用者自定義內容
-                content()
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // 統一的導航按鈕區域
-                SetupNavigationButtons(
-                    showBackButton = showBackButton,
-                    isFormValid = isFormValid,
-                    onBackClick = onBackClick,
-                    onNextClick = onNextClick,
-                    nextButtonText = nextButtonText
+                Spacer(modifier = Modifier.height(4.dp)) // 縮小從8dp到4dp
+
+                // Animated content entrance
+                val contentAlpha by animateFloatAsState(
+                    targetValue = 1f,
+                    animationSpec = tween(600, delayMillis = 200),
+                    label = "content_alpha"
                 )
-                
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Column(
+                    modifier = Modifier.alpha(contentAlpha),
+                    verticalArrangement = Arrangement.spacedBy(12.dp) // 縮小從16dp到12dp
+                ) {
+                    content()
+                }
+
+                Spacer(modifier = Modifier.height(16.dp)) // 縮小從24dp到16dp
+            }
+
+            // Bottom navigation with enhanced styling but reduced size
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp), // 縮小從24dp到20dp horizontal, 16dp vertical
+                    horizontalArrangement = Arrangement.spacedBy(12.dp), // 縮小從16dp到12dp
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (showBackButton) {
+                        SecondaryButton(
+                            label = R.string.previous_step,
+                            onButtonClick = onBackClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    // Enhanced next button with loading state
+                    if (isLoading) {
+                        LoadingStateButton(
+                            label = nextButtonText,
+                            onClick = onNextClick,
+                            isLoading = true,
+                            enabled = isFormValid,
+                            loadingText = loadingText,
+                            modifier = Modifier.weight(if (showBackButton) 1f else 1f)
+                        )
+                    } else {
+                        StandardButton(
+                            label = nextButtonText,
+                            onButtonClick = onNextClick,
+                            enabled = isFormValid,
+                            modifier = Modifier.weight(if (showBackButton) 1f else 1f)
+                        )
+                    }
+                }
             }
         }
     }
@@ -443,6 +494,220 @@ fun SetupContentCard(
             modifier = Modifier.padding(20.dp)
         ) {
             content()
+        }
+    }
+}
+
+@Composable
+fun CompletionCelebration(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + scaleIn(),
+        exit = fadeOut() + scaleOut(),
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.7f))
+                .clickable { onDismiss() },
+            contentAlignment = Alignment.Center
+        ) {
+            // Confetti animation
+            ConfettiAnimation(isPlaying = visible)
+
+            // Success card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Animated success icon
+                    val scale by animateFloatAsState(
+                        targetValue = if (visible) 1f else 0f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        label = "success_icon_scale"
+                    )
+
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Success",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .scale(scale),
+                        tint = Color(0xFF4CAF50)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "設定完成！",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1B5E20),
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "恭喜您已完成所有設定步驟！\n現在可以開始使用應用程式了。",
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 22.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Animated continue button
+                    val buttonScale by animateFloatAsState(
+                        targetValue = if (visible) 1f else 0f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        label = "button_scale"
+                    )
+
+                    StandardButton(
+                        label = R.string.setup_complete_continue,
+                        onButtonClick = onDismiss,
+                        modifier = Modifier.scale(buttonScale)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ConfettiAnimation(
+    isPlaying: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val confettiPieces = remember {
+        List(30) { ConfettiPiece() }
+    }
+
+    val animationProgress by animateFloatAsState(
+        targetValue = if (isPlaying) 1f else 0f,
+        animationSpec = tween(3000),
+        label = "confetti_animation"
+    )
+
+    Canvas(
+        modifier = modifier.fillMaxSize()
+    ) {
+        confettiPieces.forEach { piece ->
+            val x = piece.startX * size.width + piece.velocityX * animationProgress * 200
+            val y = piece.startY * size.height + piece.velocityY * animationProgress * 800 +
+                    0.5f * 500 * animationProgress * animationProgress // gravity effect
+
+            val rotation = piece.rotation * animationProgress * 720 // multiple rotations
+
+            if (y < size.height && x >= 0 && x <= size.width) {
+                drawRect(
+                    color = piece.color,
+                    topLeft = androidx.compose.ui.geometry.Offset(x, y),
+                    size = androidx.compose.ui.geometry.Size(piece.size, piece.size),
+                    alpha = 1f - animationProgress * 0.3f
+                )
+            }
+        }
+    }
+}
+
+
+data class ConfettiPiece(
+    val startX: Float = Random.nextFloat(),
+    val startY: Float = Random.nextFloat() * 0.3f,
+    val velocityX: Float = (Random.nextFloat() - 0.5f) * 2f,
+    val velocityY: Float = Random.nextFloat() * -2f - 1f,
+    val rotation: Float = Random.nextFloat(),
+    val size: Float = Random.nextFloat() * 8f + 4f,
+    val color: Color = listOf(
+        Color(0xFFFF6B6B),
+        Color(0xFF4ECDC4),
+        Color(0xFF45B7D1),
+        Color(0xFF96CEB4),
+        Color(0xFFFDA085),
+        Color(0xFFFFD93D),
+        Color(0xFF6C5CE7),
+        Color(0xFFFD79A8)
+    ).random()
+)
+
+@Composable
+fun LoadingStateButton(
+    @StringRes label: Int,
+    onClick: () -> Unit,
+    isLoading: Boolean,
+    enabled: Boolean = true,
+    loadingText: String = "處理中...",
+    modifier: Modifier = Modifier
+) {
+    OutlinedButton(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .background(
+                brush = if (enabled && !isLoading) purpleGradient else SolidColor(Color.Gray),
+                shape = RoundedCornerShape(12.dp)
+            ),
+        onClick = onClick,
+        enabled = enabled && !isLoading,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = Color.White,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = Color.White
+        ),
+        border = BorderStroke(1.dp, Color.Transparent),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(vertical = 6.dp)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = loadingText,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            } else {
+                Text(
+                    text = stringResource(label),
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }

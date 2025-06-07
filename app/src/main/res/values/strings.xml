@@ -161,4 +161,7 @@
     <string name="setup6_looking_for_placeholder">描述您希望找到什麼樣的人或關係...</string>
     <string name="setup6_hint">至少填寫其中一個欄位以繼續</string>
     <string name="setup6_complete_button">完成設定</string>
+
+    <!-- Completion Celebration -->
+    <string name="setup_complete_continue">開始使用</string>
 </resources>
