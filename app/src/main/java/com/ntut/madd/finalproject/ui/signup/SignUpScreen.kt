@@ -24,12 +24,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -64,8 +60,13 @@ import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -123,7 +124,7 @@ fun SignUpScreenContent(
     val onLNameChange: (String) -> Unit = { last_name = it }
     val onRPasswordChange: (String) -> Unit = { repeat_password = it }
     val onIsCheckedChange: (Boolean) -> Unit = { isChecked = it }
-
+    var showPassword by remember { mutableStateOf(false) }
 
     // 可以滾動
     val scrollState = rememberScrollState()
@@ -224,9 +225,18 @@ fun SignUpScreenContent(
                 label = "密碼",
                 value = password,
                 onValueChange = onPasswordChange,
-                placeholder = "請輸入您的密碼"
+                placeholder = "請輸入您的密碼",
+                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        Icon(
+                            imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (showPassword) "隱藏密碼" else "顯示密碼"
+                        )
+                    }
+                }
             )
-
+            
             // Check Password
             LabeledField(
                 label = "確認密碼",

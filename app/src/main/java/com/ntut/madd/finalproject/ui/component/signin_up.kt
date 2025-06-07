@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 
 /**　中間帶文字的 divider　*/
 @Composable
@@ -67,50 +69,60 @@ fun LabeledInputBox(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
-    fontSize: TextUnit = 20.sp
+    fontSize: TextUnit = 20.sp,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: (@Composable () -> Unit)? = null
 ) {
     Box(
         modifier = modifier
             .height(64.dp)
-            .border(
-                width = 1.dp,
-                color = Color(0xFFEAECEF),
-                shape = RoundedCornerShape(8.dp)
-            )
-            .background(
-                color = Color(0xFFF8F9FA),
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(top = 12.dp, start = 12.dp, end = 12.dp, bottom = 8.dp),
+            .border(1.dp, Color(0xFFEAECEF), RoundedCornerShape(8.dp))
+            .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 8.dp),
         contentAlignment = Alignment.TopStart
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.CenterStart // ✅ 垂直置中 placeholder
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize()
         ) {
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                textStyle = LocalTextStyle.current.copy(
-                    color = Color.Black,
-                    fontSize = fontSize
-                ),
-                singleLine = true,
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 5.dp),
-                decorationBox = { innerTextField ->
-                    if (value.isEmpty()) {
-                        Text(
-                            text = placeholder,
-                            color = Color(0xFFB0B0B0),
-                            fontSize = fontSize,
-                            fontWeight = FontWeight.Medium
-                        )
+                    .weight(1f)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    textStyle = LocalTextStyle.current.copy(
+                        color = Color.Black,
+                        fontSize = fontSize
+                    ),
+                    singleLine = true,
+                    visualTransformation = visualTransformation,
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .padding(start = 5.dp),
+                    decorationBox = { innerTextField ->
+                        if (value.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                color = Color(0xFFB0B0B0),
+                                fontSize = fontSize,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                        innerTextField()
                     }
-                    innerTextField()
+                )
+            }
+
+            // 可選尾端 icon
+            if (trailingIcon != null) {
+                Box(modifier = Modifier.padding(start = 8.dp)) {
+                    trailingIcon()
                 }
-            )
+            }
         }
     }
 }
@@ -258,7 +270,10 @@ fun LabeledField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 20.sp,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: (@Composable () -> Unit)? = null
 ) {
     InputFieldLabel(
         text = label,
@@ -268,7 +283,10 @@ fun LabeledField(
         value = value,
         onValueChange = onValueChange,
         placeholder = placeholder,
-        modifier = Modifier.fillMaxWidth(0.8f)
+        modifier = Modifier.fillMaxWidth(0.8f),
+        fontSize = fontSize,
+        visualTransformation = visualTransformation,
+        trailingIcon = trailingIcon
     )
     Spacer(Modifier.height(8.dp))
 }

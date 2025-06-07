@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation("androidx.compose.material:material-icons-extended")
     ksp(libs.hilt.android.compiler)
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     //Firebase
     implementation(platform(libs.firebase.bom))

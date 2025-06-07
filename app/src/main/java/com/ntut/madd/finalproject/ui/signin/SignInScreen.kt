@@ -4,9 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +37,8 @@ import kotlinx.serialization.Serializable
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.ntut.madd.finalproject.ui.signup.BirthdayInput
 
@@ -130,19 +137,21 @@ private fun SignInScreenContent(
                 )
 
                 // Password
+
                 LabeledField(
                     label = "密碼",
                     value = password,
                     onValueChange = onPasswordChange,
-                    placeholder = "請輸入您的密碼"
-                )
-
-                PasswordInputField(
-                    password = password,
-                    onPasswordChange = { password = it },
-                    showPassword = showPassword,
-                    onTogglePasswordVisibility = { showPassword = !showPassword },
-                    modifier = Modifier.fillMaxWidth(0.85f)
+                    placeholder = "請輸入您的密碼",
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (showPassword) "隱藏密碼" else "顯示密碼"
+                            )
+                        }
+                    }
                 )
 
                 Row(
