@@ -1,7 +1,8 @@
 package com.ntut.madd.finalproject.ui.setup5
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ntut.madd.finalproject.ui.setup.BaseSetupViewModel
+import com.ntut.madd.finalproject.data.repository.SetupDataManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,21 +14,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class Setup5ViewModel @Inject constructor() : ViewModel() {
+class Setup5ViewModel @Inject constructor(
+    setupDataManager: SetupDataManager
+) : BaseSetupViewModel(setupDataManager) {
 
     private val _selectedTraits = MutableStateFlow<List<String>>(emptyList())
     val selectedTraits: StateFlow<List<String>> = _selectedTraits.asStateFlow()
 
-    private val _navigateToNext = MutableStateFlow(false)
-    val navigateToNext: StateFlow<Boolean> = _navigateToNext.asStateFlow()
-
-    val isFormValid: StateFlow<Boolean> = selectedTraits
+    override val isFormValid: StateFlow<Boolean> = selectedTraits
         .map { traits -> traits.size >= 3 } // 至少要選擇3個特質
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
+
+    override fun saveCurrentStepData() {
+        setupDataManager.updatePersonalityTraits(_selectedTraits.value)
+    }
 
     fun toggleTrait(trait: String) {
         viewModelScope.launch {
@@ -39,15 +43,5 @@ class Setup5ViewModel @Inject constructor() : ViewModel() {
             }
             _selectedTraits.value = currentTraits
         }
-    }
-
-    fun onNextClicked() {
-        if (isFormValid.value) {
-            _navigateToNext.value = true
-        }
-    }
-
-    fun onNavigateHandled() {
-        _navigateToNext.value = false
     }
 }

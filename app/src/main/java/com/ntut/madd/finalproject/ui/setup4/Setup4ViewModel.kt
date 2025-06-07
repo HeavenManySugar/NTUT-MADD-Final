@@ -2,6 +2,7 @@ package com.ntut.madd.finalproject.ui.setup4
 
 import androidx.lifecycle.viewModelScope
 import com.ntut.madd.finalproject.ui.setup.BaseSetupViewModel
+import com.ntut.madd.finalproject.data.repository.SetupDataManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +14,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class Setup4ViewModel @Inject constructor() : BaseSetupViewModel() {
+class Setup4ViewModel @Inject constructor(
+    setupDataManager: SetupDataManager
+) : BaseSetupViewModel(setupDataManager) {
 
     private val _selectedInterests = MutableStateFlow<List<String>>(emptyList())
     val selectedInterests: StateFlow<List<String>> = _selectedInterests.asStateFlow()
@@ -25,6 +28,10 @@ class Setup4ViewModel @Inject constructor() : BaseSetupViewModel() {
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
+
+    override fun saveCurrentStepData() {
+        setupDataManager.updateInterests(_selectedInterests.value)
+    }
 
     fun toggleInterest(interest: String) {
         viewModelScope.launch {

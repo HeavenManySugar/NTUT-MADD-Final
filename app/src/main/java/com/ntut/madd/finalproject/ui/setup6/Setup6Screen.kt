@@ -34,10 +34,19 @@ fun Setup6Screen(
     val aboutMe by viewModel.aboutMe.collectAsStateWithLifecycle()
     val lookingFor by viewModel.lookingFor.collectAsStateWithLifecycle()
     val isFormValid by viewModel.isFormValid.collectAsStateWithLifecycle()
+    val isSubmitting by viewModel.isSubmitting.collectAsStateWithLifecycle()
+    val setupCompleted by viewModel.setupCompleted.collectAsStateWithLifecycle()
     
     val coroutineScope = rememberCoroutineScope()
     var showCelebration by remember { mutableStateOf(false) }
-    var isSubmitting by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Handle setup completion
+    LaunchedEffect(setupCompleted) {
+        if (setupCompleted) {
+            showCelebration = true
+        }
+    }
 
     Setup6ScreenContent(
         aboutMe = aboutMe,
@@ -49,16 +58,25 @@ fun Setup6Screen(
         getAboutMeCharacterCount = viewModel::getAboutMeCharacterCount,
         getLookingForCharacterCount = viewModel::getLookingForCharacterCount,
         onNext = {
-            isSubmitting = true
-            // Simulate form submission delay
             coroutineScope.launch {
-                delay(1500) // Simulate processing
-                isSubmitting = false
-                showCelebration = true
+                val result = viewModel.saveProfileAndComplete()
+                if (result.isFailure) {
+                    errorMessage = result.exceptionOrNull()?.message ?: "保存失敗，請重試"
+                }
             }
         },
         onBack = onBack
     )
+    
+    // Error handling
+    errorMessage?.let { message ->
+        LaunchedEffect(message) {
+            // Show error snackbar or dialog
+            // For now, we'll just log it and clear
+            println("Setup save error: $message")
+            errorMessage = null
+        }
+    }
     
     // Completion celebration overlay
     CompletionCelebration(
