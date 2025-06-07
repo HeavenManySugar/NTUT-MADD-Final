@@ -49,6 +49,7 @@ import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
 import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.setup.components.SetupContentCard
 import com.ntut.madd.finalproject.ui.setup.components.EnhancedInterestButton
+import com.ntut.madd.finalproject.ui.setup.components.TraitSelectionProgress
 import com.ntut.madd.finalproject.ui.setup.components.SuccessMessageCard
 import com.ntut.madd.finalproject.ui.shared.StandardButton
 import com.ntut.madd.finalproject.ui.shared.SecondaryButton
@@ -113,7 +114,7 @@ fun Setup4ScreenContent(
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Selected count indicator with better styling
+        // Enhanced selection counter with circular progress  
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -123,44 +124,43 @@ fun Setup4ScreenContent(
                     else -> Color(0xFFF3E5F5)
                 }
             ),
-            shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // 圓形數字指示器
+                    // Circular progress indicator with count
                     Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(
-                                color = when {
-                                    selectedInterests.isEmpty() -> Color(0xFFE65100)
-                                    selectedInterests.size >= 3 -> Color(0xFF2E7D32)
-                                    else -> Color(0xFF7B1FA2)
-                                },
-                                shape = androidx.compose.foundation.shape.CircleShape
-                            ),
+                        modifier = Modifier.size(60.dp),
                         contentAlignment = Alignment.Center
                     ) {
+                        TraitSelectionProgress(
+                            selected = selectedInterests.size,
+                            total = 5
+                        )
                         Text(
-                            text = selectedInterests.size.toString(),
-                            color = Color.White,
+                            text = "${selectedInterests.size}/5",
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = when {
+                                selectedInterests.isEmpty() -> Color(0xFFE65100)
+                                selectedInterests.size >= 3 -> Color(0xFF2E7D32)
+                                else -> Color(0xFF7B1FA2)
+                            }
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
 
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
                         val (title, subtitle, titleColor, subtitleColor) = when {
                             selectedInterests.isEmpty() -> listOf(
                                 "還沒有選擇興趣",
@@ -201,15 +201,16 @@ fun Setup4ScreenContent(
                             lineHeight = 18.sp
                         )
                     }
-                }
-
-                // 狀態圖標
-                if (selectedInterests.size >= 3) {
-                    Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
-                        contentDescription = "完成",
-                        tint = Color(0xFF4CAF50),
-                        modifier = Modifier.size(24.dp)
+                
+                    // Status emoji
+                    Text(
+                        text = when {
+                            selectedInterests.isEmpty() -> "💭"
+                            selectedInterests.size < 3 -> "🎯"
+                            selectedInterests.size == 5 -> "🎉"
+                            else -> "✨"
+                        },
+                        fontSize = 24.sp
                     )
                 }
             }
@@ -257,10 +258,14 @@ fun InterestGrid(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             interests.forEach { interest ->
+                val isSelected = selectedInterests.contains(interest)
+                val canSelect = selectedInterests.size < 5 || isSelected
+                
                 EnhancedInterestButton(
                     interest = interest,
-                    isSelected = selectedInterests.contains(interest),
-                    onToggle = { onInterestToggle(interest) }
+                    isSelected = isSelected,
+                    isEnabled = canSelect,
+                    onToggle = { if (canSelect) onInterestToggle(interest) }
                 )
             }
         }

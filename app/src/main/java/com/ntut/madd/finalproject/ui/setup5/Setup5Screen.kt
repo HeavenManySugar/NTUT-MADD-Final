@@ -50,6 +50,7 @@ import com.ntut.madd.finalproject.ui.setup.components.SetupPageContainer
 import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.setup.components.SetupContentCard
 import com.ntut.madd.finalproject.ui.setup.components.EnhancedInterestButton
+import com.ntut.madd.finalproject.ui.setup.components.TraitSelectionProgress
 import com.ntut.madd.finalproject.ui.setup.components.SuccessMessageCard
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable
@@ -309,55 +310,6 @@ fun EnhancedTraitButton(
                 fontSize = 14.sp,
                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                 style = MaterialTheme.typography.labelLarge
-            )
-        }
-    }
-}
-
-@Composable
-fun TraitSelectionProgress(
-    selected: Int,
-    total: Int,
-    modifier: Modifier = Modifier
-) {
-    val progress = selected.toFloat() / total.toFloat()
-    val progressColor = when {
-        selected == 0 -> Color(0xFFE65100)
-        selected < 3 -> Color(0xFF7B1FA2)
-        else -> Color(0xFF2E7D32)
-    }
-    
-    Canvas(
-        modifier = modifier.size(50.dp)
-    ) {
-        val strokeWidth = 6.dp.toPx()
-        val radius = (size.minDimension - strokeWidth) / 2
-        val center = Offset(size.width / 2, size.height / 2)
-        
-        // Background circle
-        drawCircle(
-            color = Color(0xFFE0E0E0),
-            radius = radius,
-            center = center,
-            style = Stroke(width = strokeWidth)
-        )
-        
-        // Progress arc
-        if (progress > 0) {
-            drawArc(
-                color = progressColor,
-                startAngle = -90f,
-                sweepAngle = 360f * progress,
-                useCenter = false,
-                topLeft = Offset(
-                    center.x - radius,
-                    center.y - radius
-                ),
-                size = Size(radius * 2, radius * 2),
-                style = Stroke(
-                    width = strokeWidth,
-                    cap = StrokeCap.Round
-                )
             )
         }
     }

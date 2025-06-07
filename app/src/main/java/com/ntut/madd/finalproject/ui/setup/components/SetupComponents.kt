@@ -27,6 +27,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -823,10 +826,15 @@ fun EnhancedInterestButton(
     interest: String,
     isSelected: Boolean,
     onToggle: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true
 ) {
     val animatedBackgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Color(0xFF6B46C1) else Color.White,
+        targetValue = when {
+            isSelected -> Color(0xFF6B46C1)
+            isEnabled -> Color.White
+            else -> Color.White.copy(alpha = 0.5f)
+        },
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
@@ -835,7 +843,11 @@ fun EnhancedInterestButton(
     )
 
     val animatedTextColor by animateColorAsState(
-        targetValue = if (isSelected) Color.White else Color(0xFF4A5568),
+        targetValue = when {
+            isSelected -> Color.White
+            isEnabled -> Color(0xFF4A5568)
+            else -> Color(0xFF4A5568).copy(alpha = 0.5f)
+        },
         animationSpec = tween(200),
         label = "text_color"
     )
@@ -850,7 +862,11 @@ fun EnhancedInterestButton(
     )
 
     val elevation by animateDpAsState(
-        targetValue = if (isSelected) 6.dp else 2.dp,
+        targetValue = when {
+            isSelected -> 6.dp
+            isEnabled -> 2.dp
+            else -> 0.dp
+        },
         animationSpec = tween(200),
         label = "button_elevation"
     )
@@ -858,7 +874,7 @@ fun EnhancedInterestButton(
     Card(
         modifier = modifier
             .scale(scale)
-            .clickable { onToggle() },
+            .clickable(enabled = isEnabled) { if (isEnabled) onToggle() },
         colors = CardDefaults.cardColors(
             containerColor = animatedBackgroundColor
         ),
@@ -1019,6 +1035,56 @@ fun FormValidationFeedback(
                 color = textColor,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+// Unified circular progress indicator used by both Setup4 and Setup5
+@Composable
+fun TraitSelectionProgress(
+    selected: Int,
+    total: Int,
+    modifier: Modifier = Modifier
+) {
+    val progress = selected.toFloat() / total.toFloat()
+    val progressColor = when {
+        selected == 0 -> Color(0xFFE65100)
+        selected < 3 -> Color(0xFF7B1FA2)
+        else -> Color(0xFF2E7D32)
+    }
+    
+    Canvas(
+        modifier = modifier.size(50.dp)
+    ) {
+        val strokeWidth = 6.dp.toPx()
+        val radius = (size.minDimension - strokeWidth) / 2
+        val center = Offset(size.width / 2, size.height / 2)
+        
+        // Background circle
+        drawCircle(
+            color = Color(0xFFE0E0E0),
+            radius = radius,
+            center = center,
+            style = Stroke(width = strokeWidth)
+        )
+        
+        // Progress arc
+        if (progress > 0) {
+            drawArc(
+                color = progressColor,
+                startAngle = -90f,
+                sweepAngle = 360f * progress,
+                useCenter = false,
+                topLeft = Offset(
+                    center.x - radius,
+                    center.y - radius
+                ),
+                size = Size(radius * 2, radius * 2),
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
             )
         }
     }
