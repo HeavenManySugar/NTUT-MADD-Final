@@ -14,10 +14,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class Setup4ViewModel @Inject constructor() : BaseSetupViewModel() {
-    
+
     private val _selectedInterests = MutableStateFlow<List<String>>(emptyList())
     val selectedInterests: StateFlow<List<String>> = _selectedInterests.asStateFlow()
-    
+
     override val isFormValid: StateFlow<Boolean> = selectedInterests
         .map { interests -> interests.size >= 3 }
         .stateIn(
@@ -25,22 +25,16 @@ class Setup4ViewModel @Inject constructor() : BaseSetupViewModel() {
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
-    
+
     fun toggleInterest(interest: String) {
         viewModelScope.launch {
             val currentInterests = _selectedInterests.value.toMutableList()
             if (currentInterests.contains(interest)) {
                 currentInterests.remove(interest)
-            } else {
+            } else if (currentInterests.size < 5) { // 最多選擇5個
                 currentInterests.add(interest)
             }
             _selectedInterests.value = currentInterests
-        }
-    }
-    
-    fun updateInterests(interests: List<String>) {
-        viewModelScope.launch {
-            _selectedInterests.value = interests
         }
     }
 }

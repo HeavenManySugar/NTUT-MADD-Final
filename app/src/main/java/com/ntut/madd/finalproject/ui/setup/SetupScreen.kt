@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -24,9 +25,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -159,8 +162,23 @@ fun CityDropdown(
     onCitySelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val cities = listOf("台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市")
-    
+    var searchText by remember { mutableStateOf("") }
+
+    val allCities = listOf(
+        "台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市",
+        "基隆市", "新竹市", "嘉義市", "新竹縣", "苗栗縣", "彰化縣",
+        "南投縣", "雲林縣", "嘉義縣", "屏東縣", "宜蘭縣", "花蓮縣",
+        "台東縣", "澎湖縣", "金門縣", "連江縣"
+    )
+
+    val popularCities = listOf("台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市")
+
+    val filteredCities = if (searchText.isEmpty()) {
+        allCities
+    } else {
+        allCities.filter { it.contains(searchText, ignoreCase = true) }
+    }
+
     Box {
         OutlinedTextField(
             value = selectedCity,
@@ -191,27 +209,148 @@ fun CityDropdown(
                 cursorColor = Color(0xFF6B46C1)
             )
         )
-        
+
         // Invisible clickable overlay
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .clickable { expanded = true }
         )
-        
+
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
+            onDismissRequest = {
+                expanded = false
+                searchText = ""
+            },
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .height(400.dp)
         ) {
-            cities.forEach { city ->
+            // 搜索框
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                placeholder = {
+                    Text(
+                        "搜索城市...",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color(0xFFE2E8F0),
+                    focusedBorderColor = Color(0xFF6B46C1)
+                )
+            )
+
+            // 如果沒有搜索，顯示常用城市
+            if (searchText.isEmpty()) {
+                Text(
+                    text = "⭐ 常用城市",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFF6B46C1),
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                popularCities.forEach { city ->
+                    DropdownMenuItem(
+                        text = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Icon(
+                                    Icons.Filled.LocationOn,
+                                    contentDescription = null,
+                                    tint = Color(0xFF6B46C1),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = city,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        },
+                        onClick = {
+                            onCitySelected(city)
+                            expanded = false
+                            searchText = ""
+                        },
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+                    color = Color(0xFFE2E8F0)
+                )
+
+                Text(
+                    text = "🏙️ 所有城市",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFF718096),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            // 顯示篩選後的城市
+            filteredCities.forEach { city ->
                 DropdownMenuItem(
-                    text = { Text(city) },
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = city,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF2D3748)
+                            )
+                        }
+                    },
                     onClick = {
                         onCitySelected(city)
                         expanded = false
-                    }
+                        searchText = ""
+                    },
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
+            }
+
+            if (filteredCities.isEmpty() && searchText.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "🔍",
+                            fontSize = 24.sp,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Text(
+                            text = "未找到符合的城市",
+                            fontSize = 14.sp,
+                            color = Color(0xFF718096),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }

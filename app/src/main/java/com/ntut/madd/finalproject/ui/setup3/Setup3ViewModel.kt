@@ -14,34 +14,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class Setup3ViewModel @Inject constructor() : BaseSetupViewModel() {
-    
+
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    
+
     private val _selectedDegree = MutableStateFlow("")
     val selectedDegree: StateFlow<String> = _selectedDegree.asStateFlow()
-    
+
     private val _school = MutableStateFlow("")
     val school: StateFlow<String> = _school.asStateFlow()
-    
+
     private val _major = MutableStateFlow("")
     val major: StateFlow<String> = _major.asStateFlow()
-    
+
     override val isFormValid: StateFlow<Boolean> = combine(_selectedDegree, _school, _major) { degree, school, major ->
-        degree.isNotEmpty() && school.trim().isNotEmpty() && major.trim().isNotEmpty()
+        degree.isNotEmpty() && school.trim().isNotEmpty() && school.trim().length >= 2 && major.trim().isNotEmpty() && major.trim().length >= 2
     }.stateIn(
         scope = viewModelScope,
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
         initialValue = false
     )
-    
+
     fun updateDegree(degree: String) {
         _selectedDegree.value = degree
     }
-    
+
     fun updateSchool(school: String) {
         _school.value = school
     }
-    
+
     fun updateMajor(major: String) {
         _major.value = major
     }

@@ -125,7 +125,7 @@ fun Setup5ScreenContent(
                     )
                     if (selectedTraits.isEmpty()) {
                         Text(
-                            text = "請選擇最多5個能描述您的特質",
+                            text = "還需要選擇 ${3 - selectedTraits.size} 個特質",
                             color = Color(0xFFBF360C),
                             fontSize = 14.sp
                         )

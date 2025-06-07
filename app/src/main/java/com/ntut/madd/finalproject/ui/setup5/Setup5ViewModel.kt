@@ -14,21 +14,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class Setup5ViewModel @Inject constructor() : ViewModel() {
-    
+
     private val _selectedTraits = MutableStateFlow<List<String>>(emptyList())
     val selectedTraits: StateFlow<List<String>> = _selectedTraits.asStateFlow()
-    
+
     private val _navigateToNext = MutableStateFlow(false)
     val navigateToNext: StateFlow<Boolean> = _navigateToNext.asStateFlow()
-    
+
     val isFormValid: StateFlow<Boolean> = selectedTraits
-        .map { traits -> traits.isNotEmpty() } // 至少要選擇一個特質
+        .map { traits -> traits.size >= 3 } // 至少要選擇3個特質
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
-    
+
     fun toggleTrait(trait: String) {
         viewModelScope.launch {
             val currentTraits = _selectedTraits.value.toMutableList()
@@ -40,13 +40,13 @@ class Setup5ViewModel @Inject constructor() : ViewModel() {
             _selectedTraits.value = currentTraits
         }
     }
-    
+
     fun onNextClicked() {
         if (isFormValid.value) {
             _navigateToNext.value = true
         }
     }
-    
+
     fun onNavigateHandled() {
         _navigateToNext.value = false
     }

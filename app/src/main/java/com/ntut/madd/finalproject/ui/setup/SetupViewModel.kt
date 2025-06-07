@@ -13,15 +13,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SetupViewModel @Inject constructor() : BaseSetupViewModel() {
-    
+
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    
+
     private val _selectedCity = MutableStateFlow("")
     val selectedCity: StateFlow<String> = _selectedCity.asStateFlow()
-    
+
     private val _district = MutableStateFlow("")
     val district: StateFlow<String> = _district.asStateFlow()
-    
+
     override val isFormValid: StateFlow<Boolean> = combine(_selectedCity, _district) { city, district ->
         city.isNotEmpty() && district.trim().isNotEmpty()
     }.stateIn(
@@ -29,11 +29,11 @@ class SetupViewModel @Inject constructor() : BaseSetupViewModel() {
         started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
         initialValue = false
     )
-    
+
     fun updateCity(city: String) {
         _selectedCity.value = city
     }
-    
+
     fun updateDistrict(district: String) {
         _district.value = district
     }

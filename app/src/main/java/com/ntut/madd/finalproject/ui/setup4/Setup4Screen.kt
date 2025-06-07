@@ -120,7 +120,7 @@ fun Setup4ScreenContent(
                 Column {
                     Text(
                         text = "已選擇 ${selectedInterests.size} 個興趣",
-                        color = if (selectedInterests.size >= 3) 
+                        color = if (selectedInterests.size >= 3)
                             Color(0xFF2E7D32) else Color(0xFFE65100),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
@@ -131,9 +131,15 @@ fun Setup4ScreenContent(
                             color = Color(0xFFBF360C),
                             fontSize = 14.sp
                         )
+                    } else if (selectedInterests.size < 5) {
+                        Text(
+                            text = "還可以選擇 ${5 - selectedInterests.size} 個興趣",
+                            color = Color(0xFF1B5E20),
+                            fontSize = 14.sp
+                        )
                     } else {
                         Text(
-                            text = "太棒了！您可以繼續下一步",
+                            text = "已選擇最大數量的興趣",
                             color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
@@ -184,26 +190,32 @@ fun InterestGrid(
     ) {
         interests.forEach { interest ->
             val isSelected = selectedInterests.contains(interest)
+            val canSelect = selectedInterests.size < 5 || isSelected
             
             Card(
                 modifier = Modifier
-                    .clickable { onInterestToggle(interest) },
+                    .clickable(enabled = canSelect) {
+                        if (canSelect) onInterestToggle(interest)
+                        },
                 colors = CardDefaults.cardColors(
                     containerColor = when {
                         isSelected -> Color(0xFF6C63FF) // Modern purple
-                        else -> Color.White
+                        canSelect -> Color.White
+                        else -> Color(0xFFF5F5F5) // Disabled gray
                     }
                 ),
                 shape = RoundedCornerShape(24.dp),
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = if (isSelected) 4.dp else 1.dp
+                    defaultElevation = if (isSelected) 4.dp else if (canSelect) 1.dp else 0.dp
                 )
             ) {
                 Box(
                     modifier = Modifier
                         .border(
-                            width = if (isSelected) 0.dp else 1.dp,
-                            color = if (isSelected) Color.Transparent else Color(0xFFE1E5E9),
+                            width = if (isSelected) 0.dp else if (canSelect) 1.dp else 0.dp,
+                            color = if (isSelected) Color.Transparent
+                            else if (canSelect) Color(0xFFE1E5E9)
+                            else Color.Transparent,
                             shape = RoundedCornerShape(24.dp)
                         )
                         .padding(horizontal = 20.dp, vertical = 12.dp),
@@ -211,7 +223,11 @@ fun InterestGrid(
                 ) {
                     Text(
                         text = interest,
-                        color = if (isSelected) Color.White else Color(0xFF4A5568),
+                        color = when {
+                            isSelected -> Color.White
+                            canSelect -> Color(0xFF4A5568)
+                            else -> Color(0xFFBDBDBD)
+                        },
                         fontSize = 14.sp,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                         lineHeight = 16.sp
