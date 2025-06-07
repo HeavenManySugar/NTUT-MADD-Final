@@ -22,7 +22,7 @@ class Setup5ViewModel @Inject constructor() : ViewModel() {
     val navigateToNext: StateFlow<Boolean> = _navigateToNext.asStateFlow()
     
     val isFormValid: StateFlow<Boolean> = selectedTraits
-        .map { traits -> traits.isNotEmpty() } // 至少要選擇一個特質
+        .map { traits -> traits.size >= 3 } // 至少要選擇3個特質
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

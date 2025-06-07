@@ -118,9 +118,9 @@ fun Setup4ScreenContent(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = when {
-                    selectedInterests.size >= 3 -> Color(0xFFE8F5E8) // 綠色背景表示達到要求
-                    selectedInterests.size > 0 -> Color(0xFFFFF3E0) // 橙色背景表示部分完成
-                    else -> Color(0xFFFFF3E0) // 默認橙色背景
+                    selectedInterests.isEmpty() -> Color(0xFFFFF3E0)
+                    selectedInterests.size >= 3 -> Color(0xFFE8F5E8)
+                    else -> Color(0xFFF3E5F5)
                 }
             ),
             shape = RoundedCornerShape(12.dp),
@@ -141,9 +141,11 @@ fun Setup4ScreenContent(
                         modifier = Modifier
                             .size(32.dp)
                             .background(
-                                color = if (selectedInterests.size >= 3) Color(0xFF4CAF50) else Color(
-                                    0xFFFF9800
-                                ),
+                                color = when {
+                                    selectedInterests.isEmpty() -> Color(0xFFE65100)
+                                    selectedInterests.size >= 3 -> Color(0xFF2E7D32)
+                                    else -> Color(0xFF7B1FA2)
+                                },
                                 shape = androidx.compose.foundation.shape.CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -159,21 +161,44 @@ fun Setup4ScreenContent(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
+                        val (title, subtitle, titleColor, subtitleColor) = when {
+                            selectedInterests.isEmpty() -> listOf(
+                                "還沒有選擇興趣",
+                                "請選擇 3-5 個您感興趣的領域",
+                                Color(0xFFE65100),
+                                Color(0xFFBF360C)
+                            )
+                            selectedInterests.size < 3 -> listOf(
+                                "再選擇 ${3 - selectedInterests.size} 個興趣",
+                                "至少需要選擇 3 個興趣才能繼續",
+                                Color(0xFF7B1FA2),
+                                Color(0xFF4A148C)
+                            )
+                            selectedInterests.size == 5 -> listOf(
+                                "已選滿 5 個興趣！",
+                                "您的興趣組合很完整",
+                                Color(0xFF2E7D32),
+                                Color(0xFF1B5E20)
+                            )
+                            else -> listOf(
+                                "已選擇 ${selectedInterests.size} 個興趣",
+                                "還可以再選擇 ${5 - selectedInterests.size} 個興趣",
+                                Color(0xFF2E7D32),
+                                Color(0xFF1B5E20)
+                            )
+                        }
+                        
                         Text(
-                            text = "已選擇 ${selectedInterests.size} 個興趣",
+                            text = title as String,
+                            color = titleColor as Color,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
+                            fontWeight = FontWeight.SemiBold
                         )
-
                         Text(
-                            text = if (selectedInterests.size >= 3)
-                                "太棒了！您可以繼續下一步"
-                            else "至少需要選擇 3 個興趣（還需 ${3 - selectedInterests.size} 個）",
-                            color = if (selectedInterests.size >= 3) Color(0xFF1B5E20) else Color(
-                                0xFFF57C00
-                            ),
-                            fontSize = 14.sp
+                            text = subtitle as String,
+                            color = subtitleColor as Color,
+                            fontSize = 14.sp,
+                            lineHeight = 18.sp
                         )
                     }
                 }

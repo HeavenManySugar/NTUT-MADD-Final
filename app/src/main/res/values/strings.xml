@@ -96,7 +96,7 @@
     <string name="setup4_progress">4/6</string>
     <string name="interests_icon">❤️</string>
     <string name="interests_question">興趣愛好</string>
-    <string name="interests_description">選擇您的興趣（至少選擇3個）</string>
+    <string name="interests_description">選擇您的興趣（選擇3~5個）</string>
     
     <!-- Interest options -->
     <string name="interest_travel">🌍 旅行</string>
@@ -129,7 +129,7 @@
     <string name="setup5_progress">5/6</string>
     <string name="personality_icon">✨</string>
     <string name="personality_question">個人特質</string>
-    <string name="personality_description">選擇最能描述您的特質（最多選擇5個）</string>
+    <string name="personality_description">選擇最能描述您的特質（選擇3~5個）</string>
     
     <!-- Personality traits -->
     <string name="trait_humorous">😊 幽默風趣</string>
