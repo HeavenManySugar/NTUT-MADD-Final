@@ -35,6 +35,8 @@ import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import com.ntut.madd.finalproject.ui.component.*
 import kotlinx.serialization.Serializable
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -87,18 +89,23 @@ private fun SignInScreenContent(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
-            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .weight(35f)
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
+                .drawWithCache {
+                    val gradient = Brush.linearGradient(
                         colors = listOf(
-                            Color(0xFF764BA2), // 紫色起點
-                            Color(0xFF667EEA)  // 藍色終點
-                        )
+                            Color(0xFF667EEA),
+                            Color(0xFF764BA2)
+                        ),
+                        start = Offset(0f, 0f),
+                        end = Offset(size.width, size.height) // 斜角方向
                     )
-                )
+                    onDrawBehind {
+                        drawRect(brush = gradient)
+                    }
+                }
+                .padding(vertical = 48.dp),
+            contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

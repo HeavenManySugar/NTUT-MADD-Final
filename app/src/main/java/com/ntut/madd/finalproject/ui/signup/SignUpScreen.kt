@@ -54,6 +54,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.*
 import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
@@ -69,6 +70,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import java.text.SimpleDateFormat
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import java.util.Calendar
 import java.util.Locale
 
@@ -124,6 +126,7 @@ fun SignUpScreenContent(
     val onRPasswordChange: (String) -> Unit = { repeat_password = it }
     val onIsCheckedChange: (Boolean) -> Unit = { isChecked = it }
     var showPassword by remember { mutableStateOf(false) }
+    var showRepeatPassword by remember { mutableStateOf(false) }
 
     // 可以滾動
     val scrollState = rememberScrollState()
@@ -134,14 +137,19 @@ fun SignUpScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
+                .drawWithCache {
+                    val gradient = Brush.linearGradient(
                         colors = listOf(
-                            Color(0xFF764BA2),
-                            Color(0xFF667EEA)
-                        )
+                            Color(0xFF667EEA),
+                            Color(0xFF764BA2)
+                        ),
+                        start = Offset(0f, 0f),
+                        end = Offset(size.width, size.height) // 斜角方向
                     )
-                )
+                    onDrawBehind {
+                        drawRect(brush = gradient)
+                    }
+                }
                 .padding(vertical = 48.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -212,6 +220,7 @@ fun SignUpScreenContent(
                 text = "生日",
                 modifier = Modifier.fillMaxWidth(0.85f)
             )
+
             BirthdayInput(
                 birthday = birthday,
                 onDateSelected = { birthday = it },
@@ -247,7 +256,16 @@ fun SignUpScreenContent(
                 label = "確認密碼",
                 value = repeat_password,
                 onValueChange = onRPasswordChange,
-                placeholder = "再次確認密碼"
+                placeholder = "再次確認密碼",
+                visualTransformation = if (showRepeatPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { showRepeatPassword = !showRepeatPassword }) {
+                        Icon(
+                            imageVector = if (showRepeatPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (showRepeatPassword) "隱藏密碼" else "顯示密碼"
+                        )
+                    }
+                }
             )
 
             // Privacy Check
@@ -448,11 +466,17 @@ enum class PasswordStrength(val label: String, val level: Int, val color: Color)
 }
 
 fun getPasswordStrength(password: String): PasswordStrength {
+    val length = password.length
+
+    if (length < 6) return PasswordStrength.WEAK
+
+    val hasLetter = password.any { it.isLetter() }
+    val hasDigit = password.any { it.isDigit() }
+    val hasSpecial = password.any { "!@#\$%^&*()_+".contains(it) }
+
     return when {
-        password.length < 6 -> PasswordStrength.WEAK
-        password.matches(Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) -> PasswordStrength.MEDIUM
-        password.matches(Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*()_+])[A-Za-z\\d!@#\$%^&*()_+]{8,}$")) ->
-            PasswordStrength.STRONG
+        length >= 8 && hasLetter && hasDigit && hasSpecial -> PasswordStrength.STRONG
+        length >= 6 && hasLetter && hasDigit -> PasswordStrength.MEDIUM
         else -> PasswordStrength.WEAK
     }
 }
