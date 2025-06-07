@@ -1,47 +1,52 @@
 package com.ntut.madd.finalproject.ui.setup.components
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ntut.madd.finalproject.R
-import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.shared.StandardButton
+import com.ntut.madd.finalproject.ui.shared.SecondaryButton
 import com.ntut.madd.finalproject.ui.theme.DarkBlue
 import com.ntut.madd.finalproject.ui.theme.LightGray
 import com.ntut.madd.finalproject.ui.theme.purpleGradient
+import kotlinx.coroutines.delay
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.random.Random
 
 @Composable
 fun SetupHeader(
@@ -160,36 +165,133 @@ fun SetupInputField(
     value: String,
     onValueChange: (String) -> Unit,
     @StringRes placeholder: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    errorMessage: String? = null,
+    hasError: Boolean = false,
+    showSuccess: Boolean = false,
+    maxLength: Int = Int.MAX_VALUE,
+    singleLine: Boolean = true,
+    minLines: Int = 1,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF8F9FA) // 背景色 F8F9FA
+    var isFocused by remember { mutableStateOf(false) }
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            hasError -> Color(0xFFE53E3E)
+            showSuccess -> Color(0xFF4CAF50)
+            isFocused -> Color(0xFF6B46C1)
+            else -> Color(0xFFEAECEF)
+        },
+        animationSpec = tween(200),
+        label = "border_color"
+    )
+
+    val elevation by animateDpAsState(
+        targetValue = if (isFocused) 2.dp else 0.dp,
+        animationSpec = tween(200),
+        label = "elevation"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.01f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
         ),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(
-                    text = stringResource(placeholder),
-                    color = Color.Gray.copy(alpha = 0.7f),
-                    fontSize = 14.sp
+        label = "scale"
+    )
+
+    Column(modifier = modifier) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scale),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+            border = BorderStroke(1.dp, borderColor),
+            elevation = CardDefaults.cardElevation(defaultElevation = elevation),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Box(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { newValue ->
+                        if (newValue.length <= maxLength) {
+                            onValueChange(newValue)
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            text = stringResource(placeholder),
+                            color = Color.Gray.copy(alpha = 0.7f),
+                            fontSize = 14.sp
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            isFocused = focusState.isFocused
+                        }
+                        .defaultMinSize(minHeight = 48.dp), // 控制最小高度
+                    singleLine = singleLine,
+                    minLines = minLines,
+                    maxLines = maxLines,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        cursorColor = Color(0xFF6B46C1)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
                 )
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedBorderColor = Color(0xFFEAECEF), // 框線色 EAECEF
-                focusedBorderColor = Color(0xFF6B46C1).copy(alpha = 0.5f),
-                cursorColor = Color(0xFF6B46C1)
-            ),
-            singleLine = true
-        )
+                // 成功 icon
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = showSuccess,
+                    enter = scaleIn() + fadeIn(),
+                    exit = scaleOut() + fadeOut(),
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Valid input",
+                        tint = Color(0xFF4CAF50),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
+
+        // 錯誤提示與字數顯示
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AnimatedVisibility(
+                visible = hasError && errorMessage != null,
+                enter = slideInVertically() + fadeIn(),
+                exit = slideOutVertically() + fadeOut()
+            ) {
+                Text(
+                    text = errorMessage ?: "",
+                    color = Color(0xFFE53E3E),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            if (maxLength != Int.MAX_VALUE) {
+                Text(
+                    text = "${value.length}/$maxLength",
+                    color = if (value.length > maxLength * 0.9) Color(0xFFFF9800)
+                    else Color.Gray.copy(alpha = 0.6f),
+                    fontSize = 12.sp
+                )
+            }
+        }
     }
 }
 

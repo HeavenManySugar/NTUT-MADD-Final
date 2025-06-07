@@ -113,11 +113,15 @@ fun Setup2ScreenContent(
             text = stringResource(R.string.position_label),
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        
+
         SetupInputField(
             value = position,
             onValueChange = onPositionChanged,
-            placeholder = R.string.position_placeholder
+            placeholder = R.string.position_placeholder,
+            errorMessage = if (position.isNotBlank() && position.length < 2) "職位名稱至少需要2個字符" else null,
+            hasError = position.isNotBlank() && position.length < 2,
+            showSuccess = position.length >= 2,
+            maxLength = 50
         )
         
         Spacer(modifier = Modifier.height(24.dp))
