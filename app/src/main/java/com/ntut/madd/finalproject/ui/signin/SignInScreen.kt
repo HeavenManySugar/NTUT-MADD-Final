@@ -81,11 +81,24 @@ private fun SignInScreenContent(
     // 事件 lambda
     val onEmailChange: (String) -> Unit = { email = it }
     val onPasswordChange: (String) -> Unit = { password = it }
-    val onSignInClick: () -> Unit = { signIn(email, password, showErrorSnackbar) }
     val onGoogleSignInClick: () -> Unit = { /* TODO: Google login */ }
     val onForgotPasswordClick: () -> Unit = { /* TODO: Forgot password */ }
     val onSignUpClick: () -> Unit = openSignUpScreen
     var showPassword by remember { mutableStateOf(false) }
+
+    var shouldValidate by remember { mutableStateOf(true) }
+
+    val onSignInClick: () -> Unit = {
+        if (
+            email.isNotBlank() &&
+            password.isNotBlank()
+        ) {
+            signIn(email, password, showErrorSnackbar)
+        } else {
+            shouldValidate = false
+            showErrorSnackbar(ErrorMessage.StringError("請填寫必填欄位"))
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         AppHeaderBanner(
@@ -109,7 +122,8 @@ private fun SignInScreenContent(
                     label = "電子信箱",
                     value = email,
                     onValueChange = onEmailChange,
-                    placeholder = "請輸入您的電子郵件"
+                    placeholder = "請輸入您的電子郵件",
+                    shouldShowError = shouldValidate || email.isNotBlank()
                 )
 
                 // Password
@@ -127,7 +141,8 @@ private fun SignInScreenContent(
                                 contentDescription = if (showPassword) "隱藏密碼" else "顯示密碼"
                             )
                         }
-                    }
+                    },
+                    shouldShowError = shouldValidate || password.isNotBlank()
                 )
 
                 Row(

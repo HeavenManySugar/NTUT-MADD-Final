@@ -34,8 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
@@ -121,64 +124,91 @@ fun LabeledInputBox(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 20.sp,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    trailingIcon: (@Composable () -> Unit)? = null
+    trailingIcon: (@Composable () -> Unit)? = null,
+    shouldShowError: Boolean = false,
+    shouldRepeatPasswordError: Boolean = false
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    // 根據焦點切換框線顏色
-    val borderColor = if (isFocused) Color(0xFF90CAF9) else Color(0xFFEAECEF)
+    val borderColor = when {
+        !shouldShowError || (shouldRepeatPasswordError) -> Color(0xFFFFCDD2)
+        isFocused -> Color(0xFF90CAF9)
+        else -> Color(0xFFEAECEF)
+    }
 
-    Box(
-        modifier = modifier
-            .height(64.dp)
-            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
-            .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
-            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 8.dp),
-        contentAlignment = Alignment.TopStart
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxSize()
+    Column(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .height(64.dp)
+                .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+                .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
+                .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 8.dp),
+            contentAlignment = Alignment.TopStart
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.CenterStart
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize()
             ) {
-                BasicTextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    interactionSource = interactionSource, // ✅ 加這行才會追蹤焦點
-                    textStyle = LocalTextStyle.current.copy(
-                        color = Color.Black,
-                        fontSize = fontSize
-                    ),
-                    singleLine = true,
-                    visualTransformation = visualTransformation,
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.85f)
-                        .padding(start = 5.dp),
-                    decorationBox = { innerTextField ->
-                        if (value.isEmpty()) {
-                            Text(
-                                text = placeholder,
-                                color = Color(0xFFB0B0B0),
-                                fontSize = fontSize,
-                                fontWeight = FontWeight.Medium
-                            )
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    BasicTextField(
+                        value = value,
+                        onValueChange = onValueChange,
+                        interactionSource = interactionSource,
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color.Black,
+                            fontSize = fontSize
+                        ),
+                        singleLine = true,
+                        visualTransformation = visualTransformation,
+                        modifier = Modifier
+                            .fillMaxWidth(0.85f)
+                            .padding(start = 5.dp),
+                        decorationBox = { innerTextField ->
+                            if (value.isEmpty()) {
+                                Text(
+                                    text = placeholder,
+                                    color = Color(0xFFB0B0B0),
+                                    fontSize = fontSize,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            innerTextField()
                         }
-                        innerTextField()
-                    }
-                )
-            }
+                    )
+                }
 
-            if (trailingIcon != null) {
-                Box(modifier = Modifier.padding(start = 8.dp)) {
-                    trailingIcon()
+                if (trailingIcon != null) {
+                    Box(modifier = Modifier.padding(start = 8.dp)) {
+                        trailingIcon()
+                    }
                 }
             }
+        }
+
+        // ✅ 顯示錯誤文字
+        if (!shouldShowError) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "此欄位必填",
+                color = Color(0xFFFF6B6B),
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+        if (shouldRepeatPasswordError){
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "密碼欄位不一致",
+                color = Color(0xFFFF6B6B),
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
         }
     }
 }
@@ -216,12 +246,12 @@ fun LabeledFieldMedium(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
-
-    // 焦點變色：淡藍 / 淺灰
-    val borderColor = if (isFocused) Color(0xFF90CAF9) else Color(0xFFEAECEF)
+    val borderColor = when {
+        isFocused -> Color(0xFF90CAF9) // 淡藍
+        else -> Color(0xFFEAECEF)      // 淺灰
+    }
 
     Column(modifier = modifier) {
-        // Label
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -236,7 +266,6 @@ fun LabeledFieldMedium(
             )
         }
 
-        // Input box
         Box(
             modifier = Modifier
                 .height(64.dp)
@@ -249,7 +278,7 @@ fun LabeledFieldMedium(
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
-                interactionSource = interactionSource, // ✅ 必加才能偵測 focus
+                interactionSource = interactionSource,
                 textStyle = LocalTextStyle.current.copy(
                     color = Color.Black,
                     fontSize = 20.sp
@@ -273,7 +302,6 @@ fun LabeledFieldMedium(
         }
     }
 }
-
 
 @Composable
 fun PressButton(
@@ -333,20 +361,26 @@ fun LabeledField(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 20.sp,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    trailingIcon: (@Composable () -> Unit)? = null
+    trailingIcon: (@Composable () -> Unit)? = null,
+    shouldShowError: Boolean = false, // ✅ 新增參數
+    shouldRepeatPasswordError: Boolean = false,
 ) {
     InputFieldLabel(
         text = label,
         modifier = Modifier.fillMaxWidth(0.85f)
     )
+
     LabeledInputBox(
         value = value,
         onValueChange = onValueChange,
         placeholder = placeholder,
-        modifier = Modifier.fillMaxWidth(0.8f),
         fontSize = fontSize,
         visualTransformation = visualTransformation,
-        trailingIcon = trailingIcon
+        trailingIcon = trailingIcon,
+        shouldShowError = shouldShowError,// ✅ 傳下去
+        modifier = Modifier.fillMaxWidth(0.8f),
+        shouldRepeatPasswordError = shouldRepeatPasswordError
     )
+
     Spacer(Modifier.height(8.dp))
 }
