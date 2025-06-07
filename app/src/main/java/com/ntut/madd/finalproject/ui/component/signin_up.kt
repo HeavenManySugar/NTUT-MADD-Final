@@ -34,8 +34,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas // 安全補上
+import androidx.compose.ui.graphics.drawscope.DrawScope
 
 val LightBlue = Color(0xFF90CAF9)
 
@@ -231,20 +237,29 @@ fun PressButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = Color.White,
-    gradient: Brush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF764BA2),
-            Color(0xFF667EEA)
-        )
+    colors: List<Color> = listOf(
+        Color(0xFF667EEA),
+        Color(0xFF764BA2)
     ),
-    cornerRadius: androidx.compose.ui.unit.Dp = 12.dp,
+    cornerRadius: Dp = 12.dp,
     fontSize: TextUnit = 18.sp,
     fontWeight: FontWeight = FontWeight.SemiBold
 ) {
     Button(
         onClick = onClick,
         modifier = modifier
-            .background(gradient, shape = RoundedCornerShape(cornerRadius)),
+            .clip(RoundedCornerShape(cornerRadius))
+            .drawBehind {
+                val gradient = Brush.linearGradient(
+                    colors = colors,
+                    start = Offset.Zero, // 左上
+                    end = Offset(size.width, size.height) // 右下
+                )
+                drawRoundRect(
+                    brush = gradient,
+                    cornerRadius = CornerRadius(cornerRadius.toPx())
+                )
+            },
         shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
@@ -256,8 +271,11 @@ fun PressButton(
             text = text,
             fontSize = fontSize,
             fontWeight = fontWeight,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            color = textColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp)
         )
     }
 }

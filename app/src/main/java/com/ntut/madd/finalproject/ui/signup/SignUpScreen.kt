@@ -516,16 +516,10 @@ fun PasswordStrengthIndicator(password: String) {
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 4.dp),
             fontWeight = FontWeight.Medium,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
         )
     }
 }
-
-
-
-
-
-
 
 @Composable
 @Preview(showSystemUi = true)
