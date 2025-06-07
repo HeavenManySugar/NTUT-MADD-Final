@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,7 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 
 
@@ -56,6 +59,34 @@ fun HighlightTag(
             color = Color.White,
             fontSize = 10.sp,
             fontWeight = FontWeight.Normal
+        )
+    }
+}
+
+/** Avatar **/
+
+@Composable
+fun InitialAvatar(
+    initial: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(80.dp) // ⭕️ 圓形大小（你可以調成 80.dp）
+            .clip(CircleShape)
+            .background(Color(0xFFF2F5FF)) // ⬜ 背景淡藍白
+            .border(
+                width = 1.dp,
+                color = Color(0xFFD7DFFB), // 淺藍邊框
+                shape = CircleShape
+            )
+    ) {
+        Text(
+            text = initial,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF5B72F2) // 藍紫色文字
         )
     }
 }
@@ -100,7 +131,9 @@ fun StatCard(
 }
 
 @Composable
-fun StatCardRow() {
+fun StatCardRow(
+    modifier: Modifier = Modifier
+)  {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
@@ -149,4 +182,20 @@ fun InterestTag(
             )
             .padding(horizontal = 12.dp, vertical = 6.dp)
     )
+}
+
+/** 興趣欄位 **/
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun InterestTagSection(tags: List<String>) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        tags.forEach { tag ->
+            InterestTag(text = tag)
+        }
+    }
 }

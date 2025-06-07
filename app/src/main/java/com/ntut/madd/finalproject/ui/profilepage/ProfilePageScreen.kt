@@ -83,36 +83,59 @@ fun ProfilePageScreenContent(
             // 這裡放畫面主內容
             GradientBackgroundBox {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    InitialAvatar(initial = "A")
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     Text(
                         text = "Alex Chen",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "25y, Taipei City",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
                         color = Color.White
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
                     HighlightTag("尋找真愛中")
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
 
-            /** 資料列 **/
-            StatCardRow()
-            Spacer(modifier = Modifier.height(24.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize() // ✅ 讓 Column 撐滿整個可用畫面（寬 + 高）
+            ){
+                /** 資料列 **/
+                StatCardRow(modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(24.dp))
 
-            /** 興趣列 **/
-            SectionTitle(
-                icon = Icons.Filled.TrackChanges, // 你想用的 icon
-                title = "我的興趣",
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                /** 興趣列 **/
+                SectionTitle(
+                    icon = Icons.Filled.TrackChanges,
+                    title = "我的興趣",
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-            InterestTag(text = "💻 程式設計",modifier = Modifier.padding(horizontal = 16.dp))
+                InterestTagSection(
+                    tags = listOf(
+                        "💻 程式設計",
+                        "🏃‍♂️ 跑步",
+                        "📚 閱讀",
+                        "🎵 音樂",
+                        "☕ 咖啡",
+                        "🎮 遊戲",
+                        "📷 攝影",
+                        "🏔️ 登山",
+                        "🍳 料理",
+                        "✈️ 旅行"
+                    )
+                )
+            }
         }
     }
 }
