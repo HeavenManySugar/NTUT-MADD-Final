@@ -149,7 +149,7 @@ fun SetupProgressBar(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "$currentStep/$totalSteps",
+                text = "步驟 $currentStep/$totalSteps",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.Gray,
@@ -314,7 +314,7 @@ fun SetupDivider() {
 @Composable
 fun SetupPageContainer(
     currentStep: Int,
-    totalSteps: Int = 4,
+    totalSteps: Int = 6,
     headerIcon: String,
     headerTitle: String,
     headerSubtitle: String,
