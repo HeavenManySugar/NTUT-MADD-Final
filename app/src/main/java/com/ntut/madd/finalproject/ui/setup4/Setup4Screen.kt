@@ -225,15 +225,6 @@ fun InterestGrid(
         stringResource(R.string.interest_learning)
     )
 
-    var showSuccessMessage by remember { mutableStateOf(false) }
-    
-    // Show success message when reaching minimum requirement
-    LaunchedEffect(selectedInterests.size) {
-        if (selectedInterests.size >= 3 && selectedInterests.size <= 3) {
-            showSuccessMessage = true
-        }
-    }
-
     Column {
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -247,15 +238,6 @@ fun InterestGrid(
                     onToggle = { onInterestToggle(interest) }
                 )
             }
-        }
-        
-        // Success message
-        if (showSuccessMessage && selectedInterests.size >= 3) {
-            Spacer(modifier = Modifier.height(16.dp))
-            SuccessMessageCard(
-                message = "太棒了！您已選擇了 ${selectedInterests.size} 個興趣領域",
-                visible = showSuccessMessage
-            )
         }
     }
 }

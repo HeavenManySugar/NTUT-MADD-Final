@@ -218,15 +218,6 @@ fun PersonalityTraitGrid(
     selectedTraits: List<String>,
     onTraitToggle: (String) -> Unit
 ) {
-    var showSuccessMessage by remember { mutableStateOf(false) }
-    
-    // Show success message when reaching optimal selection
-    LaunchedEffect(selectedTraits.size) {
-        if (selectedTraits.size >= 3 && selectedTraits.size <= 3) {
-            showSuccessMessage = true
-        }
-    }
-    
     val traits = listOf(
         stringResource(R.string.trait_humorous),
         stringResource(R.string.trait_warm),
@@ -265,15 +256,6 @@ fun PersonalityTraitGrid(
                     onClick = { if (canSelect) onTraitToggle(trait) }
                 )
             }
-        }
-        
-        // Success message
-        if (showSuccessMessage && selectedTraits.size >= 3) {
-            Spacer(modifier = Modifier.height(16.dp))
-            SuccessMessageCard(
-                message = "完美！您已選擇了 ${selectedTraits.size} 個個人特質",
-                visible = showSuccessMessage
-            )
         }
     }
 }
