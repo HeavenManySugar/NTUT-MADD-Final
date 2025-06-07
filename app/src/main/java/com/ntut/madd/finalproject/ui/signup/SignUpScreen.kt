@@ -106,35 +106,41 @@ fun SignUpScreenContent(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var repeat_password by remember { mutableStateOf("") }
+    var repeatPassword by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
+
     var first_name by remember { mutableStateOf("") }
     var last_name by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(false) }
     var birthday by remember { mutableStateOf<Calendar?>(null) }
-
-    // 事件 lambda
-    val onEmailChange: (String) -> Unit = { email = it }
-    val onPasswordChange: (String) -> Unit = { password = it }
-    val onSignUpClick: () -> Unit = { signUp(email, password, repeat_password, showErrorSnackbar) }
-    val onGoogleSignInClick: () -> Unit = { /* TODO: Google login */ }
-    val onForgotPasswordClick: () -> Unit = { /* TODO: Forgot password */ }
-    val onSignInClick: () -> Unit = openSignInScreen
-    val onPhoneChange: (String) -> Unit = { phone = it }
-    val onFNameChange: (String) -> Unit = { first_name = it }
-    val onLNameChange: (String) -> Unit = { last_name = it }
-    val onRPasswordChange: (String) -> Unit = { repeat_password = it }
-    val onIsCheckedChange: (Boolean) -> Unit = { isChecked = it }
     var showPassword by remember { mutableStateOf(false) }
     var showRepeatPassword by remember { mutableStateOf(false) }
 
-    // 可以滾動
+    var shouldValidate by remember { mutableStateOf(true) }
+
+    val onSignUpClick: () -> Unit = {
+        if (
+            email.isNotBlank() &&
+            password.isNotBlank() &&
+            repeatPassword.isNotBlank() &&
+            phone.isNotBlank() &&
+            isChecked &&
+            password == repeatPassword
+        ) {
+            signUp(email, password, repeatPassword, showErrorSnackbar)
+        } else {
+            shouldValidate = false
+            showErrorSnackbar(ErrorMessage.StringError("請填寫必填欄位，並確認密碼一致"))
+        }
+    }
+
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(scrollState)) {
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+    ) {
         AppHeaderBanner(
             title = "This is our App",
             subtitle = "Quick for match"
@@ -155,7 +161,7 @@ fun SignUpScreenContent(
                     LabeledFieldMedium(
                         label = "名字",
                         value = first_name,
-                        onValueChange = onFNameChange,
+                        onValueChange = { first_name = it },
                         placeholder = "請輸入名字"
                     )
                 }
@@ -164,30 +170,34 @@ fun SignUpScreenContent(
                     LabeledFieldMedium(
                         label = "姓氏",
                         value = last_name,
-                        onValueChange = onLNameChange,
+                        onValueChange = { last_name = it },
                         placeholder = "請輸入姓氏"
                     )
                 }
             }
+
             Spacer(Modifier.height(8.dp))
 
-            // Email
             LabeledField(
                 label = "電子信箱",
                 value = email,
-                onValueChange = onEmailChange,
-                placeholder = "請輸入您的電子郵件"
+                onValueChange = {
+                    email = it
+                },
+                placeholder = "請輸入您的電子郵件",
+                shouldShowError = shouldValidate || email.isNotBlank(),
             )
 
-            // Phone Number
             LabeledField(
                 label = "手機號碼",
                 value = phone,
-                onValueChange = onPhoneChange,
-                placeholder = "請輸入您的手機號碼"
+                onValueChange = {
+                    phone = it
+                },
+                placeholder = "請輸入您的手機號碼",
+                shouldShowError = shouldValidate || phone.isNotBlank(),
             )
 
-            // Birthday
             InputFieldLabel(
                 text = "生日",
                 modifier = Modifier.fillMaxWidth(0.85f)
@@ -198,57 +208,61 @@ fun SignUpScreenContent(
                 onDateSelected = { birthday = it },
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
+
             Spacer(Modifier.height(16.dp))
 
-            // Password
             LabeledField(
                 label = "密碼",
                 value = password,
-                onValueChange = onPasswordChange,
+                onValueChange = {
+                    password = it
+                },
                 placeholder = "請輸入您的密碼",
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showPassword = !showPassword }) {
                         Icon(
                             imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (showPassword) "隱藏密碼" else "顯示密碼"
+                            contentDescription = null
                         )
                     }
-                }
+                },
+                shouldShowError = shouldValidate || password.isNotBlank(),
             )
-
 
             if (password.isNotEmpty()) {
                 PasswordStrengthIndicator(password)
             }
 
-
-            // Check Password
             LabeledField(
                 label = "確認密碼",
-                value = repeat_password,
-                onValueChange = onRPasswordChange,
+                value = repeatPassword,
+                onValueChange = {
+                    repeatPassword = it
+                },
                 placeholder = "再次確認密碼",
                 visualTransformation = if (showRepeatPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showRepeatPassword = !showRepeatPassword }) {
                         Icon(
                             imageVector = if (showRepeatPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (showRepeatPassword) "隱藏密碼" else "顯示密碼"
+                            contentDescription = null
                         )
                     }
-                }
+                },
+                shouldShowError = shouldValidate || repeatPassword.isNotBlank(),
+                shouldRepeatPasswordError = password.isNotBlank() &&
+                        repeatPassword.isNotBlank() &&
+                        password != repeatPassword
             )
 
-            // Privacy Check
             TermsCheckbox(
                 checked = isChecked,
-                onCheckedChange = onIsCheckedChange,
-                onTermsClick = { /* 開啟使用條款 */ },
-                onPrivacyClick = { /* 開啟隱私權政策 */ }
+                onCheckedChange = { isChecked = it },
+                onTermsClick = { },
+                onPrivacyClick = { }
             )
 
-            // Sign-in button
             PressButton(
                 text = "立即註冊",
                 onClick = onSignUpClick,
@@ -256,6 +270,7 @@ fun SignUpScreenContent(
                     .fillMaxWidth(0.85f)
                     .height(50.dp)
             )
+
             Spacer(Modifier.height(8.dp))
 
             DividerWithText(
@@ -265,21 +280,20 @@ fun SignUpScreenContent(
 
             Spacer(Modifier.height(8.dp))
 
-            // Google sign-in
             OutlinedButton(
-                onClick = onGoogleSignInClick,
+                onClick = { /* TODO: Google Sign-In */ },
                 modifier = Modifier
                     .wrapContentSize()
-                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp), // ✅ 強制取消最小寬高限制
+                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(0.dp)   // ✅ 拿掉預設 padding，讓圖片剛好貼齊
+                contentPadding = PaddingValues(0.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.sign_up_with_google4),
                     contentDescription = "Google Sign-In",
                     modifier = Modifier
-                        .height(40.dp)              // ✅ 圖片給高度
-                        .wrapContentWidth(),        // ✅ 宽度按比例自動決定
+                        .height(40.dp)
+                        .wrapContentWidth(),
                     contentScale = ContentScale.Fit
                 )
             }
@@ -288,7 +302,7 @@ fun SignUpScreenContent(
 
             Row(
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically, // ✅ 垂直置中對齊文字與按鈕
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -297,9 +311,9 @@ fun SignUpScreenContent(
                     fontWeight = FontWeight.Normal
                 )
                 TextButton(
-                    onClick = onSignInClick,
-                    contentPadding = PaddingValues(0.dp), // ✅ 移除內邊距讓字靠近
-                    modifier = Modifier.padding(start = 4.dp) // ✅ 加一點間距
+                    onClick = openSignInScreen,
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.padding(start = 4.dp)
                 ) {
                     Text(
                         text = "立刻登入",
@@ -312,6 +326,7 @@ fun SignUpScreenContent(
         }
     }
 }
+
 
 @Composable
 fun BirthdayInput(
