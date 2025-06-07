@@ -122,7 +122,7 @@ fun Setup4ScreenContent(
                         text = "已選擇 ${selectedInterests.size} 個興趣",
                         color = if (selectedInterests.size >= 3)
                             Color(0xFF2E7D32) else Color(0xFFE65100),
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     if (selectedInterests.size < 3) {

@@ -1,5 +1,6 @@
 package com.ntut.madd.finalproject.ui.setup3
 
+import androidx.lifecycle.viewModelScope
 import com.ntut.madd.finalproject.ui.setup.BaseSetupViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class Setup3ViewModel @Inject constructor() : BaseSetupViewModel() {
 
-    private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    // Using the built-in viewModelScope for proper lifecycle management
 
     private val _selectedDegree = MutableStateFlow("")
     val selectedDegree: StateFlow<String> = _selectedDegree.asStateFlow()

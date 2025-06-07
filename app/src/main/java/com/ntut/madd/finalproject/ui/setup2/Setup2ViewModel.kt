@@ -1,5 +1,6 @@
 package com.ntut.madd.finalproject.ui.setup2
 
+import androidx.lifecycle.viewModelScope
 import com.ntut.madd.finalproject.ui.setup.BaseSetupViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class Setup2ViewModel @Inject constructor() : BaseSetupViewModel() {
 
-    private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    // Using the built-in viewModelScope for lifecycle-aware coroutine management
 
     private val _position = MutableStateFlow("")
     val position: StateFlow<String> = _position.asStateFlow()

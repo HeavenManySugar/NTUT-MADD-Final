@@ -98,7 +98,7 @@ fun Setup5ScreenContent(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = if (selectedTraits.isNotEmpty()) 
+                containerColor = if (selectedTraits.size >= 3)
                     Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
             ),
             shape = RoundedCornerShape(12.dp),
@@ -111,23 +111,25 @@ fun Setup5ScreenContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (selectedTraits.isNotEmpty()) "✅" else "💡",
+                    text = if (selectedTraits.size >= 3) "✅" else "💡",
                     fontSize = 20.sp,
                     modifier = Modifier.padding(end = 12.dp)
                 )
                 Column {
                     Text(
                         text = "已選擇 ${selectedTraits.size} 個特質",
-                        color = if (selectedTraits.isNotEmpty()) 
+                        color = if (selectedTraits.size >= 3)
                             Color(0xFF2E7D32) else Color(0xFFE65100),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-                    if (selectedTraits.isEmpty()) {
+                    if (selectedTraits.size < 3) {
                         Text(
                             text = "還需要選擇 ${3 - selectedTraits.size} 個特質",
-                            color = Color(0xFFBF360C),
-                            fontSize = 14.sp
+                            color = if (selectedTraits.size >= 3)
+                                Color(0xFF2E7D32) else Color(0xFFE65100),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     } else if (selectedTraits.size < 5) {
                         Text(
