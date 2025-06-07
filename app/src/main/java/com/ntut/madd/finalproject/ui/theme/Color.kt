@@ -1,10 +1,8 @@
 package com.ntut.madd.finalproject.ui.theme
 
-import android.graphics.drawable.GradientDrawable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.toColorInt
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
