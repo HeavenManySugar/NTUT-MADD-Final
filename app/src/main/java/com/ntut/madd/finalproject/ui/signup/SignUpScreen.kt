@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,12 +63,12 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import androidx.compose.ui.draw.clip
 import java.util.Calendar
 import java.util.Locale
 
@@ -236,7 +235,13 @@ fun SignUpScreenContent(
                     }
                 }
             )
-            
+
+
+            if (password.isNotEmpty()) {
+                PasswordStrengthIndicator(password)
+            }
+
+
             // Check Password
             LabeledField(
                 label = "確認密碼",
@@ -433,6 +438,70 @@ fun TermsCheckbox(
         }
     }
 }
+
+/* 密碼強度顯示 */
+
+enum class PasswordStrength(val label: String, val level: Int, val color: Color) {
+    WEAK("弱", 1, Color.Red),
+    MEDIUM("中", 2, Color(0xFFFFC107)), // Amber
+    STRONG("強", 3, Color(0xFF4CAF50))  // Green
+}
+
+fun getPasswordStrength(password: String): PasswordStrength {
+    return when {
+        password.length < 6 -> PasswordStrength.WEAK
+        password.matches(Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) -> PasswordStrength.MEDIUM
+        password.matches(Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*()_+])[A-Za-z\\d!@#\$%^&*()_+]{8,}$")) ->
+            PasswordStrength.STRONG
+        else -> PasswordStrength.WEAK
+    }
+}
+
+@Composable
+fun PasswordStrengthIndicator(password: String) {
+    val strength = remember(password) { getPasswordStrength(password) }
+
+    Column {
+        // 顏色條
+        Row(
+            Modifier
+                .fillMaxWidth(0.8f)
+                .height(8.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.LightGray)
+        ) {
+            repeat(3) { index ->
+                val active = index < strength.level
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(
+                            if (active) strength.color else Color.LightGray
+                        )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // 強度文字
+        Text(
+            text = "密碼強度：${strength.label}",
+            color = Color.Black,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(top = 4.dp),
+            fontWeight = FontWeight.Medium,
+            fontSize = 18.sp,
+        )
+    }
+}
+
+
+
+
+
+
 
 @Composable
 @Preview(showSystemUi = true)

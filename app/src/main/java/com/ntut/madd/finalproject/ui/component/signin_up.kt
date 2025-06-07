@@ -2,6 +2,8 @@ package com.ntut.madd.finalproject.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,15 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,11 +31,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+
+val LightBlue = Color(0xFF90CAF9)
 
 /**　中間帶文字的 divider　*/
 @Composable
@@ -73,10 +73,16 @@ fun LabeledInputBox(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: (@Composable () -> Unit)? = null
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    // 根據焦點切換框線顏色
+    val borderColor = if (isFocused) Color(0xFF90CAF9) else Color(0xFFEAECEF)
+
     Box(
         modifier = modifier
             .height(64.dp)
-            .border(1.dp, Color(0xFFEAECEF), RoundedCornerShape(8.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
             .background(Color(0xFFF8F9FA), RoundedCornerShape(8.dp))
             .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 8.dp),
         contentAlignment = Alignment.TopStart
@@ -94,6 +100,7 @@ fun LabeledInputBox(
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,
+                    interactionSource = interactionSource, // ✅ 加這行才會追蹤焦點
                     textStyle = LocalTextStyle.current.copy(
                         color = Color.Black,
                         fontSize = fontSize
@@ -117,7 +124,6 @@ fun LabeledInputBox(
                 )
             }
 
-            // 可選尾端 icon
             if (trailingIcon != null) {
                 Box(modifier = Modifier.padding(start = 8.dp)) {
                     trailingIcon()
@@ -126,6 +132,8 @@ fun LabeledInputBox(
         }
     }
 }
+
+
 /* 左上角字體 😍🥰😘 */
 
 @Composable
@@ -156,8 +164,14 @@ fun LabeledFieldMedium(
     placeholder: String,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    // 焦點變色：淡藍 / 淺灰
+    val borderColor = if (isFocused) Color(0xFF90CAF9) else Color(0xFFEAECEF)
+
     Column(modifier = modifier) {
-        // ✅ Label 包在 Box 中，用同樣 padding
+        // Label
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,16 +181,17 @@ fun LabeledFieldMedium(
                 text = label,
                 fontSize = 20.sp,
                 color = Color.Black,
-                modifier = Modifier.align(Alignment.CenterStart),
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.align(Alignment.CenterStart)
             )
         }
 
+        // Input box
         Box(
             modifier = Modifier
                 .height(64.dp)
                 .fillMaxWidth()
-                .border(1.dp, Color(0xFFEAECEF), shape = RoundedCornerShape(8.dp))
+                .border(1.dp, borderColor, shape = RoundedCornerShape(8.dp))
                 .background(Color(0xFFF8F9FA), shape = RoundedCornerShape(8.dp))
                 .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 8.dp),
             contentAlignment = Alignment.CenterStart
@@ -184,6 +199,7 @@ fun LabeledFieldMedium(
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
+                interactionSource = interactionSource, // ✅ 必加才能偵測 focus
                 textStyle = LocalTextStyle.current.copy(
                     color = Color.Black,
                     fontSize = 20.sp
@@ -194,7 +210,12 @@ fun LabeledFieldMedium(
                     .padding(start = 5.dp),
                 decorationBox = { innerTextField ->
                     if (value.isEmpty()) {
-                        Text(text = placeholder, color = Color(0xFFB0B0B0), fontSize = 20.sp,fontWeight = FontWeight.Medium)
+                        Text(
+                            text = placeholder,
+                            color = Color(0xFFB0B0B0),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                     innerTextField()
                 }
@@ -203,29 +224,6 @@ fun LabeledFieldMedium(
     }
 }
 
-@Composable
-fun PasswordInputField(
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    showPassword: Boolean,
-    onTogglePasswordVisibility: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = password,
-        onValueChange = onPasswordChange,
-        label = { Text("密碼") },
-        singleLine = true,
-        modifier = modifier,
-        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val icon = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff
-            IconButton(onClick = onTogglePasswordVisibility) {
-                Icon(imageVector = icon, contentDescription = if (showPassword) "隱藏密碼" else "顯示密碼")
-            }
-        }
-    )
-}
 
 @Composable
 fun PressButton(
