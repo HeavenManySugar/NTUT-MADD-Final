@@ -2,6 +2,7 @@ package com.ntut.madd.finalproject.ui.component
 
 
 import android.text.Layout
+import androidx.compose.foundation.background
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
@@ -78,11 +79,12 @@ fun BottomNavBar(
 @Composable
 fun GradientBackgroundBox(
     modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.Center, // ✅ 這裡要用 Compose 的 Alignment
+    contentAlignment: Alignment = Alignment.Center,
+    useGradient: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    Box(
-        modifier = modifier
+    val gradientModifier = if (useGradient) {
+        modifier
             .fillMaxWidth()
             .drawWithCache {
                 val gradient = Brush.linearGradient(
@@ -94,8 +96,17 @@ fun GradientBackgroundBox(
                     drawRect(brush = gradient)
                 }
             }
-            .padding(vertical = 48.dp),
-        contentAlignment = contentAlignment // ✅ 傳進來的 alignment
+            .padding(vertical = 48.dp)
+    } else {
+        modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(vertical = 48.dp)
+    }
+
+    Box(
+        modifier = gradientModifier,
+        contentAlignment = contentAlignment
     ) {
         content()
     }
