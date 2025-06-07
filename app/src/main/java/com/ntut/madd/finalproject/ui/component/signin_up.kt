@@ -1,5 +1,6 @@
 package com.ntut.madd.finalproject.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
@@ -39,11 +41,53 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas // 安全補上
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.res.painterResource
+import com.ntut.madd.finalproject.R
 
 val LightBlue = Color(0xFF90CAF9)
+
+/** 上面那個紫紫的 **/
+@Composable
+fun AppHeaderBanner(
+    modifier: Modifier = Modifier,
+    title: String = "This is our app",
+    subtitle: String = "Quick for match"
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .drawWithCache {
+                val gradient = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFF667EEA),
+                        Color(0xFF764BA2)
+                    ),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height)
+                )
+                onDrawBehind {
+                    drawRect(brush = gradient)
+                }
+            }
+            .padding(vertical = 48.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = painterResource(id = R.drawable.app_icon),
+                contentDescription = "App Logo",
+                modifier = Modifier.size(128.dp)
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(title, fontSize = 24.sp, color = Color.White)
+            Text(subtitle, fontSize = 16.sp, color = Color.White)
+        }
+    }
+}
 
 /**　中間帶文字的 divider　*/
 @Composable

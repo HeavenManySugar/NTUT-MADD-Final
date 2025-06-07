@@ -134,39 +134,11 @@ fun SignUpScreenContent(
     Column(modifier = Modifier
         .fillMaxSize()
         .verticalScroll(scrollState)) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .drawWithCache {
-                    val gradient = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFF667EEA),
-                            Color(0xFF764BA2)
-                        ),
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, size.height) // 斜角方向
-                    )
-                    onDrawBehind {
-                        drawRect(brush = gradient)
-                    }
-                }
-                .padding(vertical = 48.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.app_icon),
-                    contentDescription = "App Logo",
-                    modifier = Modifier.size(128.dp)
-                )
-                Spacer(Modifier.height(16.dp))
-                Text("This is our app", fontSize = 24.sp, color = Color.White)
-                Text("Quick for match", fontSize = 16.sp, color = Color.White)
-            }
-        }
 
+        AppHeaderBanner(
+            title = "This is our App",
+            subtitle = "Quick for match"
+        )
 
         Column(
             modifier = Modifier

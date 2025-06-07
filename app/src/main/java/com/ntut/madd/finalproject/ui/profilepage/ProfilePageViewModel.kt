@@ -13,7 +13,9 @@ import javax.inject.Inject
 class ProfilePageViewModel @Inject constructor(
     // 如果 Profile 要用 repository 可注入
 ) : MainViewModel() {
-
+    private val _shouldRestartApp = MutableStateFlow(false)
+    val shouldRestartApp: StateFlow<Boolean>
+        get() = _shouldRestartApp.asStateFlow()
     private val _currentRoute = MutableStateFlow("profile")
     val currentRoute: StateFlow<String> = _currentRoute.asStateFlow()
 
