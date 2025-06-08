@@ -95,8 +95,7 @@ fun TodoListScreenContent(
                 action = openSettingsScreen,
                 scrollBehavior = scrollBehavior
             )
-        },
-    ) { innerPadding ->
+        }) { innerPadding ->
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
@@ -134,7 +133,7 @@ fun TodoListScreenContent(
                 modifier = Modifier
                     .constrainAs(fab) {
                         bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
                     }
                     .padding(horizontal = 16.dp),
                 containerColor = DarkBlue,

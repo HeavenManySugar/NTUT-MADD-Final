@@ -23,6 +23,18 @@ import com.ntut.madd.finalproject.ui.home.HomeRoute
 import com.ntut.madd.finalproject.ui.home.HomeScreen
 import com.ntut.madd.finalproject.ui.settings.SettingsRoute
 import com.ntut.madd.finalproject.ui.settings.SettingsScreen
+import com.ntut.madd.finalproject.ui.setup.SetupRoute
+import com.ntut.madd.finalproject.ui.setup.SetupScreen
+import com.ntut.madd.finalproject.ui.setup2.Setup2Route
+import com.ntut.madd.finalproject.ui.setup2.Setup2Screen
+import com.ntut.madd.finalproject.ui.setup3.Setup3Route
+import com.ntut.madd.finalproject.ui.setup3.Setup3Screen
+import com.ntut.madd.finalproject.ui.setup4.Setup4Route
+import com.ntut.madd.finalproject.ui.setup4.Setup4Screen
+import com.ntut.madd.finalproject.ui.setup5.Setup5Route
+import com.ntut.madd.finalproject.ui.setup5.Setup5Screen
+import com.ntut.madd.finalproject.ui.setup6.Setup6Route
+import com.ntut.madd.finalproject.ui.setup6.Setup6Screen
 import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
@@ -58,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = TodoListRoute,
+                            startDestination = SetupRoute,
                             modifier = Modifier.padding(innerPadding)
                         ) {
                             composable<HomeRoute> { HomeScreen(
@@ -113,6 +125,55 @@ class MainActivity : ComponentActivity() {
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
                                     scope.launch { snackbarHostState.showSnackbar(message) }
+                                }
+                            ) }
+                            composable<SetupRoute> { SetupScreen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    navController.navigate(Setup2Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup2Route> { Setup2Screen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    navController.navigate(Setup3Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup3Route> { Setup3Screen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    navController.navigate(Setup4Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup4Route> { Setup4Screen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    navController.navigate(Setup5Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup5Route> { Setup5Screen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                },
+                                onNextClick = {
+                                    navController.navigate(Setup6Route) { launchSingleTop = true }
+                                }
+                            ) }
+                            composable<Setup6Route> { Setup6Screen(
+                                onNext = {
+                                    // 完成設定，導航到主頁面
+                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                },
+                                onBack = {
+                                    navController.popBackStack()
                                 }
                             ) }
                         }
