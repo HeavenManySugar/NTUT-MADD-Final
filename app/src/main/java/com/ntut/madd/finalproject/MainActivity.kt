@@ -98,11 +98,14 @@ class MainActivity : ComponentActivity() {
                                 openHomeScreen = {
                                     navController.navigate(TodoListRoute) { launchSingleTop = true }
                                 },
+                                openSignInScreen = {
+                                    navController.navigate(SignInRoute) { launchSingleTop = true }
+                                },
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
                                     scope.launch { snackbarHostState.showSnackbar(message) }
                                 }
-                            ) }
+                                ) }
                             composable<TodoItemRoute> { TodoItemScreen(
                                 openTodoListScreen = {
                                     navController.navigate(TodoListRoute) { launchSingleTop = true }

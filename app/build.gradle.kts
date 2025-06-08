@@ -59,7 +59,11 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.android)
+    implementation("androidx.compose.material:material-icons-extended")
     ksp(libs.hilt.android.compiler)
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("com.google.accompanist:accompanist-flowlayout:0.33.2-alpha")
 
     //Firebase
     implementation(platform(libs.firebase.bom))
