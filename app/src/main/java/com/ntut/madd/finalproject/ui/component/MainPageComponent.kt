@@ -27,8 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.TextUnit
 
 
 data class BottomNavItem(
@@ -75,7 +76,7 @@ fun BottomNavBar(
     }
 }
 
-/** 主畫面上面那快紫紫的東西 **/
+/** 主畫面上面那塊的東西 **/
 @Composable
 fun GradientBackgroundBox(
     modifier: Modifier = Modifier,
@@ -118,7 +119,9 @@ fun GradientBackgroundBox(
 fun SectionTitle(
     icon: ImageVector,
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 18.sp,
+    iconSize: Dp = 20.dp
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -128,12 +131,12 @@ fun SectionTitle(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier
-                .size(20.dp)
+                .size(iconSize)
                 .padding(end = 4.dp)
         )
         Text(
             text = title,
-            fontSize = 18.sp,
+            fontSize = fontSize,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF2D3748)
         )

@@ -1,8 +1,6 @@
 package com.ntut.madd.finalproject.ui.discover
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import com.ntut.madd.finalproject.ui.discover.*
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -14,22 +12,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 
 import com.ntut.madd.finalproject.data.model.ErrorMessage // 你的 ErrorMessage 定義
 
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ntut.madd.finalproject.R
 import com.ntut.madd.finalproject.ui.component.*
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable
