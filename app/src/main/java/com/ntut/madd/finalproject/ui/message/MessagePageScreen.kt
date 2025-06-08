@@ -1,4 +1,4 @@
-package com.ntut.madd.finalproject.message
+package com.ntut.madd.finalproject.ui.message
 
 
 import androidx.compose.foundation.background
@@ -22,11 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import com.ntut.madd.finalproject.data.model.ErrorMessage // 你的 ErrorMessage 定義
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ntut.madd.finalproject.messages.FilterChips
-import com.ntut.madd.finalproject.messages.MessageListWithSeparators
-import com.ntut.madd.finalproject.messages.MessagePreview
-import com.ntut.madd.finalproject.messages.SearchInputField
-import com.ntut.madd.finalproject.messages.TopFadeOverlay
+import com.ntut.madd.finalproject.ui.messages.FilterChips
+import com.ntut.madd.finalproject.ui.messages.MessageListWithSeparators
+import com.ntut.madd.finalproject.ui.messages.MessagePreview
+import com.ntut.madd.finalproject.ui.messages.SearchInputField
+import com.ntut.madd.finalproject.ui.messages.TopFadeOverlay
 import com.ntut.madd.finalproject.ui.component.*
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable

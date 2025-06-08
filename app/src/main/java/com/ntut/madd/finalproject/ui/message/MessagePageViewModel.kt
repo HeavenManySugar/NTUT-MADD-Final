@@ -1,4 +1,4 @@
-package com.ntut.madd.finalproject.message
+package com.ntut.madd.finalproject.ui.message
 
 
 import com.ntut.madd.finalproject.MainViewModel

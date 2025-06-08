@@ -1,4 +1,4 @@
-package com.ntut.madd.finalproject.messages
+package com.ntut.madd.finalproject.ui.messages
 
 
 import androidx.compose.foundation.background
