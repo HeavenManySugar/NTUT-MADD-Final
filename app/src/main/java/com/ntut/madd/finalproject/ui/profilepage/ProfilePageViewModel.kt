@@ -1,6 +1,8 @@
 package com.ntut.madd.finalproject.ui.profilepage;
 
 import com.ntut.madd.finalproject.MainViewModel
+import com.ntut.madd.finalproject.data.model.ErrorMessage
+import com.ntut.madd.finalproject.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

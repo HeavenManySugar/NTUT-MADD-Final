@@ -2,7 +2,6 @@ package com.ntut.madd.finalproject.ui.component
 
 
 import android.text.Layout
-import androidx.compose.foundation.background
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
@@ -27,9 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.TextUnit
 
 
 data class BottomNavItem(
@@ -76,16 +74,15 @@ fun BottomNavBar(
     }
 }
 
-/** 主畫面上面那塊的東西 **/
+/** 主畫面上面那快紫紫的東西 **/
 @Composable
 fun GradientBackgroundBox(
     modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.Center,
-    useGradient: Boolean = true,
+    contentAlignment: Alignment = Alignment.Center, // ✅ 這裡要用 Compose 的 Alignment
     content: @Composable () -> Unit
 ) {
-    val gradientModifier = if (useGradient) {
-        modifier
+    Box(
+        modifier = modifier
             .fillMaxWidth()
             .drawWithCache {
                 val gradient = Brush.linearGradient(
@@ -97,17 +94,8 @@ fun GradientBackgroundBox(
                     drawRect(brush = gradient)
                 }
             }
-            .padding(vertical = 48.dp)
-    } else {
-        modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(vertical = 48.dp)
-    }
-
-    Box(
-        modifier = gradientModifier,
-        contentAlignment = contentAlignment
+            .padding(vertical = 48.dp),
+        contentAlignment = contentAlignment // ✅ 傳進來的 alignment
     ) {
         content()
     }
@@ -119,9 +107,7 @@ fun GradientBackgroundBox(
 fun SectionTitle(
     icon: ImageVector,
     title: String,
-    modifier: Modifier = Modifier,
-    fontSize: TextUnit = 18.sp,
-    iconSize: Dp = 20.dp
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -131,12 +117,12 @@ fun SectionTitle(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier
-                .size(iconSize)
+                .size(20.dp)
                 .padding(end = 4.dp)
         )
         Text(
             text = title,
-            fontSize = fontSize,
+            fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color(0xFF2D3748)
         )
