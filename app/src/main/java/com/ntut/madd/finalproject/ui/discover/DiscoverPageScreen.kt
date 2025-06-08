@@ -111,9 +111,22 @@ fun DiscoverPageScreenContent(
                     .background(Color(0xFFF2F2F2)) // 🎯 加這行就變深灰底
             ){
                 /** 大格子 **/
-
-
-
+                RoundedWhiteCard {
+                    TopSection(
+                        name = "Alex",
+                        location = "New York",
+                        jobTitle = "Software Engineer",
+                        education = "Bachelor's"
+                    )
+                    InterestSection(
+                        listOf("🎵" to "J-pop Music", "🏃" to "Fitness", "🎤" to "Singing", "📚" to "Reading")
+                    )
+                    PersonalitySection(listOf("🌟 Optimistic", "🎯 Ambitious", "🤝 Outgoing"))
+                }
+                DecisionButtons(
+                    onReject = { /* TODO: Handle rejection */ },
+                    onApprove = { /* TODO: Handle approval */ }
+                )
             }
         }
     }
