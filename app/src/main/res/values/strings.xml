@@ -44,4 +44,124 @@
     <string name="delete_account_description">Are you sure you want to delete your account? This action is irreversible.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    
+    <!-- Setup Screen -->
+    <string name="setup_1">Setup 1</string>
+    <string name="setup_title">Title</string>
+    <string name="setup_subtitle">SubTitle</string>
+    <string name="setup_progress">1/6</string>
+    <string name="location_question">您住在哪裡？</string>
+    <string name="location_description">這將幫助我們為您推薦附近的人</string>
+    <string name="city_label">城市</string>
+    <string name="city_placeholder">請選擇城市</string>
+    <string name="district_label">區域</string>
+    <string name="district_placeholder">例：信義區、板橋區</string>
+    <string name="next_step">下一步</string>
+    <string name="previous_step">上一步</string>
+    
+    <!-- Setup 2 Screen -->
+    <string name="setup_2">Setup 2</string>
+    <string name="setup2_progress">2/6</string>
+    <string name="career_icon">👔</string>
+    <string name="career_question">您的職業</string>
+    <string name="career_description">分享您的工作讓其他人更了解您</string>
+    <string name="position_label">職位</string>
+    <string name="position_placeholder">例：軟體工程師、設計師、老師</string>
+    <string name="company_label">公司/機構</string>
+    <string name="company_placeholder">例：Google、台積電、自由工作者</string>
+    
+    <!-- Setup 3 Screen -->
+    <string name="setup_3">Setup 3</string>
+    <string name="setup3_progress">3/6</string>
+    <string name="education_icon">🎓</string>
+    <string name="education_question">您的教育背景</string>
+    <string name="education_description">分享您的學歷讓其他人更了解您</string>
+    <string name="degree_label">學歷程度</string>
+    <string name="degree_placeholder">請選擇學歷程度</string>
+    <string name="school_label">學校</string>
+    <string name="school_placeholder">例：台灣大學、台北科技大學</string>
+    <string name="major_label">主修領域</string>
+    <string name="major_placeholder">例：資訊工程、企業管理、設計</string>
+    
+    <!-- Degree options -->
+    <string name="degree_high_school">高中職</string>
+    <string name="degree_college">專科</string>
+    <string name="degree_bachelor">大學</string>
+    <string name="degree_master">碩士</string>
+    <string name="degree_doctor">博士</string>
+    <string name="degree_other">其他</string>
+    
+    <!-- Setup 4 Screen -->
+    <string name="setup_4">Setup 4</string>
+    <string name="setup4_progress">4/6</string>
+    <string name="interests_icon">❤️</string>
+    <string name="interests_question">興趣愛好</string>
+    <string name="interests_description">選擇您的興趣（至少選擇3個）</string>
+    
+    <!-- Interest options -->
+    <string name="interest_travel">🌍 旅行</string>
+    <string name="interest_food">🍕 美食</string>
+    <string name="interest_movie">🎬 電影</string>
+    <string name="interest_music">🎵 音樂</string>
+    <string name="interest_reading">📚 閱讀</string>
+    <string name="interest_sports">⚽ 運動</string>
+    <string name="interest_fitness">💪 健身</string>
+    <string name="interest_yoga">🧘 瑜伽</string>
+    <string name="interest_swimming">🏊 游泳</string>
+    <string name="interest_hiking">🏔️ 登山</string>
+    <string name="interest_photography">📷 攝影</string>
+    <string name="interest_drawing">📝 繪畫</string>
+    <string name="interest_cooking">🍳 料理</string>
+    <string name="interest_coffee">☕ 咖啡</string>
+    <string name="interest_wine">🍷 紅酒</string>
+    <string name="interest_pets">🐕 寵物</string>
+    <string name="interest_gardening">🌱 園藝</string>
+    <string name="interest_technology">💻 科技</string>
+    <string name="interest_gaming">🎮 遊戲</string>
+    <string name="interest_dancing">💃 舞蹈</string>
+    <string name="interest_instrument">🎹 樂器</string>
+    <string name="interest_crafts">✂️ 手作</string>
+    <string name="interest_investment">💰 投資</string>
+    <string name="interest_learning">📖 學習</string>
+    
+    <!-- Setup 5 Screen -->
+    <string name="setup_5">Setup 5</string>
+    <string name="setup5_progress">5/6</string>
+    <string name="personality_icon">✨</string>
+    <string name="personality_question">個人特質</string>
+    <string name="personality_description">選擇最能描述您的特質（最多選擇5個）</string>
+    
+    <!-- Personality traits -->
+    <string name="trait_humorous">😊 幽默風趣</string>
+    <string name="trait_warm">🧡 溫柔體貼</string>
+    <string name="trait_active">😄 積極樂觀</string>
+    <string name="trait_calm">🧘 冷靜理性</string>
+    <string name="trait_creative">🎨 創意十足</string>
+    <string name="trait_honest">💪 誠實可靠</string>
+    <string name="trait_independent">🏆 獨立自主</string>
+    <string name="trait_kind">💝 善解人意</string>
+    <string name="trait_passionate">🔥 熱情洋溢</string>
+    <string name="trait_careful">🔍 細心周到</string>
+    <string name="trait_adventurous">📈 冒險精神</string>
+    <string name="trait_wise">🧠 文藝氣質</string>
+    <string name="trait_athletic">🏃 運動健將</string>
+    <string name="trait_knowledgeable">📚 知識豐富</string>
+    <string name="trait_social">🎭 社交達人</string>
+    <string name="trait_secure">😊 安靜內斂</string>
+    <string name="trait_romantic">💕 浪漫主義</string>
+    <string name="trait_practical">👔 實事求是</string>
+    
+    <!-- Setup 6 Screen -->
+    <string name="setup_6">Setup 6</string>
+    <string name="setup6_progress">6/6</string>
+    <string name="setup6_title">個人簡介</string>
+    <string name="setup6_about_me_title">關於我</string>
+    <string name="setup6_about_me_placeholder">介紹一下自己，讓其他人更了解您...</string>
+    <string name="setup6_looking_for_title">我在尋找</string>
+    <string name="setup6_looking_for_placeholder">描述您希望找到什麼樣的人或關係...</string>
+    <string name="setup6_hint">至少填寫其中一個欄位以繼續</string>
+    <string name="setup6_complete_button">完成設定</string>
+
+    <!-- Completion Celebration -->
+    <string name="setup_complete_continue">開始使用</string>
 </resources>
