@@ -12,28 +12,19 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-
 import com.ntut.madd.finalproject.data.model.ErrorMessage // 你的 ErrorMessage 定義
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntut.madd.finalproject.messages.FilterChips
 import com.ntut.madd.finalproject.messages.MessageListWithSeparators
 import com.ntut.madd.finalproject.messages.MessagePreview
-import com.ntut.madd.finalproject.messages.MessagePreviewCard
 import com.ntut.madd.finalproject.messages.SearchInputField
 import com.ntut.madd.finalproject.messages.TopFadeOverlay
 import com.ntut.madd.finalproject.ui.component.*
@@ -124,7 +115,7 @@ fun MessagePageScreenContent(
                     MessagePreview("chat3", "M", "Maggie", "I'll send the files later", "1 hr ago", true),
                     MessagePreview("chat4", "L", "Liam", "Got it, thanks!", "2 hr ago", false)
                 ),
-                onChatClick = {} // 👈 這樣代表按下去什麼都不做
+                onChatClick = {}
             )
         }
     }
