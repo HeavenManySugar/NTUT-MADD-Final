@@ -2,6 +2,8 @@ package com.ntut.madd.finalproject.ui.discover
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,6 +37,7 @@ object DiscoverPageRoute
 @Composable
 fun DiscoverPageScreen(
     openHomeScreen: () -> Unit,
+    openSettingsScreen: () -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "discover",
     onNavigate: (String) -> Unit = {},
@@ -53,6 +56,7 @@ fun DiscoverPageScreen(
             onReject = viewModel::onRejectProfile,
             onApprove = viewModel::onApproveProfile,
             onRetry = viewModel::retryLoading,
+            openSettingsScreen = openSettingsScreen,
             showErrorSnackbar = showErrorSnackbar
         )
     }
@@ -66,6 +70,7 @@ fun DiscoverPageScreenContent(
     onReject: () -> Unit = {},
     onApprove: () -> Unit = {},
     onRetry: () -> Unit = {},
+    openSettingsScreen: () -> Unit = {},
     showErrorSnackbar: (ErrorMessage) -> Unit = {}
 ) {
     Scaffold(
@@ -85,23 +90,43 @@ fun DiscoverPageScreenContent(
             // Page Information
             // Head
             GradientBackgroundBox(useGradient = false) {
-                Column(
-                    modifier = Modifier.wrapContentSize(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Box(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Discover",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "Find your perfect match",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.Black
-                    )
+                    // Centered content
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.Center)
+                            .padding(top = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Discover",
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Find your perfect match",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.Black
+                        )
+                    }
+                    
+                    // Settings button in top right
+                    IconButton(
+                        onClick = openSettingsScreen,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.Black
+                        )
+                    }
                 }
             }
 
@@ -254,58 +279,35 @@ private fun ProfileContent(
     }
     
     RoundedWhiteCard {
-        TopSection(
-            name = user.displayName.ifEmpty { "Anonymous User" },
-            location = if (profile.city.isNotEmpty() && profile.district.isNotEmpty()) {
-                "${profile.district}, ${profile.city}"
-            } else if (profile.city.isNotEmpty()) {
-                profile.city
-            } else {
-                "Location not specified"
-            },
-            jobTitle = profile.position.ifEmpty { "Position not specified" },
-            education = if (profile.degree.isNotEmpty()) {
-                profile.degree
-            } else if (profile.school.isNotEmpty()) {
-                profile.school
-            } else {
-                "Education not specified"
-            }
-        )
+        TopSection(user = user)
         
         if (profile.interests.isNotEmpty()) {
             InterestSection(
-                interests = profile.interests.map { interest ->
-                    // Add emoji based on interest or use a default one
-                    getEmojiForInterest(interest) to interest
-                }
+                interests = profile.interests
             )
         }
         
         if (profile.personalityTraits.isNotEmpty()) {
             PersonalitySection(
-                traits = profile.personalityTraits.map { trait ->
-                    if (trait.startsWith("🌟") || trait.startsWith("🎯") || trait.startsWith("🤝")) {
-                        trait
-                    } else {
-                        "✨ $trait"
-                    }
-                }
+                traits = profile.personalityTraits
             )
         }
-        
-        if (profile.aboutMe.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "About Me",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = profile.aboutMe,
-                style = MaterialTheme.typography.bodyMedium
-            )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (profile.company.isNotEmpty() || profile.position.isNotEmpty() || profile.city.isNotEmpty() || profile.district.isNotEmpty()) {
+                CareerCard(profile)
+            }
+            if (profile.school.isNotEmpty() || profile.degree.isNotEmpty() || profile.major.isNotEmpty()) {
+                EducationCard(profile)
+            }
+            if (profile.aboutMe.isNotEmpty()) {
+                AboutMeCard(profile)
+            }
+            if (profile.lookingFor.isNotEmpty()) {
+                LookingForCard(profile)
+            }
         }
     }
     
@@ -341,23 +343,26 @@ fun DiscoverPageScreenPreview() {
                 .height(1200.dp)
         ) {
             val sampleProfile = UserProfile(
-                city = "Taipei",
-                district = "Da'an",
-                position = "Software Engineer",
-                company = "Tech Corp",
-                degree = "Bachelor's",
-                school = "NTUT",
-                major = "Computer Science",
-                interests = listOf("Music", "Fitness", "Reading", "Cooking"),
-                personalityTraits = listOf("🌟 Optimistic", "🎯 Ambitious", "🤝 Outgoing"),
-                aboutMe = "Love exploring new technologies and meeting new people!",
-                lookingFor = "Someone who shares similar interests",
-                isProfileComplete = true
+                city = "Kaohsiung City",
+                district = "1123",
+                position = "123",
+                company = "123",
+                degree = "College",
+                school = "123",
+                major = "123",
+                interests = listOf("📝 Drawing", "⚽ Sports", "🏔️ Hiking"),
+                personalityTraits = listOf("😄 Positive & Active", "💪 Honest & Reliable", "🧘 Calm & Rational"),
+                aboutMe = "1231",
+                lookingFor = "23",
+                isProfileComplete = true,
+                profileCompletedAt = 1749486980966
             )
             val sampleUser = User(
                 id = "sample123",
+                ownerId = "1b0WiotDsfSwDGlbj7CEzhhE3a62",
                 displayName = "Alex Chen",
                 email = "alex@example.com",
+                isAnonymous = false,
                 profile = sampleProfile
             )
             val sampleUiState = DiscoverUiState(

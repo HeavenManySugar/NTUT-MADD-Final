@@ -21,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import com.ntut.madd.finalproject.data.model.ErrorMessage
 import com.ntut.madd.finalproject.ui.home.HomeRoute
 import com.ntut.madd.finalproject.ui.home.HomeScreen
+import com.ntut.madd.finalproject.ui.main.MainPageRoute
+import com.ntut.madd.finalproject.ui.main.MainPageScreen
 import com.ntut.madd.finalproject.ui.settings.SettingsRoute
 import com.ntut.madd.finalproject.ui.settings.SettingsScreen
 import com.ntut.madd.finalproject.ui.setup.SetupRoute
@@ -74,7 +76,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             composable<SplashRoute> { SplashScreen(
                                 onNavigateToHome = {
-                                    navController.navigate(HomeRoute) {
+                                    navController.navigate(MainPageRoute) {
                                         popUpTo<SplashRoute> { inclusive = true }
                                         launchSingleTop = true
                                     }
@@ -92,6 +94,18 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             ) }
+                            composable<MainPageRoute> { MainPageScreen(
+                                openHomeScreen = {
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
+                                },
+                                openSettingsScreen = {
+                                    navController.navigate(SettingsRoute) { launchSingleTop = true }
+                                },
+                                showErrorSnackbar = { errorMessage ->
+                                    val message = getErrorMessage(errorMessage)
+                                    scope.launch { snackbarHostState.showSnackbar(message) }
+                                }
+                            ) }
                             composable<HomeRoute> { HomeScreen(
                                 openSettingsScreen = {
                                     navController.navigate(SettingsRoute) { launchSingleTop = true }
@@ -99,7 +113,7 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SettingsRoute> { SettingsScreen(
                                 openHomeScreen = {
-                                    navController.navigate(HomeRoute) { launchSingleTop = true }
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
@@ -107,7 +121,7 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SignInRoute> { SignInScreen(
                                 openHomeScreen = {
-                                    navController.navigate(HomeRoute) { launchSingleTop = true }
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 openSignUpScreen = {
                                     navController.navigate(SignUpRoute) { launchSingleTop = true }
@@ -122,7 +136,7 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SignUpRoute> { SignUpScreen(
                                 openHomeScreen = {
-                                    navController.navigate(HomeRoute) { launchSingleTop = true }
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
@@ -174,8 +188,8 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<Setup6Route> { Setup6Screen(
                                 onNext = {
-                                    // 完成設定，導航到主頁面
-                                    navController.navigate(HomeRoute) { launchSingleTop = true }
+                                    // 完成設定，導航到主頁面 (Discover page)
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 onBack = {
                                     navController.popBackStack()
