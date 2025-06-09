@@ -85,7 +85,7 @@ fun DiscoverPageScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             // Page Information
             // Head
@@ -278,43 +278,58 @@ private fun ProfileContent(
         return
     }
     
-    RoundedWhiteCard {
-        TopSection(user = user)
-        
-        if (profile.interests.isNotEmpty()) {
-            InterestSection(
-                interests = profile.interests
-            )
-        }
-        
-        if (profile.personalityTraits.isNotEmpty()) {
-            PersonalitySection(
-                traits = profile.personalityTraits
-            )
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Scrollable content area
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
         ) {
-            if (profile.company.isNotEmpty() || profile.position.isNotEmpty() || profile.city.isNotEmpty() || profile.district.isNotEmpty()) {
-                CareerCard(profile)
-            }
-            if (profile.school.isNotEmpty() || profile.degree.isNotEmpty() || profile.major.isNotEmpty()) {
-                EducationCard(profile)
-            }
-            if (profile.aboutMe.isNotEmpty()) {
-                AboutMeCard(profile)
-            }
-            if (profile.lookingFor.isNotEmpty()) {
-                LookingForCard(profile)
+            RoundedWhiteCard {
+                TopSection(user = user)
+                
+                if (profile.interests.isNotEmpty()) {
+                    InterestSection(
+                        interests = profile.interests
+                    )
+                }
+                
+                if (profile.personalityTraits.isNotEmpty()) {
+                    PersonalitySection(
+                        traits = profile.personalityTraits
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    if (profile.company.isNotEmpty() || profile.position.isNotEmpty() || profile.city.isNotEmpty() || profile.district.isNotEmpty()) {
+                        CareerCard(profile)
+                    }
+                    if (profile.school.isNotEmpty() || profile.degree.isNotEmpty() || profile.major.isNotEmpty()) {
+                        EducationCard(profile)
+                    }
+                    if (profile.aboutMe.isNotEmpty()) {
+                        AboutMeCard(profile)
+                    }
+                    if (profile.lookingFor.isNotEmpty()) {
+                        LookingForCard(profile)
+                    }
+                }
             }
         }
+        
+        // Fixed buttons at bottom
+        DecisionButtons(
+            onReject = onReject,
+            onApprove = onApprove
+        )
     }
-    
-    DecisionButtons(
-        onReject = onReject,
-        onApprove = onApprove
-    )
 }
 
 private fun getEmojiForInterest(interest: String): String {
