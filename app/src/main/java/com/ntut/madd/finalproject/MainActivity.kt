@@ -19,8 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ntut.madd.finalproject.data.model.ErrorMessage
-import com.ntut.madd.finalproject.ui.home.HomeRoute
-import com.ntut.madd.finalproject.ui.home.HomeScreen
+
 import com.ntut.madd.finalproject.ui.main.MainPageRoute
 import com.ntut.madd.finalproject.ui.main.MainPageScreen
 import com.ntut.madd.finalproject.ui.settings.SettingsRoute
@@ -104,11 +103,6 @@ class MainActivity : ComponentActivity() {
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
                                     scope.launch { snackbarHostState.showSnackbar(message) }
-                                }
-                            ) }
-                            composable<HomeRoute> { HomeScreen(
-                                openSettingsScreen = {
-                                    navController.navigate(SettingsRoute) { launchSingleTop = true }
                                 }
                             ) }
                             composable<SettingsRoute> { SettingsScreen(
