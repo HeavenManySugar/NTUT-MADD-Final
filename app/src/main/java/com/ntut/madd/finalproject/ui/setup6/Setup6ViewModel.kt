@@ -32,7 +32,7 @@ class Setup6ViewModel @Inject constructor(
     private val _setupCompleted = MutableStateFlow(false)
     val setupCompleted: StateFlow<Boolean> = _setupCompleted.asStateFlow()
 
-    // 響應式的表單驗證狀態
+    // Reactive form validation state
     val isFormValid: StateFlow<Boolean> = combine(
         _aboutMe,
         _lookingFor

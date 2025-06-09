@@ -86,7 +86,7 @@ fun Setup4ScreenContent(
         onNextClick = onNextClick
     ) {
         SetupContentCard {
-            SetupFieldLabel(text = "請選擇您感興趣的領域")
+            SetupFieldLabel(text = stringResource(R.string.setup4_field_label))
             
             InterestGrid(
                 selectedInterests = selectedInterests,
@@ -119,7 +119,7 @@ fun Setup4ScreenContent(
                 )
                 Column {
                     Text(
-                        text = "已選擇 ${selectedInterests.size} 個興趣",
+                        text = stringResource(R.string.setup4_selected_count, selectedInterests.size),
                         color = if (selectedInterests.size >= 3)
                             Color(0xFF2E7D32) else Color(0xFFE65100),
                         fontSize = 14.sp,
@@ -127,19 +127,19 @@ fun Setup4ScreenContent(
                     )
                     if (selectedInterests.size < 3) {
                         Text(
-                            text = "還需要選擇 ${3 - selectedInterests.size} 個興趣",
+                            text = stringResource(R.string.setup4_need_more, 3 - selectedInterests.size),
                             color = Color(0xFFBF360C),
                             fontSize = 14.sp
                         )
                     } else if (selectedInterests.size < 5) {
                         Text(
-                            text = "還可以選擇 ${5 - selectedInterests.size} 個興趣",
+                            text = stringResource(R.string.setup4_can_select_more, 5 - selectedInterests.size),
                             color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
                     } else {
                         Text(
-                            text = "已選擇最大數量的興趣",
+                            text = stringResource(R.string.setup4_max_selected),
                             color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
@@ -243,7 +243,12 @@ fun InterestGrid(
 fun Setup4ScreenPreview() {
     MakeItSoTheme(darkTheme = false) {
         Setup4ScreenContent(
-            selectedInterests = listOf("🌍 旅行", "🍕 美食", "🎬 電影", "🎵 音樂"),
+            selectedInterests = listOf(
+                stringResource(R.string.interest_travel), 
+                stringResource(R.string.interest_food), 
+                stringResource(R.string.interest_movie), 
+                stringResource(R.string.interest_music)
+            ),
             isFormValid = true,
             onBackClick = {},
             onInterestToggle = {},
@@ -271,7 +276,7 @@ fun InterestGridPreview() {
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "請選擇您感興趣的領域",
+                    text = stringResource(R.string.setup4_field_label),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2E3440),
@@ -279,7 +284,12 @@ fun InterestGridPreview() {
                 )
                 
                 InterestGrid(
-                    selectedInterests = listOf("🌍 旅行", "🍕 美食", "🎬 電影", "🎵 音樂"),
+                    selectedInterests = listOf(
+                        stringResource(R.string.interest_travel), 
+                        stringResource(R.string.interest_food), 
+                        stringResource(R.string.interest_movie), 
+                        stringResource(R.string.interest_music)
+                    ),
                     onInterestToggle = {}
                 )
             }
