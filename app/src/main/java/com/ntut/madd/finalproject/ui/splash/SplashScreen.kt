@@ -158,7 +158,7 @@ private fun SplashScreenContent() {
         ) {
             // Logo 動畫 - 縮放 + 旋轉
             Image(
-                painter = painterResource(id = R.drawable.app_icon),
+                painter = painterResource(id = R.drawable.ic_launcher),
                 contentDescription = "App Logo",
                 modifier = Modifier
                     .size(128.dp)
