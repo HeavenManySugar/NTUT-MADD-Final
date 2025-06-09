@@ -1,8 +1,5 @@
 package com.ntut.madd.finalproject.ui.profilepage
 
-import androidx.compose.foundation.Image
-import com.ntut.madd.finalproject.ui.profilepage.*
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,18 +11,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-
-import com.ntut.madd.finalproject.data.model.ErrorMessage // 你的 ErrorMessage 定義
-
+import com.ntut.madd.finalproject.data.model.ErrorMessage
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntut.madd.finalproject.R
@@ -33,12 +24,8 @@ import com.ntut.madd.finalproject.ui.component.*
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 object ProfilePageRoute
-
-
-
 
 @Composable
 fun ProfilePageScreen(
@@ -78,9 +65,8 @@ fun ProfilePageScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding) // ✅ 讓內容不被導覽列擋到
+                .padding(innerPadding)
         ) {
-            // 這裡放畫面主內容
             GradientBackgroundBox {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     InitialAvatar(initial = "A")
@@ -100,39 +86,39 @@ fun ProfilePageScreenContent(
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    HighlightTag("尋找真愛中")
+                    HighlightTag(stringResource(R.string.finding_love))
                 }
             }
             Spacer(modifier = Modifier.height(24.dp))
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize() // ✅ 讓 Column 撐滿整個可用畫面（寬 + 高）
+                    .fillMaxSize()
             ){
-                /** 資料列 **/
+                /** Data Field **/
                 StatCardRow(modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.height(24.dp))
 
-                /** 興趣列 **/
+                /** Hoppy Field **/
                 SectionTitle(
                     icon = Icons.Filled.TrackChanges,
-                    title = "我的興趣",
+                    title = stringResource(R.string.my_interest),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 InterestTagSection(
                     tags = listOf(
-                        "💻 程式設計",
-                        "🏃‍♂️ 跑步",
-                        "📚 閱讀",
-                        "🎵 音樂",
-                        "☕ 咖啡",
-                        "🎮 遊戲",
-                        "📷 攝影",
-                        "🏔️ 登山",
-                        "🍳 料理",
-                        "✈️ 旅行"
+                        stringResource(R.string.interest_food),
+                        stringResource(R.string.interest_technology),
+                        stringResource(R.string.interest_cooking),
+                        stringResource(R.string.interest_coffee),
+                        stringResource(R.string.interest_swimming),
+                        stringResource(R.string.interest_music),
+                        stringResource(R.string.interest_drawing),
+                        stringResource(R.string.interest_investment),
+                        stringResource(R.string.interest_fitness),
+                        stringResource(R.string.interest_gaming),
                     )
                 )
             }
@@ -147,7 +133,7 @@ fun ProfilePageScreenPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1200.dp) // ✅ 預估高度夠容納整個註冊表單
+                .height(1200.dp)
         ) {
             ProfilePageScreenContent(
                 currentRoute = "profile",

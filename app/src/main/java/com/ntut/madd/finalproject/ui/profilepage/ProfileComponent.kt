@@ -29,9 +29,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
+import com.ntut.madd.finalproject.R
 
 
-/** Profile Page 紫色區塊的 Hashtag **/
+/** Profile Page Hashtag **/
 @Composable
 fun HighlightTag(
     text: String,
@@ -49,7 +51,7 @@ fun HighlightTag(
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
-            tint = Color(0xFFFFC107), // 金黃色
+            tint = Color(0xFFFFC107),
             modifier = Modifier
                 .size(16.dp)
                 .padding(end = 6.dp)
@@ -73,12 +75,12 @@ fun InitialAvatar(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(80.dp) // ⭕️ 圓形大小（你可以調成 80.dp）
+            .size(80.dp)
             .clip(CircleShape)
-            .background(Color(0xFFF2F5FF)) // ⬜ 背景淡藍白
+            .background(Color(0xFFF2F5FF))
             .border(
                 width = 1.dp,
-                color = Color(0xFFD7DFFB), // 淺藍邊框
+                color = Color(0xFFD7DFFB),
                 shape = CircleShape
             )
     ) {
@@ -86,12 +88,12 @@ fun InitialAvatar(
             text = initial,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF5B72F2) // 藍紫色文字
+            color = Color(0xFF5B72F2)
         )
     }
 }
 
-/** 查看次數、收到愛心、配對成功 **/
+/** Match,Hearts,Success **/
 
 @Composable
 fun StatCard(
@@ -124,7 +126,7 @@ fun StatCard(
         Text(
             text = labelText,
             fontSize = 14.sp,
-            color = Color(0xFF7180AD), // 淡藍紫色（可調整）
+            color = Color(0xFF7180AD),
             fontWeight = FontWeight.Normal
         )
     }
@@ -143,25 +145,25 @@ fun StatCardRow(
         StatCard(
             icon = Icons.Filled.Visibility,
             valueText = "1,247",
-            labelText = "查看次數",
+            labelText = stringResource(R.string.view_times),
             modifier = Modifier.weight(1f)
         )
         StatCard(
             icon = Icons.Filled.Favorite,
             valueText = "89",
-            labelText = "收到愛心",
+            labelText = stringResource(R.string.get_heart),
             modifier = Modifier.weight(1f)
         )
         StatCard(
             icon = Icons.Filled.Star,
             valueText = "23",
-            labelText = "配對成功",
+            labelText = stringResource(R.string.match_times),
             modifier = Modifier.weight(1f)
         )
     }
 }
 
-/** 興趣標籤 **/
+/** Hobby Label **/
 
 @Composable
 fun InterestTag(
@@ -184,7 +186,7 @@ fun InterestTag(
     )
 }
 
-/** 興趣欄位 **/
+/** Hobby Field **/
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

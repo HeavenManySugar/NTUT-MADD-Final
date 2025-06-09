@@ -281,4 +281,13 @@
 
     <string name="using_other_way_to_sign_up">Using Other way to sign up</string>
 
+    <!-- Profile Page -->
+
+    <string name="view_times">View</string>
+    <string name="get_heart">Heart</string>
+    <string name="match_times">Match</string>
+
+    <string name="finding_love">Finding True Love</string>
+
+    <string name="my_interest">My Interest</string>
 </resources>
