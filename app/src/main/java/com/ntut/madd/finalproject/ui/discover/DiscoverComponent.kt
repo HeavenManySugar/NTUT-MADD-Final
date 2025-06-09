@@ -17,7 +17,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-/** 配對資訊欄 **/
+
+
+/** Matching Information **/
 @Composable
 fun RoundedWhiteCard(content: @Composable ColumnScope.() -> Unit) {
     Box(
@@ -136,7 +138,7 @@ fun TraitPill(text: String) {
     }
 }
 
-/** 接受拒絕 **/
+/** Accept & Reject Buttom **/
 @Composable
 fun DecisionButtons(
     onReject: () -> Unit,
@@ -146,16 +148,15 @@ fun DecisionButtons(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .height(50.dp), // ⬅️ 控制整體高度
+            .height(50.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Rejected (灰色)
         Button(
             onClick = onReject,
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight(), // ⬅️ 拉高和 Row 一樣
+                .fillMaxHeight(),
             shape = RoundedCornerShape(50),
             elevation = ButtonDefaults.buttonElevation(0.dp),
             colors = ButtonDefaults.buttonColors(
@@ -165,8 +166,6 @@ fun DecisionButtons(
         ) {
             Text("Rejected", fontWeight = FontWeight.Medium, fontSize = 20.sp)
         }
-
-        // Approved (漸層)
         Button(
             onClick = onApprove,
             modifier = Modifier

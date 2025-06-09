@@ -7,8 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,14 +32,12 @@ import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import com.ntut.madd.finalproject.ui.component.*
 import kotlinx.serialization.Serializable
 import androidx.compose.material3.TextButton
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import com.ntut.madd.finalproject.ui.signup.BirthdayInput
+import androidx.compose.ui.res.stringResource
 
 @Serializable
 object SignInRoute
@@ -96,7 +91,7 @@ private fun SignInScreenContent(
             signIn(email, password, showErrorSnackbar)
         } else {
             shouldValidate = false
-            showErrorSnackbar(ErrorMessage.StringError("請填寫必填欄位"))
+            showErrorSnackbar(ErrorMessage.StringError("Please Fill All Blank"))
         }
     }
 
@@ -119,26 +114,28 @@ private fun SignInScreenContent(
             ) {
                 // Email
                 LabeledField(
-                    label = "電子信箱",
+                    label = stringResource(R.string.email),
                     value = email,
                     onValueChange = onEmailChange,
-                    placeholder = "請輸入您的電子郵件",
+                    placeholder = stringResource(R.string.enter_email),
+                    fontSize = 18.sp,
                     shouldShowError = shouldValidate || email.isNotBlank()
                 )
 
                 // Password
 
                 LabeledField(
-                    label = "密碼",
+                    label = stringResource(R.string.password),
                     value = password,
                     onValueChange = onPasswordChange,
-                    placeholder = "請輸入您的密碼",
+                    placeholder = stringResource(R.string.enter_password),
+                    fontSize = 18.sp,
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
                                 imageVector = if (showPassword) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (showPassword) "隱藏密碼" else "顯示密碼"
+                                contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(R.string.show_password)
                             )
                         }
                     },
@@ -153,7 +150,7 @@ private fun SignInScreenContent(
                         onClick = onForgotPasswordClick,
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text("忘記密碼？", color = Color(0xFF5A5AFF),fontWeight = FontWeight.Medium)
+                        Text(stringResource(R.string.forget_password), color = Color(0xFF5A5AFF),fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -161,7 +158,7 @@ private fun SignInScreenContent(
 
                 // Sign-in button
                 PressButton(
-                    text = "登入",
+                    text = stringResource(R.string.sign_in),
                     onClick = onSignInClick,
                     modifier = Modifier
                         .fillMaxWidth(0.85f)
@@ -171,7 +168,7 @@ private fun SignInScreenContent(
                 Spacer(Modifier.height(8.dp))
 
                 DividerWithText(
-                    "或使用以下方式登入",
+                    stringResource(R.string.using_other_way_to_sign_in),
                     textColor = Color(0xFF6C757D)
                 )
 
@@ -204,7 +201,7 @@ private fun SignInScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "還沒有帳號？",
+                        text = stringResource(R.string.have_no_account),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal
                     )
@@ -214,7 +211,7 @@ private fun SignInScreenContent(
                         modifier = Modifier.padding(start = 4.dp) // ✅ 加一點間距
                     ) {
                         Text(
-                            text = "立刻註冊",
+                            text = stringResource(R.string.click_here_sign_up),
                             color = Color(0xFF5A5AFF),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold

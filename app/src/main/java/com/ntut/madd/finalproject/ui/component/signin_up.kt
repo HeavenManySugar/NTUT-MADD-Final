@@ -53,7 +53,7 @@ import com.ntut.madd.finalproject.R
 
 val LightBlue = Color(0xFF90CAF9)
 
-/** 上面那個紫紫的 **/
+/** Purple Bar **/
 @Composable
 fun AppHeaderBanner(
     modifier: Modifier = Modifier,
@@ -92,11 +92,11 @@ fun AppHeaderBanner(
     }
 }
 
-/**　中間帶文字的 divider　*/
+/**　With word divider　*/
 @Composable
 fun DividerWithText(
     text: String,
-    textColor: Color = Color.White // 預設白色，可手動指定
+    textColor: Color = Color.White
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -114,7 +114,7 @@ fun DividerWithText(
         Divider(Modifier.weight(1f), color = textColor)
     }
 }
-/* 中間可以輸入的框框 😍🥰😘 */
+/* Input Box 😍🥰😘 */
 
 @Composable
 fun LabeledInputBox(
@@ -191,11 +191,10 @@ fun LabeledInputBox(
             }
         }
 
-        // ✅ 顯示錯誤文字
         if (!shouldShowError) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "此欄位必填",
+                text = "Must be filled",
                 color = Color(0xFFFF6B6B),
                 fontSize = 14.sp,
                 modifier = Modifier.padding(start = 8.dp)
@@ -204,7 +203,7 @@ fun LabeledInputBox(
         if (shouldRepeatPasswordError){
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "密碼欄位不一致",
+                text = "Password is different for two fields",
                 color = Color(0xFFFF6B6B),
                 fontSize = 14.sp,
                 modifier = Modifier.padding(start = 8.dp)
@@ -214,7 +213,7 @@ fun LabeledInputBox(
 }
 
 
-/* 左上角字體 😍🥰😘 */
+/* Left-Top word 😍🥰😘 */
 
 @Composable
 fun InputFieldLabel(
@@ -230,7 +229,7 @@ fun InputFieldLabel(
             text = text,
             fontSize = fontSize,
             color = textColor,
-            modifier = Modifier.padding(start = 12.dp), // 對齊下方 padding 的 Box 輸入框
+            modifier = Modifier.padding(start = 12.dp),
             fontWeight = FontWeight.SemiBold
         )
     }
@@ -242,13 +241,14 @@ fun LabeledFieldMedium(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    fontSize: TextUnit = 20.sp,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val borderColor = when {
-        isFocused -> Color(0xFF90CAF9) // 淡藍
-        else -> Color(0xFFEAECEF)      // 淺灰
+        isFocused -> Color(0xFF90CAF9)
+        else -> Color(0xFFEAECEF)
     }
 
     Column(modifier = modifier) {
@@ -292,7 +292,7 @@ fun LabeledFieldMedium(
                         Text(
                             text = placeholder,
                             color = Color(0xFFB0B0B0),
-                            fontSize = 20.sp,
+                            fontSize = fontSize,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -324,8 +324,8 @@ fun PressButton(
             .drawBehind {
                 val gradient = Brush.linearGradient(
                     colors = colors,
-                    start = Offset.Zero, // 左上
-                    end = Offset(size.width, size.height) // 右下
+                    start = Offset.Zero,
+                    end = Offset(size.width, size.height)
                 )
                 drawRoundRect(
                     brush = gradient,
@@ -362,7 +362,7 @@ fun LabeledField(
     fontSize: TextUnit = 20.sp,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: (@Composable () -> Unit)? = null,
-    shouldShowError: Boolean = false, // ✅ 新增參數
+    shouldShowError: Boolean = false,
     shouldRepeatPasswordError: Boolean = false,
 ) {
     InputFieldLabel(
@@ -377,7 +377,7 @@ fun LabeledField(
         fontSize = fontSize,
         visualTransformation = visualTransformation,
         trailingIcon = trailingIcon,
-        shouldShowError = shouldShowError,// ✅ 傳下去
+        shouldShowError = shouldShowError,
         modifier = Modifier.fillMaxWidth(0.8f),
         shouldRepeatPasswordError = shouldRepeatPasswordError
     )

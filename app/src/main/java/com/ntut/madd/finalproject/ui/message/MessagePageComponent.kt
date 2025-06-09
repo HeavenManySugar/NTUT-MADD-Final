@@ -24,7 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 
-/** 搜尋欄、選取訊息 **/
+/** Searching Bar **/
 
 @Composable
 fun SearchBarWithFilters(
@@ -108,7 +108,7 @@ fun FilterChip(
     }
 }
 
-/** 灰色線線 **/
+/** Gray lines **/
 
 @Composable
 fun TopFadeOverlay(modifier: Modifier = Modifier) {
@@ -120,12 +120,12 @@ fun TopFadeOverlay(modifier: Modifier = Modifier) {
     )
 }
 
-/** 朋友欄位 **/
+/** Field for friends **/
 
 @Composable
 fun MessagePreviewCard(
     initials: String,
-    userName: String, // 👈 新增使用者名稱
+    userName: String,
     message: String,
     timeAgo: String,
     isOnline: Boolean,
@@ -135,11 +135,10 @@ fun MessagePreviewCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(horizontal = 20.dp, vertical = 16.dp), // 放大 padding
+            .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 頭像 + 線上狀態
-        Box(modifier = Modifier.size(56.dp)) { // 放大頭像
+        Box(modifier = Modifier.size(56.dp)) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -155,7 +154,7 @@ fun MessagePreviewCard(
                     text = initials,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp // 放大字體
+                    fontSize = 22.sp
                 )
             }
 
@@ -174,7 +173,7 @@ fun MessagePreviewCard(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = userName, // 👈 顯示名稱
+                text = userName,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 color = Color.Black

@@ -68,10 +68,9 @@ fun MatchesPageScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding) // ✅ 讓內容不被導覽列擋到
+                .padding(innerPadding)
         ) {
-            // 這裡放畫面主內容
-            // 頭部
+            // Page Information
             GradientBackgroundBox(useGradient = false) {
                 MyMatchesStats(
                     newMatches = 12,
@@ -79,7 +78,6 @@ fun MatchesPageScreenContent(
                     superLikes = 8
                 )
             }
-            // 下面
 
             SectionTitle(
                 icon = Icons.Filled.AutoAwesome,
@@ -119,7 +117,7 @@ fun MatchesPageScreenPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1200.dp) // ✅ 預估高度夠容納整個註冊表單
+                .height(1200.dp)
         ) {
             MatchesPageScreenContent(
                 currentRoute = "matches",

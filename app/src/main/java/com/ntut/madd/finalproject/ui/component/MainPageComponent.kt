@@ -76,7 +76,7 @@ fun BottomNavBar(
     }
 }
 
-/** 主畫面上面那塊的東西 **/
+/** Main Top Bar  Purple or White  **/
 @Composable
 fun GradientBackgroundBox(
     modifier: Modifier = Modifier,
@@ -113,7 +113,7 @@ fun GradientBackgroundBox(
     }
 }
 
-/** 標題 **/
+/** Title **/
 
 @Composable
 fun SectionTitle(

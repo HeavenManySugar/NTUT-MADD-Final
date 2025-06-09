@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.clickable
 
-/** 上方配對資訊 **/
+/** Upper Matching Page **/
 
 @Composable
 fun MyMatchesStats(
@@ -214,7 +214,6 @@ fun MatchRequestCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(12.dp)
         ) {
-            // 頭像
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -232,7 +231,6 @@ fun MatchRequestCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // 名稱 + 地點 + 時間
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -266,7 +264,6 @@ fun MatchRequestCard(
                 }
             }
 
-            // 按鈕區塊（自製小圓按鈕）
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Box(
                     modifier = Modifier

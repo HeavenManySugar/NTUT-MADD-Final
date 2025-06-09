@@ -48,9 +48,9 @@ fun ChatPageScreen(
             name = "Emma",
             isOnline = true,
             initials = "E",
-            onBackClick = { /* 返回 */ },
-            onInfoClick = { /* Info 點擊 */ },
-            onExitClick = { /* 離開點擊 */ }
+            onBackClick = { /* Go to message page */ },
+            onInfoClick = { /* Info click */ },
+            onExitClick = { /* Leave conversation */ }
         )
     }
 }
@@ -70,7 +70,7 @@ fun ChatPageScreenContent(
     Scaffold(
         topBar = {
             Surface(
-                tonalElevation = 100.dp, // 陰影效果
+                tonalElevation = 100.dp,
                 color = Color.Black
             ) {
                 ChatHeader(
@@ -89,7 +89,6 @@ fun ChatPageScreenContent(
                 onTextChange = { inputText = it },
                 onSendClick = {
                     if (inputText.isNotBlank()) {
-                        // 實際傳送邏輯可放這裡
                         println("Send: $inputText")
                         inputText = ""
                     }
@@ -103,10 +102,14 @@ fun ChatPageScreenContent(
                 .padding(innerPadding)
                 .background(Color(0xFFF2F2F2))
         ) {
-            // Chat page 內容
+            // Chat
             val messages = listOf(
-                ChatMessage("我以為這是交友軟體", "00:00", isMe = true, isRead = true),
-                ChatMessage("不是哦", "00:01", isMe = false)
+                ChatMessage("I think this is an matching APP", "00:00", isMe = true, isRead = true),
+                ChatMessage("No", "00:01", isMe = false),
+                ChatMessage("What is this?", "00:00", isMe = true, isRead = true),
+                ChatMessage("My MADD final project.", "00:01", isMe = false),
+                ChatMessage("Oh! I realized it!", "00:00", isMe = true, isRead = true),
+                ChatMessage("Please gave me 100,thanks!", "00:01", isMe = false)
             )
 
             LazyColumn (
@@ -125,15 +128,15 @@ fun ChatPageScreenPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1200.dp) // ✅ 預估高度夠容納整個註冊表單
+                .height(1200.dp)
         ) {
             ChatPageScreenContent(
                 name = "Emma",
                 isOnline = true,
                 initials = "E",
-                onBackClick = { /* 返回 */ },
-                onInfoClick = { /* Info 點擊 */ },
-                onExitClick = { /* 離開點擊 */ }
+                onBackClick = { /* Go to message page */ },
+                onInfoClick = { /* Info click */ },
+                onExitClick = { /* Leave conversation */ }
             )
         }
     }

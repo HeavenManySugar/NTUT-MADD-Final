@@ -28,7 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.*
 
 
-/** 對方資訊欄 **/
+/** Other's information **/
 @Composable
 fun ChatHeader(
     name: String,
@@ -41,9 +41,9 @@ fun ChatHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(132.dp) // 💥 設定整體高度更高
+            .height(132.dp)
             .background(Color.White)
-            .padding(horizontal = 16.dp), // 保持左右 padding
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -140,10 +140,7 @@ fun ChatBubble(message: ChatMessage) {
         horizontalArrangement = if (message.isMe) Arrangement.End else Arrangement.Start
     ) {
         Column(horizontalAlignment = if (message.isMe) Alignment.End else Alignment.Start) {
-
-            // Read + Timestamp 排在泡泡左下
             if (message.isMe) {
-                // ✅ 左邊 Read + 時間，右邊是氣泡
                 Row(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -236,10 +233,10 @@ fun ChatInputBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .padding(16.dp)
+            .heightIn(min = 72.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 輸入框
         TextField(
             value = text,
             onValueChange = onTextChange,
@@ -252,8 +249,7 @@ fun ChatInputBar(
                 unfocusedContainerColor = Color.White,
                 focusedContainerColor = Color.White,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+                focusedIndicatorColor = Color.Transparent
             ),
             textStyle = TextStyle(fontSize = 16.sp),
             maxLines = 1,
@@ -262,7 +258,6 @@ fun ChatInputBar(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        // 送出按鈕（右側）
         Box(
             modifier = Modifier
                 .size(48.dp)

@@ -77,8 +77,7 @@ fun MessagePageScreenContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // 這裡放畫面主內容
-            // 頭部
+            // Page Information
             GradientBackgroundBox() {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -99,7 +98,7 @@ fun MessagePageScreenContent(
                 }
             }
 
-            /** 搜尋欄 **/
+            /** Searching Bar **/
             Column(
                 modifier = Modifier.fillMaxWidth().padding(12.dp)
             ) {
@@ -128,7 +127,7 @@ fun MessagePageScreenPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1200.dp) // ✅ 預估高度夠容納整個註冊表單
+                .height(1200.dp)
         ) {
             MessagePageScreenContent(
                 currentRoute = "messages",

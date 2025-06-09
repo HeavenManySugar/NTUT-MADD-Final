@@ -69,13 +69,13 @@ fun DiscoverPageScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding) // ✅ 讓內容不被導覽列擋到
+                .padding(innerPadding)
         ) {
-            // 這裡放畫面主內容
-            // 頭部
+            // Page Information
+            // Head
             GradientBackgroundBox(useGradient = false) {
                 Column(
-                    modifier = Modifier.wrapContentSize(Alignment.Center), // 🎯 直接在這裡搞定垂直 + 水平置中
+                    modifier = Modifier.wrapContentSize(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -98,9 +98,8 @@ fun DiscoverPageScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFF2F2F2)) // 🎯 加這行就變深灰底
+                    .background(Color(0xFFF2F2F2))
             ){
-                /** 大格子 **/
                 RoundedWhiteCard {
                     TopSection(
                         name = "Alex",
@@ -129,7 +128,7 @@ fun DiscoverPageScreenPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1200.dp) // ✅ 預估高度夠容納整個註冊表單
+                .height(1200.dp)
         ) {
             DiscoverPageScreenContent(
                 currentRoute = "discover",
