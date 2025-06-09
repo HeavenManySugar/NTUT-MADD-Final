@@ -29,26 +29,34 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.unit.dp
 
 @Serializable
-object ChatPageRoute
+data class ChatPageRoute(val chatId: String = "chat1")
 
 @Composable
 fun ChatPageScreen(
     openHomeScreen: () -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
-    currentRoute: String = "profile",
-    onNavigate: (String) -> Unit = {},
+    chatId: String = "chat1",
+    onBackClick: () -> Unit = {},
     viewModel: ChatPageViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
-
     if (shouldRestartApp) {
         openHomeScreen()
     } else {
+        // 根據 chatId 獲取聊天信息
+        val (name, initials, isOnline) = when (chatId) {
+            "chat1" -> Triple("Emily", "E", true)
+            "chat2" -> Triple("Alex", "A", false)
+            "chat3" -> Triple("Maggie", "M", true)
+            "chat4" -> Triple("Liam", "L", false)
+            else -> Triple("Unknown", "U", false)
+        }
+        
         ChatPageScreenContent(
-            name = "Emma",
-            isOnline = true,
-            initials = "E",
-            onBackClick = { /* Go to message page */ },
+            name = name,
+            isOnline = isOnline,
+            initials = initials,
+            onBackClick = onBackClick,
             onInfoClick = { /* Info click */ },
             onExitClick = { /* Leave conversation */ }
         )

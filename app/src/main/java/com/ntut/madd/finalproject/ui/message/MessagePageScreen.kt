@@ -1,8 +1,6 @@
 package com.ntut.madd.finalproject.ui.message
 
-
 import androidx.compose.foundation.background
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import com.ntut.madd.finalproject.data.model.ErrorMessage // 你的 ErrorMessage 定義
+import com.ntut.madd.finalproject.data.model.ErrorMessage
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntut.madd.finalproject.ui.messages.FilterChips
@@ -40,6 +38,7 @@ fun MessagePageScreen(
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "profile",
     onNavigate: (String) -> Unit = {},
+    openChatScreen: (String) -> Unit = {},
     viewModel: MessagePageViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
@@ -49,7 +48,8 @@ fun MessagePageScreen(
     } else {
         MessagePageScreenContent(
             currentRoute = currentRoute,
-            onNavigate = onNavigate
+            onNavigate = onNavigate,
+            openChatScreen = openChatScreen
         )
     }
 }
@@ -57,7 +57,8 @@ fun MessagePageScreen(
 @Composable
 fun MessagePageScreenContent(
     currentRoute: String = "messages",
-    onNavigate: (String) -> Unit = {}
+    onNavigate: (String) -> Unit = {},
+    openChatScreen: (String) -> Unit = {}
 ) {
 
     var query by remember { mutableStateOf("") }
@@ -110,11 +111,11 @@ fun MessagePageScreenContent(
             MessageListWithSeparators(
                 messages = listOf(
                     MessagePreview("chat1", "E", "Emily", "Hey! How was your day? 😊", "2 min ago", true),
-                    MessagePreview("chat2", "A", "Alex", "Let’s catch up tomorrow!", "10 min ago", false),
+                    MessagePreview("chat2", "A", "Alex", "Let's catch up tomorrow!", "10 min ago", false),
                     MessagePreview("chat3", "M", "Maggie", "I'll send the files later", "1 hr ago", true),
                     MessagePreview("chat4", "L", "Liam", "Got it, thanks!", "2 hr ago", false)
                 ),
-                onChatClick = {}
+                onChatClick = { chatId -> openChatScreen(chatId) }
             )
         }
     }
@@ -131,7 +132,8 @@ fun MessagePageScreenPreview() {
         ) {
             MessagePageScreenContent(
                 currentRoute = "messages",
-                onNavigate = {}
+                onNavigate = {},
+                openChatScreen = {}
             )
         }
     }

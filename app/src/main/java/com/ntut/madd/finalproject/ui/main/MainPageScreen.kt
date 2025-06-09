@@ -18,6 +18,7 @@ object MainPageRoute
 fun MainPageScreen(
     openHomeScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    openChatScreen: (String) -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     viewModel: MainPageViewModel = hiltViewModel()
 ) {
@@ -32,6 +33,7 @@ fun MainPageScreen(
             onNavigate = viewModel::navigateTo,
             openHomeScreen = openHomeScreen,
             openSettingsScreen = openSettingsScreen,
+            openChatScreen = openChatScreen,
             showErrorSnackbar = showErrorSnackbar
         )
     }
@@ -43,6 +45,7 @@ private fun MainPageContent(
     onNavigate: (String) -> Unit,
     openHomeScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    openChatScreen: (String) -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit
 ) {
     when (currentRoute) {
@@ -62,7 +65,8 @@ private fun MainPageContent(
             openHomeScreen = openHomeScreen,
             showErrorSnackbar = showErrorSnackbar,
             currentRoute = currentRoute,
-            onNavigate = onNavigate
+            onNavigate = onNavigate,
+            openChatScreen = openChatScreen
         )
         "profile" -> ProfilePageScreen(
             openHomeScreen = openHomeScreen,

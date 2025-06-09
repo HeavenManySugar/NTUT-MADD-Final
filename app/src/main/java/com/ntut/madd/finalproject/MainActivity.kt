@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.ntut.madd.finalproject.data.model.ErrorMessage
 
 import com.ntut.madd.finalproject.ui.main.MainPageRoute
@@ -42,6 +43,8 @@ import com.ntut.madd.finalproject.ui.signup.SignUpRoute
 import com.ntut.madd.finalproject.ui.signup.SignUpScreen
 import com.ntut.madd.finalproject.ui.splash.SplashRoute
 import com.ntut.madd.finalproject.ui.splash.SplashScreen
+import com.ntut.madd.finalproject.ui.chat.ChatPageRoute
+import com.ntut.madd.finalproject.ui.chat.ChatPageScreen
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -99,6 +102,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 openSettingsScreen = {
                                     navController.navigate(SettingsRoute) { launchSingleTop = true }
+                                },
+                                openChatScreen = { chatId ->
+                                    navController.navigate(ChatPageRoute(chatId)) { launchSingleTop = true }
                                 },
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
@@ -189,6 +195,22 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                 }
                             ) }
+                            composable<ChatPageRoute> { backStackEntry ->
+                                val route = backStackEntry.toRoute<ChatPageRoute>()
+                                ChatPageScreen(
+                                    openHomeScreen = {
+                                        navController.navigate(MainPageRoute) { launchSingleTop = true }
+                                    },
+                                    chatId = route.chatId,
+                                    onBackClick = {
+                                        navController.popBackStack()
+                                    },
+                                    showErrorSnackbar = { errorMessage ->
+                                        val message = getErrorMessage(errorMessage)
+                                        scope.launch { snackbarHostState.showSnackbar(message) }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
