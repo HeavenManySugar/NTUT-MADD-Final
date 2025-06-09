@@ -1,17 +1,11 @@
 package com.ntut.madd.finalproject.ui.home
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
@@ -25,7 +19,6 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,12 +28,10 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntut.madd.finalproject.R
-import com.ntut.madd.finalproject.data.model.TodoList
 import com.ntut.madd.finalproject.ui.shared.CenterTopAppBar
 import com.ntut.madd.finalproject.ui.shared.LoadingIndicator
 import com.ntut.madd.finalproject.ui.theme.DarkBlue
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
-import com.ntut.madd.finalproject.ui.theme.MediumYellow
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -56,13 +47,17 @@ fun HomeScreen(
     if (isLoadingUser) {
         LoadingIndicator()
     } else {
-        HomeScreenContent(openSettingsScreen)
+        HomeScreenContent(
+            openSettingsScreen = openSettingsScreen
+        )
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeScreenContent(openSettingsScreen: () -> Unit) {
+fun HomeScreenContent(
+    openSettingsScreen: () -> Unit
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -86,7 +81,7 @@ fun HomeScreenContent(openSettingsScreen: () -> Unit) {
                     bottom = 4.dp
                 )
         ) {
-            val (list, fab) = createRefs()
+            val (list) = createRefs()
             val listState = rememberLazyListState()
 
             LazyColumn(
@@ -95,45 +90,15 @@ fun HomeScreenContent(openSettingsScreen: () -> Unit) {
                     .fillMaxWidth()
                     .constrainAs(list) {
                         top.linkTo(parent.top)
-                        bottom.linkTo(fab.top)
+                        bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         height = Dimension.fillToConstraints
                     },
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(listOf(TodoList(title = "1"), TodoList(title = "2"))) { todoList ->
-                    //TODO: Use uiState
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(48f))
-                            .background(MediumYellow)
-                            .clickable {  }
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = todoList.title
-                        )
-                    }
-
-                    Spacer(Modifier.padding(4.dp))
-                }
+                // Placeholder content - TodoItem functionality removed
             }
-
-            ExtendedFloatingActionButton(
-                modifier = Modifier
-                    .constrainAs(fab) {
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                    }
-                    .padding(horizontal = 16.dp),
-                containerColor = DarkBlue,
-                contentColor = Color.White,
-                icon = { Icon(Icons.Filled.Add, "Create list button") },
-                text = { Text(text = stringResource(R.string.create_todo_list)) },
-                onClick = { }
-            )
         }
     }
 }

@@ -40,10 +40,7 @@ import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
 import com.ntut.madd.finalproject.ui.signup.SignUpScreen
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
-import com.ntut.madd.finalproject.ui.todoitem.TodoItemRoute
-import com.ntut.madd.finalproject.ui.todoitem.TodoItemScreen
-import com.ntut.madd.finalproject.ui.todolist.TodoListRoute
-import com.ntut.madd.finalproject.ui.todolist.TodoListScreen
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -78,17 +75,9 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate(SettingsRoute) { launchSingleTop = true }
                                 }
                             ) }
-                            composable<TodoListRoute> { TodoListScreen(
-                                openSettingsScreen = {
-                                    navController.navigate(SettingsRoute) { launchSingleTop = true }
-                                },
-                                openTodoItemScreen = { itemId ->
-                                    navController.navigate(TodoItemRoute(itemId)) { launchSingleTop = true }
-                                }
-                            ) }
                             composable<SettingsRoute> { SettingsScreen(
                                 openHomeScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(HomeRoute) { launchSingleTop = true }
                                 },
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
@@ -96,7 +85,7 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SignInRoute> { SignInScreen(
                                 openHomeScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(HomeRoute) { launchSingleTop = true }
                                 },
                                 openSignUpScreen = {
                                     navController.navigate(SignUpRoute) { launchSingleTop = true }
@@ -108,7 +97,7 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SignUpRoute> { SignUpScreen(
                                 openHomeScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(HomeRoute) { launchSingleTop = true }
                                 },
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
@@ -118,15 +107,6 @@ class MainActivity : ComponentActivity() {
                                     scope.launch { snackbarHostState.showSnackbar(message) }
                                 }
                                 ) }
-                            composable<TodoItemRoute> { TodoItemScreen(
-                                openTodoListScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
-                                },
-                                showErrorSnackbar = { errorMessage ->
-                                    val message = getErrorMessage(errorMessage)
-                                    scope.launch { snackbarHostState.showSnackbar(message) }
-                                }
-                            ) }
                             composable<SetupRoute> { SetupScreen(
                                 onBackClick = {
                                     navController.popBackStack()
@@ -170,7 +150,7 @@ class MainActivity : ComponentActivity() {
                             composable<Setup6Route> { Setup6Screen(
                                 onNext = {
                                     // 完成設定，導航到主頁面
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(HomeRoute) { launchSingleTop = true }
                                 },
                                 onBack = {
                                     navController.popBackStack()
