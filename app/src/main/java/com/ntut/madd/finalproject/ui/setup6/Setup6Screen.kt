@@ -154,7 +154,7 @@ fun Setup6ScreenContent(
                 ) {
                     OutlinedTextField(
                         value = aboutMe,
-                        onValueChange = { if (it.length <= 500) onAboutMeChange(it) },
+                        onValueChange = onAboutMeChange, // Remove character limit restriction
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(120.dp),
@@ -171,9 +171,15 @@ fun Setup6ScreenContent(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedBorderColor = if (aboutMe.length < 50 && aboutMe.isNotEmpty()) 
-                                Color(0xFFFF9800) else Color(0xFFEAECEF),
+                            unfocusedBorderColor = when {
+                                aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
+                                aboutMe.length > 450 -> Color(0xFFFF9800) // Orange when approaching limit
+                                aboutMe.length < 50 && aboutMe.isNotEmpty() -> Color(0xFFFF9800)
+                                else -> Color(0xFFEAECEF)
+                            },
                             focusedBorderColor = when {
+                                aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
+                                aboutMe.length > 450 -> Color(0xFFFF9800) // Orange when approaching limit
                                 aboutMe.length >= 50 -> Color(0xFF4CAF50)
                                 aboutMe.isNotEmpty() -> Color(0xFFFF9800)
                                 else -> Color(0xFF6B46C1).copy(alpha = 0.5f)
@@ -192,6 +198,7 @@ fun Setup6ScreenContent(
                     Text(
                         text = when {
                             aboutMe.isEmpty() -> stringResource(R.string.setup6_start_intro)
+                            aboutMe.length > 500 -> stringResource(R.string.setup6_over_limit)
                             aboutMe.length < 50 -> stringResource(R.string.setup6_write_more)
                             aboutMe.length >= 50 -> stringResource(R.string.setup6_content_great)
                             else -> ""
@@ -199,6 +206,7 @@ fun Setup6ScreenContent(
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
                             aboutMe.isEmpty() -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
                             aboutMe.length < 50 -> Color(0xFFFF9800)
                             else -> Color(0xFF4CAF50)
                         }
@@ -208,7 +216,8 @@ fun Setup6ScreenContent(
                         text = "${aboutMe.length}/500",
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
-                            aboutMe.length > 450 -> Color(0xFFE53E3E)
+                            aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
+                            aboutMe.length > 450 -> Color(0xFFFF9800) // Orange when approaching limit
                             aboutMe.length >= 50 -> Color(0xFF4CAF50)
                             else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         }
@@ -249,7 +258,7 @@ fun Setup6ScreenContent(
                 ) {
                     OutlinedTextField(
                         value = lookingFor,
-                        onValueChange = { if (it.length <= 300) onLookingForChange(it) },
+                        onValueChange = onLookingForChange, // Remove character limit restriction
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp),
@@ -266,9 +275,15 @@ fun Setup6ScreenContent(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedBorderColor = if (lookingFor.length < 20 && lookingFor.isNotEmpty()) 
-                                Color(0xFFFF9800) else Color(0xFFEAECEF),
+                            unfocusedBorderColor = when {
+                                lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
+                                lookingFor.length > 270 -> Color(0xFFFF9800) // Orange when approaching limit
+                                lookingFor.length < 20 && lookingFor.isNotEmpty() -> Color(0xFFFF9800)
+                                else -> Color(0xFFEAECEF)
+                            },
                             focusedBorderColor = when {
+                                lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
+                                lookingFor.length > 270 -> Color(0xFFFF9800) // Orange when approaching limit
                                 lookingFor.length >= 20 -> Color(0xFF4CAF50)
                                 lookingFor.isNotEmpty() -> Color(0xFFFF9800)
                                 else -> Color(0xFF6B46C1).copy(alpha = 0.5f)
@@ -287,6 +302,7 @@ fun Setup6ScreenContent(
                     Text(
                         text = when {
                             lookingFor.isEmpty() -> stringResource(R.string.setup6_describe_looking)
+                            lookingFor.length > 300 -> stringResource(R.string.setup6_over_limit)
                             lookingFor.length < 20 -> stringResource(R.string.setup6_more_details)
                             lookingFor.length >= 20 -> stringResource(R.string.setup6_description_clear)
                             else -> ""
@@ -294,6 +310,7 @@ fun Setup6ScreenContent(
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
                             lookingFor.isEmpty() -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
                             lookingFor.length < 20 -> Color(0xFFFF9800)
                             else -> Color(0xFF4CAF50)
                         }
@@ -303,7 +320,8 @@ fun Setup6ScreenContent(
                         text = "${lookingFor.length}/300",
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
-                            lookingFor.length > 270 -> Color(0xFFE53E3E)
+                            lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
+                            lookingFor.length > 270 -> Color(0xFFFF9800) // Orange when approaching limit
                             lookingFor.length >= 20 -> Color(0xFF4CAF50)
                             else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         }

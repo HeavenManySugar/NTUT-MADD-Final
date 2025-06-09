@@ -192,6 +192,7 @@
     <string name="setup6_start_intro">Start introducing yourself!</string>
     <string name="setup6_write_more">You can write a bit more (at least 50 characters)</string>
     <string name="setup6_content_great">Great! The content is very comprehensive</string>
+    <string name="setup6_over_limit">Exceeds character limit, please shorten</string>
     <string name="setup6_describe_looking">Describe who you hope to meet</string>
     <string name="setup6_more_details">Can be more detailed (at least 20 characters)</string>
     <string name="setup6_description_clear">The description is very clear!</string>
