@@ -50,118 +50,195 @@
     <string name="setup_title">Title</string>
     <string name="setup_subtitle">SubTitle</string>
     <string name="setup_progress">1/6</string>
-    <string name="location_question">您住在哪裡？</string>
-    <string name="location_description">這將幫助我們為您推薦附近的人</string>
-    <string name="city_label">城市</string>
-    <string name="city_placeholder">請選擇城市</string>
-    <string name="district_label">區域</string>
-    <string name="district_placeholder">例：信義區、板橋區</string>
-    <string name="next_step">下一步</string>
-    <string name="previous_step">上一步</string>
+    <string name="location_question">Where do you live?</string>
+    <string name="location_description">This will help us recommend people nearby</string>
+    <string name="city_label">City</string>
+    <string name="city_placeholder">Please select a city</string>
+    <string name="district_label">District</string>
+    <string name="district_placeholder">e.g. Xinyi District, Banqiao District</string>
+    <string name="next_step">Next</string>
+    <string name="previous_step">Previous</string>
     
     <!-- Setup 2 Screen -->
     <string name="setup_2">Setup 2</string>
     <string name="setup2_progress">2/6</string>
     <string name="career_icon">👔</string>
-    <string name="career_question">您的職業</string>
-    <string name="career_description">分享您的工作讓其他人更了解您</string>
-    <string name="position_label">職位</string>
-    <string name="position_placeholder">例：軟體工程師、設計師、老師</string>
-    <string name="company_label">公司/機構</string>
-    <string name="company_placeholder">例：Google、台積電、自由工作者</string>
+    <string name="career_question">Your Career</string>
+    <string name="career_description">Share your work to help others understand you better</string>
+    <string name="position_label">Position</string>
+    <string name="position_placeholder">e.g. Software Engineer, Designer, Teacher</string>
+    <string name="company_label">Company/Organization</string>
+    <string name="company_placeholder">e.g. Google, TSMC, Freelancer</string>
     
     <!-- Setup 3 Screen -->
     <string name="setup_3">Setup 3</string>
     <string name="setup3_progress">3/6</string>
     <string name="education_icon">🎓</string>
-    <string name="education_question">您的教育背景</string>
-    <string name="education_description">分享您的學歷讓其他人更了解您</string>
-    <string name="degree_label">學歷程度</string>
-    <string name="degree_placeholder">請選擇學歷程度</string>
-    <string name="school_label">學校</string>
-    <string name="school_placeholder">例：台灣大學、台北科技大學</string>
-    <string name="major_label">主修領域</string>
-    <string name="major_placeholder">例：資訊工程、企業管理、設計</string>
+    <string name="education_question">Your Educational Background</string>
+    <string name="education_description">Share your education to help others understand you better</string>
+    <string name="degree_label">Education Level</string>
+    <string name="degree_placeholder">Please select education level</string>
+    <string name="school_label">School</string>
+    <string name="school_placeholder">e.g. National Taiwan University, NTUT</string>
+    <string name="major_label">Major Field</string>
+    <string name="major_placeholder">e.g. Computer Science, Business Administration, Design</string>
     
     <!-- Degree options -->
-    <string name="degree_high_school">高中職</string>
-    <string name="degree_college">專科</string>
-    <string name="degree_bachelor">大學</string>
-    <string name="degree_master">碩士</string>
-    <string name="degree_doctor">博士</string>
-    <string name="degree_other">其他</string>
+    <string name="degree_high_school">High School</string>
+    <string name="degree_college">College</string>
+    <string name="degree_bachelor">Bachelor</string>
+    <string name="degree_master">Master</string>
+    <string name="degree_doctor">Doctorate</string>
+    <string name="degree_other">Other</string>
     
     <!-- Setup 4 Screen -->
     <string name="setup_4">Setup 4</string>
     <string name="setup4_progress">4/6</string>
     <string name="interests_icon">❤️</string>
-    <string name="interests_question">興趣愛好</string>
-    <string name="interests_description">選擇您的興趣（至少選擇3個）</string>
+    <string name="interests_question">Interests &amp; Hobbies</string>
+    <string name="interests_description">Select 3-5 interests</string>
     
     <!-- Interest options -->
-    <string name="interest_travel">🌍 旅行</string>
-    <string name="interest_food">🍕 美食</string>
-    <string name="interest_movie">🎬 電影</string>
-    <string name="interest_music">🎵 音樂</string>
-    <string name="interest_reading">📚 閱讀</string>
-    <string name="interest_sports">⚽ 運動</string>
-    <string name="interest_fitness">💪 健身</string>
-    <string name="interest_yoga">🧘 瑜伽</string>
-    <string name="interest_swimming">🏊 游泳</string>
-    <string name="interest_hiking">🏔️ 登山</string>
-    <string name="interest_photography">📷 攝影</string>
-    <string name="interest_drawing">📝 繪畫</string>
-    <string name="interest_cooking">🍳 料理</string>
-    <string name="interest_coffee">☕ 咖啡</string>
-    <string name="interest_wine">🍷 紅酒</string>
-    <string name="interest_pets">🐕 寵物</string>
-    <string name="interest_gardening">🌱 園藝</string>
-    <string name="interest_technology">💻 科技</string>
-    <string name="interest_gaming">🎮 遊戲</string>
-    <string name="interest_dancing">💃 舞蹈</string>
-    <string name="interest_instrument">🎹 樂器</string>
-    <string name="interest_crafts">✂️ 手作</string>
-    <string name="interest_investment">💰 投資</string>
-    <string name="interest_learning">📖 學習</string>
+    <string name="interest_travel">🌍 Travel</string>
+    <string name="interest_food">🍕 Food</string>
+    <string name="interest_movie">🎬 Movies</string>
+    <string name="interest_music">🎵 Music</string>
+    <string name="interest_reading">📚 Reading</string>
+    <string name="interest_sports">⚽ Sports</string>
+    <string name="interest_fitness">💪 Fitness</string>
+    <string name="interest_yoga">🧘 Yoga</string>
+    <string name="interest_swimming">🏊 Swimming</string>
+    <string name="interest_hiking">🏔️ Hiking</string>
+    <string name="interest_photography">📷 Photography</string>
+    <string name="interest_drawing">📝 Drawing</string>
+    <string name="interest_cooking">🍳 Cooking</string>
+    <string name="interest_coffee">☕ Coffee</string>
+    <string name="interest_wine">🍷 Wine</string>
+    <string name="interest_pets">🐕 Pets</string>
+    <string name="interest_gardening">🌱 Gardening</string>
+    <string name="interest_technology">💻 Technology</string>
+    <string name="interest_gaming">🎮 Gaming</string>
+    <string name="interest_dancing">💃 Dancing</string>
+    <string name="interest_instrument">🎹 Music Instruments</string>
+    <string name="interest_crafts">✂️ Crafts</string>
+    <string name="interest_investment">💰 Investment</string>
+    <string name="interest_learning">📖 Learning</string>
     
     <!-- Setup 5 Screen -->
     <string name="setup_5">Setup 5</string>
     <string name="setup5_progress">5/6</string>
     <string name="personality_icon">✨</string>
-    <string name="personality_question">個人特質</string>
-    <string name="personality_description">選擇最能描述您的特質（最多選擇5個）</string>
+    <string name="personality_question">Personal Traits</string>
+    <string name="personality_description">Select 3-5 traits that best describe you</string>
     
     <!-- Personality traits -->
-    <string name="trait_humorous">😊 幽默風趣</string>
-    <string name="trait_warm">🧡 溫柔體貼</string>
-    <string name="trait_active">😄 積極樂觀</string>
-    <string name="trait_calm">🧘 冷靜理性</string>
-    <string name="trait_creative">🎨 創意十足</string>
-    <string name="trait_honest">💪 誠實可靠</string>
-    <string name="trait_independent">🏆 獨立自主</string>
-    <string name="trait_kind">💝 善解人意</string>
-    <string name="trait_passionate">🔥 熱情洋溢</string>
-    <string name="trait_careful">🔍 細心周到</string>
-    <string name="trait_adventurous">📈 冒險精神</string>
-    <string name="trait_wise">🧠 文藝氣質</string>
-    <string name="trait_athletic">🏃 運動健將</string>
-    <string name="trait_knowledgeable">📚 知識豐富</string>
-    <string name="trait_social">🎭 社交達人</string>
-    <string name="trait_secure">😊 安靜內斂</string>
-    <string name="trait_romantic">💕 浪漫主義</string>
-    <string name="trait_practical">👔 實事求是</string>
+    <string name="trait_humorous">😊 Humorous</string>
+    <string name="trait_warm">🧡 Warm &amp; Caring</string>
+    <string name="trait_active">😄 Positive &amp; Active</string>
+    <string name="trait_calm">🧘 Calm &amp; Rational</string>
+    <string name="trait_creative">🎨 Creative</string>
+    <string name="trait_honest">💪 Honest &amp; Reliable</string>
+    <string name="trait_independent">🏆 Independent</string>
+    <string name="trait_kind">💝 Kind &amp; Understanding</string>
+    <string name="trait_passionate">🔥 Passionate</string>
+    <string name="trait_careful">🔍 Careful &amp; Thoughtful</string>
+    <string name="trait_adventurous">📈 Adventurous</string>
+    <string name="trait_wise">🧠 Wise &amp; Cultured</string>
+    <string name="trait_athletic">🏃 Athletic</string>
+    <string name="trait_knowledgeable">📚 Knowledgeable</string>
+    <string name="trait_social">🎭 Social</string>
+    <string name="trait_secure">😊 Quiet &amp; Reserved</string>
+    <string name="trait_romantic">💕 Romantic</string>
+    <string name="trait_practical">👔 Practical</string>
     
     <!-- Setup 6 Screen -->
     <string name="setup_6">Setup 6</string>
     <string name="setup6_progress">6/6</string>
-    <string name="setup6_title">個人簡介</string>
-    <string name="setup6_about_me_title">關於我</string>
-    <string name="setup6_about_me_placeholder">介紹一下自己，讓其他人更了解您...</string>
-    <string name="setup6_looking_for_title">我在尋找</string>
-    <string name="setup6_looking_for_placeholder">描述您希望找到什麼樣的人或關係...</string>
-    <string name="setup6_hint">至少填寫其中一個欄位以繼續</string>
-    <string name="setup6_complete_button">完成設定</string>
+    <string name="setup6_title">Personal Profile</string>
+    <string name="setup6_subtitle">Complete your personal profile</string>
+    <string name="setup6_about_me_title">About Me</string>
+    <string name="setup6_about_me_placeholder">Tell us about yourself so others can get to know you better...</string>
+    <string name="setup6_looking_for_title">What I\'m Looking For</string>
+    <string name="setup6_looking_for_placeholder">Describe what kind of people or relationships you\'re looking for...</string>
+    <string name="setup6_hint">Please fill in at least one field to continue</string>
+    <string name="setup6_complete_button">Complete Setup</string>
 
     <!-- Completion Celebration -->
-    <string name="setup_complete_continue">開始使用</string>
+    <string name="setup_complete_continue">Get Started</string>
+    
+    <!-- Setup Screen Status Messages -->
+    <string name="setup_progress_step">Step %1$d/%2$d</string>
+    <string name="setup_processing">Processing...</string>
+    <string name="setup_completion_title">Setup Complete!</string>
+    <string name="setup_completion_message">Congratulations! You have completed all setup steps!\nYou can now start using the app.</string>
+    
+    <!-- Setup 4 Status Messages -->
+    <string name="setup4_field_label">Please select your areas of interest</string>
+    <string name="setup4_selected_count">Selected %1$d interests</string>
+    <string name="setup4_need_more">Need to select %1$d more interests</string>
+    <string name="setup4_can_select_more">Can select %1$d more interests</string>
+    <string name="setup4_max_selected">Maximum number of interests selected</string>
+    
+    <!-- Setup 5 Status Messages -->
+    <string name="setup5_selected_count">Selected %1$d traits</string>
+    <string name="setup5_need_more">Need to select %1$d more traits</string>
+    <string name="setup5_can_select_more">Can select %1$d more traits</string>
+    <string name="setup5_max_selected">Maximum number of traits selected</string>
+    
+    <!-- Setup 6 Status Messages -->
+    <string name="setup6_char_limit_suggestion_about">Suggested 50-500 characters</string>
+    <string name="setup6_char_limit_suggestion_looking">Suggested 20-300 characters</string>
+    <string name="setup6_char_count_comment">Character count and suggestions</string>
+    <string name="setup6_start_intro">Start introducing yourself!</string>
+    <string name="setup6_write_more">You can write a bit more (at least 50 characters)</string>
+    <string name="setup6_content_great">Great! The content is very comprehensive</string>
+    <string name="setup6_over_limit">Exceeds character limit, please shorten</string>
+    <string name="setup6_describe_looking">Describe who you hope to meet</string>
+    <string name="setup6_more_details">Can be more detailed (at least 20 characters)</string>
+    <string name="setup6_description_clear">The description is very clear!</string>
+    <string name="setup6_saving_settings">Saving your settings...</string>
+    
+    <!-- General Setup Messages -->
+    <string name="city_search_placeholder">Search for cities...</string>
+    <string name="popular_cities">⭐ Popular Cities</string>
+    <string name="all_cities">🏙️ All Cities</string>
+    <string name="no_cities_found">No matching cities found</string>
+    <string name="back_button">Back</string>
+    <string name="dropdown_button">Dropdown</string>
+    <string name="setup_default_processing">Processing...</string>
+    <string name="setup_completion_celebration_title">Setup Complete!</string>
+    <string name="setup_completion_celebration_message">Congratulations! You have completed all setup steps!\nYou can now start using the app.</string>
+    <string name="setup_save_failed">Save failed, please try again</string>
+    <string name="school_name_validation">School name must be at least 2 characters</string>
+    <string name="major_name_validation">Major name must be at least 2 characters</string>
+    <string name="position_validation">Position name must be at least 2 characters</string>
+    <string name="company_validation">Company name must be at least 2 characters</string>
+    
+    <!-- Content Descriptions -->
+    <string name="valid_input_icon">Valid input</string>
+    <string name="dropdown_arrow">Dropdown arrow</string>
+    
+    <!-- Taiwan Cities -->
+    <string name="city_taipei">Taipei City</string>
+    <string name="city_new_taipei">New Taipei City</string>
+    <string name="city_taoyuan">Taoyuan City</string>
+    <string name="city_taichung">Taichung City</string>
+    <string name="city_tainan">Tainan City</string>
+    <string name="city_kaohsiung">Kaohsiung City</string>
+    <string name="city_keelung">Keelung City</string>
+    <string name="city_hsinchu_city">Hsinchu City</string>
+    <string name="city_chiayi_city">Chiayi City</string>
+    <string name="city_hsinchu_county">Hsinchu County</string>
+    <string name="city_miaoli">Miaoli County</string>
+    <string name="city_changhua">Changhua County</string>
+    <string name="city_nantou">Nantou County</string>
+    <string name="city_yunlin">Yunlin County</string>
+    <string name="city_chiayi_county">Chiayi County</string>
+    <string name="city_pingtung">Pingtung County</string>
+    <string name="city_yilan">Yilan County</string>
+    <string name="city_hualien">Hualien County</string>
+    <string name="city_taitung">Taitung County</string>
+    <string name="city_penghu">Penghu County</string>
+    <string name="city_kinmen">Kinmen County</string>
+    <string name="city_lienchiang">Lienchiang County</string>
 </resources>

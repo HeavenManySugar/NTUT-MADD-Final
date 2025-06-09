@@ -124,7 +124,7 @@ fun SetupScreenContent(
         onNextClick = onNextClick,
         showBackButton = false
     ) {
-        // 城市選擇
+        // City selection
         SetupFieldLabel(
             text = stringResource(R.string.city_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -143,7 +143,7 @@ fun SetupScreenContent(
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
-        // 區域輸入
+        // District input
         SetupFieldLabel(
             text = stringResource(R.string.district_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -165,13 +165,38 @@ fun CityDropdown(
     var searchText by remember { mutableStateOf("") }
 
     val allCities = listOf(
-        "台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市",
-        "基隆市", "新竹市", "嘉義市", "新竹縣", "苗栗縣", "彰化縣",
-        "南投縣", "雲林縣", "嘉義縣", "屏東縣", "宜蘭縣", "花蓮縣",
-        "台東縣", "澎湖縣", "金門縣", "連江縣"
+        stringResource(R.string.city_taipei),
+        stringResource(R.string.city_new_taipei),
+        stringResource(R.string.city_taoyuan),
+        stringResource(R.string.city_taichung),
+        stringResource(R.string.city_tainan),
+        stringResource(R.string.city_kaohsiung),
+        stringResource(R.string.city_keelung),
+        stringResource(R.string.city_hsinchu_city),
+        stringResource(R.string.city_chiayi_city),
+        stringResource(R.string.city_hsinchu_county),
+        stringResource(R.string.city_miaoli),
+        stringResource(R.string.city_changhua),
+        stringResource(R.string.city_nantou),
+        stringResource(R.string.city_yunlin),
+        stringResource(R.string.city_chiayi_county),
+        stringResource(R.string.city_pingtung),
+        stringResource(R.string.city_yilan),
+        stringResource(R.string.city_hualien),
+        stringResource(R.string.city_taitung),
+        stringResource(R.string.city_penghu),
+        stringResource(R.string.city_kinmen),
+        stringResource(R.string.city_lienchiang)
     )
 
-    val popularCities = listOf("台北市", "新北市", "桃園市", "台中市", "台南市", "高雄市")
+    val popularCities = listOf(
+        stringResource(R.string.city_taipei),
+        stringResource(R.string.city_new_taipei),
+        stringResource(R.string.city_taoyuan),
+        stringResource(R.string.city_taichung),
+        stringResource(R.string.city_tainan),
+        stringResource(R.string.city_kaohsiung)
+    )
 
     val filteredCities = if (searchText.isEmpty()) {
         allCities
@@ -196,7 +221,7 @@ fun CityDropdown(
                 IconButton(onClick = { expanded = true }) {
                     Icon(
                         Icons.Filled.ArrowDropDown,
-                        contentDescription = "下拉",
+                        contentDescription = stringResource(R.string.dropdown_arrow),
                         tint = Color.Gray
                     )
                 }
@@ -204,7 +229,7 @@ fun CityDropdown(
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent,
-                unfocusedBorderColor = Color(0xFFEAECEF), // 框線色 EAECEF
+                unfocusedBorderColor = Color(0xFFEAECEF), // Border color EAECEF
                 focusedBorderColor = Color(0xFF6B46C1).copy(alpha = 0.5f),
                 cursorColor = Color(0xFF6B46C1)
             )
@@ -227,7 +252,7 @@ fun CityDropdown(
                 .fillMaxWidth(0.9f)
                 .height(400.dp)
         ) {
-            // 搜索框
+            // Search box
             OutlinedTextField(
                 value = searchText,
                 onValueChange = { searchText = it },
@@ -236,7 +261,7 @@ fun CityDropdown(
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 placeholder = {
                     Text(
-                        "搜索城市...",
+                        stringResource(R.string.city_search_placeholder),
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
@@ -249,10 +274,10 @@ fun CityDropdown(
                 )
             )
 
-            // 如果沒有搜索，顯示常用城市
+            // If no search, display popular cities
             if (searchText.isEmpty()) {
                 Text(
-                    text = "⭐ 常用城市",
+                    text = stringResource(R.string.popular_cities),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color(0xFF6B46C1),
@@ -295,7 +320,7 @@ fun CityDropdown(
                 )
 
                 Text(
-                    text = "🏙️ 所有城市",
+                    text = stringResource(R.string.all_cities),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color(0xFF718096),
@@ -303,7 +328,7 @@ fun CityDropdown(
                 )
             }
 
-            // 顯示篩選後的城市
+            // Show filtered cities
             filteredCities.forEach { city ->
                 DropdownMenuItem(
                     text = {
@@ -344,7 +369,7 @@ fun CityDropdown(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         Text(
-                            text = "未找到符合的城市",
+                            text = stringResource(R.string.no_cities_found),
                             fontSize = 14.sp,
                             color = Color(0xFF718096),
                             textAlign = TextAlign.Center

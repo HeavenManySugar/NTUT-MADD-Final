@@ -84,7 +84,7 @@ fun Setup5ScreenContent(
         onNextClick = onNextClick
     ) {
         SetupContentCard {
-            SetupFieldLabel(text = "個人特質")
+            SetupFieldLabel(text = stringResource(R.string.personality_question))
             
             PersonalityTraitGrid(
                 selectedTraits = selectedTraits,
@@ -117,7 +117,7 @@ fun Setup5ScreenContent(
                 )
                 Column {
                     Text(
-                        text = "已選擇 ${selectedTraits.size} 個特質",
+                        text = stringResource(R.string.setup5_selected_count, selectedTraits.size),
                         color = if (selectedTraits.size >= 3)
                             Color(0xFF2E7D32) else Color(0xFFE65100),
                         fontSize = 16.sp,
@@ -125,7 +125,7 @@ fun Setup5ScreenContent(
                     )
                     if (selectedTraits.size < 3) {
                         Text(
-                            text = "還需要選擇 ${3 - selectedTraits.size} 個特質",
+                            text = stringResource(R.string.setup5_need_more, 3 - selectedTraits.size),
                             color = if (selectedTraits.size >= 3)
                                 Color(0xFF2E7D32) else Color(0xFFE65100),
                             fontSize = 14.sp,
@@ -133,13 +133,13 @@ fun Setup5ScreenContent(
                         )
                     } else if (selectedTraits.size < 5) {
                         Text(
-                            text = "還可以選擇 ${5 - selectedTraits.size} 個特質",
+                            text = stringResource(R.string.setup5_can_select_more, 5 - selectedTraits.size),
                             color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
                     } else {
                         Text(
-                            text = "已選擇最大數量的特質",
+                            text = stringResource(R.string.setup5_max_selected),
                             color = Color(0xFF1B5E20),
                             fontSize = 14.sp
                         )
@@ -237,7 +237,11 @@ fun PersonalityTraitGrid(
 fun Setup5ScreenPreview() {
     MakeItSoTheme(darkTheme = false) {
         Setup5ScreenContent(
-            selectedTraits = listOf("😊 幽默風趣", "🧡 溫柔體貼", "😄 積極樂觀"),
+            selectedTraits = listOf(
+                stringResource(R.string.trait_humorous), 
+                stringResource(R.string.trait_warm), 
+                stringResource(R.string.trait_active)
+            ),
             isFormValid = true,
             onBackClick = {},
             onTraitToggle = {},
@@ -265,7 +269,7 @@ fun PersonalityTraitGridPreview() {
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "個人特質",
+                    text = stringResource(R.string.personality_question),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF2E3440),
@@ -273,7 +277,11 @@ fun PersonalityTraitGridPreview() {
                 )
                 
                 PersonalityTraitGrid(
-                    selectedTraits = listOf("😊 幽默風趣", "🧡 溫柔體貼", "😄 積極樂觀"),
+                    selectedTraits = listOf(
+                        stringResource(R.string.trait_humorous), 
+                        stringResource(R.string.trait_warm), 
+                        stringResource(R.string.trait_active)
+                    ),
                     onTraitToggle = {}
                 )
             }
