@@ -9,6 +9,7 @@
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="could_not_find_account">We couldn\'t find your account id at the moment, please try again later</string>
     <string name="item_without_title">Title cannot be empty</string>
+    <string name="fill_all_blank">Please Fill All Blank</string>
 
     <!-- Authentication -->
     <string name="sign_in_with_google">Sign in with Google</string>
@@ -241,4 +242,52 @@
     <string name="city_penghu">Penghu County</string>
     <string name="city_kinmen">Kinmen County</string>
     <string name="city_lienchiang">Lienchiang County</string>
+
+
+    <!-- Sign In & Up -->
+
+    <string name="enter_email">Please enter email</string>
+    <string name="enter_password">Please enter password</string>
+
+
+
+    <!-- Sign In -->
+
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="forget_password">Forget Password?</string>
+
+    <string name="have_no_account">Don\’t have an account yet?</string>
+    <string name="click_here_sign_up">Click here to sign up</string>
+
+    <string name="using_other_way_to_sign_in">Using Other way to sign in</string>
+    <!-- Sign Up -->
+
+    <string name="sign_up">Sign Up</string>
+
+    <string name="first_name">First Name</string>
+    <string name="enter_first_name">Enter First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="enter_last_name">Enter Last Name</string>
+    <string name="birthday">Birthday</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+
+    <string name="confirm_password">Confirm Password</string>
+    <string name="enter_confirm_password">Confirm password again</string>
+
+    <string name="have_account">Have an account?</string>
+    <string name="click_here_sign_in">Click here to sign in</string>
+
+    <string name="using_other_way_to_sign_up">Using Other way to sign up</string>
+
+    <!-- Profile Page -->
+
+    <string name="view_times">View</string>
+    <string name="get_heart">Heart</string>
+    <string name="match_times">Match</string>
+
+    <string name="finding_love">Finding True Love</string>
+
+    <string name="my_interest">My Interest</string>
 </resources>

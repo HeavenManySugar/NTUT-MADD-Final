@@ -71,6 +71,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import java.text.SimpleDateFormat
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.res.stringResource
 import java.util.Calendar
 import java.util.Locale
 
@@ -130,7 +131,7 @@ fun SignUpScreenContent(
             signUp(email, password, repeatPassword, showErrorSnackbar)
         } else {
             shouldValidate = false
-            showErrorSnackbar(ErrorMessage.StringError("請填寫必填欄位，並確認密碼一致"))
+            showErrorSnackbar(ErrorMessage.StringError("Please Fill All Blank And Check The Password Is Same"))
         }
     }
 
@@ -159,19 +160,21 @@ fun SignUpScreenContent(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     LabeledFieldMedium(
-                        label = "名字",
+                        label = stringResource(R.string.last_name),
                         value = first_name,
                         onValueChange = { first_name = it },
-                        placeholder = "請輸入名字"
+                        placeholder = stringResource(R.string.enter_last_name),
+                        fontSize = 14.sp
                     )
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
                     LabeledFieldMedium(
-                        label = "姓氏",
+                        label = stringResource(R.string.first_name),
                         value = last_name,
                         onValueChange = { last_name = it },
-                        placeholder = "請輸入姓氏"
+                        placeholder = stringResource(R.string.enter_first_name),
+                        fontSize = 14.sp
                     )
                 }
             }
@@ -179,27 +182,29 @@ fun SignUpScreenContent(
             Spacer(Modifier.height(8.dp))
 
             LabeledField(
-                label = "電子信箱",
+                label = stringResource(R.string.email),
                 value = email,
                 onValueChange = {
                     email = it
                 },
-                placeholder = "請輸入您的電子郵件",
+                placeholder = stringResource(R.string.enter_email),
+                fontSize = 18.sp,
                 shouldShowError = shouldValidate || email.isNotBlank(),
             )
 
             LabeledField(
-                label = "手機號碼",
+                label = stringResource(R.string.phone_number),
                 value = phone,
                 onValueChange = {
                     phone = it
                 },
-                placeholder = "請輸入您的手機號碼",
+                placeholder = stringResource(R.string.enter_phone_number),
+                fontSize = 18.sp,
                 shouldShowError = shouldValidate || phone.isNotBlank(),
             )
 
             InputFieldLabel(
-                text = "生日",
+                text = stringResource(R.string.birthday),
                 modifier = Modifier.fillMaxWidth(0.85f)
             )
 
@@ -212,12 +217,13 @@ fun SignUpScreenContent(
             Spacer(Modifier.height(16.dp))
 
             LabeledField(
-                label = "密碼",
+                label = stringResource(R.string.password),
                 value = password,
                 onValueChange = {
                     password = it
                 },
-                placeholder = "請輸入您的密碼",
+                placeholder = stringResource(R.string.enter_password),
+                fontSize = 18.sp,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showPassword = !showPassword }) {
@@ -235,12 +241,13 @@ fun SignUpScreenContent(
             }
 
             LabeledField(
-                label = "確認密碼",
+                label = stringResource(R.string.confirm_password),
                 value = repeatPassword,
                 onValueChange = {
                     repeatPassword = it
                 },
-                placeholder = "再次確認密碼",
+                placeholder = stringResource(R.string.enter_confirm_password),
+                fontSize = 18.sp,
                 visualTransformation = if (showRepeatPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = { showRepeatPassword = !showRepeatPassword }) {
@@ -264,7 +271,7 @@ fun SignUpScreenContent(
             )
 
             PressButton(
-                text = "立即註冊",
+                text = stringResource(R.string.sign_up),
                 onClick = onSignUpClick,
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
@@ -274,7 +281,7 @@ fun SignUpScreenContent(
             Spacer(Modifier.height(8.dp))
 
             DividerWithText(
-                "或使用以下方式註冊",
+                stringResource(R.string.using_other_way_to_sign_up),
                 textColor = Color(0xFF6C757D)
             )
 
@@ -306,7 +313,7 @@ fun SignUpScreenContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "已經有帳號了嗎？",
+                    text = stringResource(R.string.have_account),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal
                 )
@@ -316,7 +323,7 @@ fun SignUpScreenContent(
                     modifier = Modifier.padding(start = 4.dp)
                 ) {
                     Text(
-                        text = "立刻登入",
+                        text = stringResource(R.string.click_here_sign_in),
                         color = Color(0xFF5A5AFF),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -336,14 +343,13 @@ fun BirthdayInput(
 ) {
     val context = LocalContext.current
 
-    // 日期格式化工具（支援 API 23）
     val formatter = remember {
         SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
     }
 
     val datePickerDialog = remember {
         val cal = birthday ?: Calendar.getInstance().apply {
-            set(2000, 0, 1) // 預設生日
+            set(2025, 1, 1)
         }
 
         DatePickerDialog(
@@ -375,14 +381,14 @@ fun BirthdayInput(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = birthday?.let { formatter.format(it.time) } ?: "年/月/日",
-                fontSize = 20.sp,
+                text = birthday?.let { formatter.format(it.time) } ?: "YY/MM/DD",
+                fontSize = 18.sp,
                 color = if (birthday == null) Color(0xFFB0B0B0) else Color.Black
             )
 
             Icon(
                 imageVector = Icons.Default.DateRange,
-                contentDescription = "選擇生日",
+                contentDescription = "Choose your birthday",
                 tint = Color.Black
             )
         }
@@ -391,7 +397,7 @@ fun BirthdayInput(
 
 
 
-/* 說明隱私權  😍🥰😘 */
+/* Privacy  😍🥰😘 */
 @Composable
 fun TermsCheckbox(
     checked: Boolean,
@@ -400,19 +406,19 @@ fun TermsCheckbox(
     onPrivacyClick: () -> Unit
 ) {
     val annotatedText = buildAnnotatedString {
-        append("我已閱讀並同意")
+        append("I have read and agree")
 
         pushStringAnnotation(tag = "TERMS", annotation = "terms")
         withStyle(SpanStyle(color = Color(0xFF5A5AFF), fontWeight = FontWeight.Medium)) {
-            append(" 使用條款")
+            append(" Terms of Use")
         }
         pop()
 
-        append(" 和 ")
+        append(" and ")
 
         pushStringAnnotation(tag = "PRIVACY", annotation = "privacy")
         withStyle(SpanStyle(color = Color(0xFF5A5AFF), fontWeight = FontWeight.Medium)) {
-            append("隱私權政策")
+            append("Privacy Policy")
         }
         pop()
     }
@@ -444,12 +450,12 @@ fun TermsCheckbox(
     }
 }
 
-/* 密碼強度顯示 */
+/* Strong for password */
 
 enum class PasswordStrength(val label: String, val level: Int, val color: Color) {
-    WEAK("弱", 1, Color.Red),
-    MEDIUM("中", 2, Color(0xFFFFC107)), // Amber
-    STRONG("強", 3, Color(0xFF4CAF50))  // Green
+    WEAK("Weak", 1, Color.Red),
+    MEDIUM("Medium", 2, Color(0xFFFFC107)), // Amber
+    STRONG("Strong", 3, Color(0xFF4CAF50))  // Green
 }
 
 fun getPasswordStrength(password: String): PasswordStrength {
@@ -498,7 +504,7 @@ fun PasswordStrengthIndicator(password: String) {
 
         // 強度文字
         Text(
-            text = "密碼強度：${strength.label}",
+            text = "Password Strength：${strength.label}",
             color = Color.Black,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 4.dp),
@@ -514,7 +520,7 @@ fun SignUpScreenPreview() {
     MakeItSoTheme(darkTheme = true) {
         Box(modifier = Modifier
             .fillMaxWidth()
-            .height(1200.dp) // ✅ 預估高度夠容納整個註冊表單
+            .height(1200.dp)
         ) {
             SignUpScreenContent(
                 openSignInScreen = {},
