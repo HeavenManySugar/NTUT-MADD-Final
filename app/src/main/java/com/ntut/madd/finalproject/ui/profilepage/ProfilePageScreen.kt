@@ -11,7 +11,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.TrackChanges
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -30,6 +33,7 @@ object ProfilePageRoute
 @Composable
 fun ProfilePageScreen(
     openHomeScreen: () -> Unit,
+    openSettingsScreen: () -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "profile",
     onNavigate: (String) -> Unit = {},
@@ -41,6 +45,7 @@ fun ProfilePageScreen(
         openHomeScreen()
     } else {
         ProfilePageScreenContent(
+            openSettingsScreen = openSettingsScreen,
             currentRoute = currentRoute,
             onNavigate = onNavigate
         )
@@ -49,6 +54,7 @@ fun ProfilePageScreen(
 
 @Composable
 fun ProfilePageScreenContent(
+    openSettingsScreen: () -> Unit,
     currentRoute: String = "profile",
     onNavigate: (String) -> Unit = {}
 ) {
@@ -65,10 +71,26 @@ fun ProfilePageScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             GradientBackgroundBox {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                // Settings button in top right
+                IconButton(
+                    onClick = openSettingsScreen,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White
+                    )
+                }
+                
+                // Profile content centered
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
                     InitialAvatar(initial = "A")
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -137,6 +159,7 @@ fun ProfilePageScreenPreview() {
         ) {
             ProfilePageScreenContent(
                 currentRoute = "profile",
+                openSettingsScreen = {},
                 onNavigate = {}
             )
         }

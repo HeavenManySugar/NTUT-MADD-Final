@@ -48,7 +48,6 @@ private fun MainPageContent(
     when (currentRoute) {
         "discover" -> DiscoverPageScreen(
             openHomeScreen = openHomeScreen,
-            openSettingsScreen = openSettingsScreen,
             showErrorSnackbar = showErrorSnackbar,
             currentRoute = currentRoute,
             onNavigate = onNavigate
@@ -67,6 +66,7 @@ private fun MainPageContent(
         )
         "profile" -> ProfilePageScreen(
             openHomeScreen = openHomeScreen,
+            openSettingsScreen = openSettingsScreen,
             showErrorSnackbar = showErrorSnackbar,
             currentRoute = currentRoute,
             onNavigate = onNavigate

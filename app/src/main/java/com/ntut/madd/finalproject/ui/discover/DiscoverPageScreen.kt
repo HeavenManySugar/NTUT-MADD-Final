@@ -37,7 +37,6 @@ object DiscoverPageRoute
 @Composable
 fun DiscoverPageScreen(
     openHomeScreen: () -> Unit,
-    openSettingsScreen: () -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "discover",
     onNavigate: (String) -> Unit = {},
@@ -56,7 +55,6 @@ fun DiscoverPageScreen(
             onReject = viewModel::onRejectProfile,
             onApprove = viewModel::onApproveProfile,
             onRetry = viewModel::retryLoading,
-            openSettingsScreen = openSettingsScreen,
             showErrorSnackbar = showErrorSnackbar
         )
     }
@@ -113,18 +111,6 @@ fun DiscoverPageScreenContent(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black
-                        )
-                    }
-                    
-                    // Settings button in top right
-                    IconButton(
-                        onClick = openSettingsScreen,
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = Color.Black
                         )
                     }
                 }

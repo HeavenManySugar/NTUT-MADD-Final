@@ -75,7 +75,7 @@ fun MessagePageScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             // Page Information
             GradientBackgroundBox() {
