@@ -39,6 +39,8 @@ import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
 import com.ntut.madd.finalproject.ui.signup.SignUpScreen
+import com.ntut.madd.finalproject.ui.splash.SplashRoute
+import com.ntut.madd.finalproject.ui.splash.SplashScreen
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,9 +69,29 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = SignInRoute,
+                            startDestination = SplashRoute,
                             modifier = Modifier.padding(innerPadding)
                         ) {
+                            composable<SplashRoute> { SplashScreen(
+                                onNavigateToHome = {
+                                    navController.navigate(HomeRoute) {
+                                        popUpTo<SplashRoute> { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                onNavigateToSignIn = {
+                                    navController.navigate(SignInRoute) {
+                                        popUpTo<SplashRoute> { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                onNavigateToSetup = {
+                                    navController.navigate(SetupRoute) {
+                                        popUpTo<SplashRoute> { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                }
+                            ) }
                             composable<HomeRoute> { HomeScreen(
                                 openSettingsScreen = {
                                     navController.navigate(SettingsRoute) { launchSingleTop = true }
