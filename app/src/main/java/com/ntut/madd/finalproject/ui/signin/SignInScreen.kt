@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,20 +47,34 @@ object SignInRoute
 fun SignInScreen(
     openHomeScreen: () -> Unit,
     openSignUpScreen: () -> Unit,
+    openSetupScreen: () -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
+    val shouldNavigateToSetup by viewModel.shouldNavigateToSetup.collectAsStateWithLifecycle()
 
-    if (shouldRestartApp) {
-        openHomeScreen()
-    } else {
-        SignInScreenContent(
-            openSignUpScreen = openSignUpScreen,
-            signIn = viewModel::signIn,
-            showErrorSnackbar = showErrorSnackbar
-        )
+    LaunchedEffect(shouldRestartApp) {
+        if (shouldRestartApp) {
+            viewModel.onNavigationHandled()
+            openHomeScreen()
+        }
     }
+    
+    LaunchedEffect(shouldNavigateToSetup) {
+        if (shouldNavigateToSetup) {
+            viewModel.onNavigationHandled()
+            openSetupScreen()
+        }
+    }
+
+    SignInScreenContent(
+        openSignUpScreen = openSignUpScreen,
+        signIn = viewModel::signIn,
+        showErrorSnackbar = showErrorSnackbar,
+        onAnonymousSignIn = { viewModel.anonymousSignIn(showErrorSnackbar) },
+        onGoogleSignIn = { viewModel.googleSignIn(showErrorSnackbar) }
+    )
 }
 
 @Composable
@@ -68,6 +83,8 @@ private fun SignInScreenContent(
     openSignUpScreen: () -> Unit,
     signIn: (String, String, (ErrorMessage) -> Unit) -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
+    onAnonymousSignIn: () -> Unit,
+    onGoogleSignIn: () -> Unit,
     isPreview: Boolean = false
 ) {
     var email by remember { mutableStateOf(if (isPreview) "test@example.com" else "") }
@@ -76,7 +93,6 @@ private fun SignInScreenContent(
     // 事件 lambda
     val onEmailChange: (String) -> Unit = { email = it }
     val onPasswordChange: (String) -> Unit = { password = it }
-    val onGoogleSignInClick: () -> Unit = { /* TODO: Google login */ }
     val onForgotPasswordClick: () -> Unit = { /* TODO: Forgot password */ }
     val onSignUpClick: () -> Unit = openSignUpScreen
     var showPassword by remember { mutableStateOf(false) }
@@ -176,7 +192,7 @@ private fun SignInScreenContent(
 
                 // Google sign-in
                 OutlinedButton(
-                    onClick = onGoogleSignInClick,
+                    onClick = onGoogleSignIn,
                     modifier = Modifier
                         .wrapContentSize()
                         .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp), // ✅ 強制取消最小寬高限制
@@ -190,6 +206,24 @@ private fun SignInScreenContent(
                             .height(40.dp)              // ✅ 圖片給高度
                             .wrapContentWidth(),        // ✅ 宽度按比例自動決定
                         contentScale = ContentScale.Fit
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                // Anonymous sign-in
+                OutlinedButton(
+                    onClick = onAnonymousSignIn,
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.anonymous_sign_in),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF6C757D)
                     )
                 }
 
@@ -220,18 +254,5 @@ private fun SignInScreenContent(
                 }
             }
         }
-    }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun SignInScreenPreview() {
-    MakeItSoTheme {
-        SignInScreenContent(
-            openSignUpScreen = {},
-            signIn = { _, _, _ -> },
-            showErrorSnackbar = {},
-            isPreview = false
-        )
     }
 }

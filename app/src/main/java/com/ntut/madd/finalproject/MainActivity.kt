@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = SetupRoute,
+                            startDestination = SignInRoute,
                             modifier = Modifier.padding(innerPadding)
                         ) {
                             composable<HomeRoute> { HomeScreen(
@@ -89,6 +89,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 openSignUpScreen = {
                                     navController.navigate(SignUpRoute) { launchSingleTop = true }
+                                },
+                                openSetupScreen = {
+                                    navController.navigate(SetupRoute) { launchSingleTop = true }
                                 },
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
