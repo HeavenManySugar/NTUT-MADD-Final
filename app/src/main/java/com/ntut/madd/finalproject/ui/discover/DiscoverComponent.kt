@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.flowlayout.FlowRow
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
@@ -81,8 +80,8 @@ fun InterestSection(interests: List<Pair<String, String>>) {
         Text("Interests & Hobbies", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
         Spacer(Modifier.height(12.dp))
         FlowRow(
-            mainAxisSpacing = 12.dp,
-            crossAxisSpacing = 12.dp
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             interests.forEach { (emoji, label) ->
                 InterestItem(emoji, label)
@@ -113,8 +112,8 @@ fun PersonalitySection(traits: List<String>) {
         Text("Personality", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
         Spacer(Modifier.height(12.dp))
         FlowRow(
-            mainAxisSpacing = 12.dp,
-            crossAxisSpacing = 12.dp
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             traits.forEach { trait ->
                 TraitPill(trait)

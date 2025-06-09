@@ -77,6 +77,39 @@ class UserProfileRemoteDataSource @Inject constructor(
             .await()
     }
 
+    suspend fun getDiscoverableUsers(currentUserId: String, limit: Int = 10): List<User> {
+        return try {
+            val query = usersCollection
+                .whereNotEqualTo("ownerId", currentUserId) // Exclude current user
+                .whereEqualTo("profile.isProfileComplete", true) // Only complete profiles
+                .limit(limit.toLong())
+            
+            val documents = query.get().await()
+            documents.mapNotNull { document ->
+                document.toObject(User::class.java)
+            }
+        } catch (e: Exception) {
+            println("UserProfileRemoteDataSource: Error fetching discoverable users: ${e.message}")
+            emptyList()
+        }
+    }
+
+    suspend fun getAllUsers(limit: Int = 50): List<User> {
+        return try {
+            val query = usersCollection
+                .whereEqualTo("profile.isProfileComplete", true)
+                .limit(limit.toLong())
+            
+            val documents = query.get().await()
+            documents.mapNotNull { document ->
+                document.toObject(User::class.java)
+            }
+        } catch (e: Exception) {
+            println("UserProfileRemoteDataSource: Error fetching all users: ${e.message}")
+            emptyList()
+        }
+    }
+
     companion object {
         private const val USERS_COLLECTION = "users"
     }

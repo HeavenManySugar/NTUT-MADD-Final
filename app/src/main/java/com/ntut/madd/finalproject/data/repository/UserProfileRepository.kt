@@ -68,4 +68,27 @@ class UserProfileRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun getDiscoverableUsers(limit: Int = 10): Result<List<User>> {
+        return try {
+            val currentUser = authRepository.currentUser
+            if (currentUser == null) {
+                Result.failure(Exception("User not authenticated"))
+            } else {
+                val users = userProfileRemoteDataSource.getDiscoverableUsers(currentUser.uid, limit)
+                Result.success(users)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getAllUsers(limit: Int = 50): Result<List<User>> {
+        return try {
+            val users = userProfileRemoteDataSource.getAllUsers(limit)
+            Result.success(users)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
