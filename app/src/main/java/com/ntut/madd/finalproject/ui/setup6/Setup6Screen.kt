@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +41,7 @@ fun Setup6Screen(
     val coroutineScope = rememberCoroutineScope()
     var showCelebration by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     // Handle setup completion
     LaunchedEffect(setupCompleted) {
@@ -61,7 +63,7 @@ fun Setup6Screen(
             coroutineScope.launch {
                 val result = viewModel.saveProfileAndComplete()
                 if (result.isFailure) {
-                    errorMessage = result.exceptionOrNull()?.message ?: "保存失敗，請重試"
+                    errorMessage = result.exceptionOrNull()?.message ?: context.getString(R.string.setup_save_failed)
                 }
             }
         },
@@ -108,18 +110,18 @@ fun Setup6ScreenContent(
         onBackClick = onBack,
         headerIcon = "📝",
         headerTitle = stringResource(R.string.setup6_title),
-        headerSubtitle = "完善您的個人檔案",
+        headerSubtitle = stringResource(R.string.setup6_subtitle),
         isFormValid = isFormValid,
         onNextClick = onNext,
         nextButtonText = R.string.setup6_complete_button,
         isLoading = isSubmitting,
-        loadingText = "正在保存您的設定..."
+        loadingText = stringResource(R.string.setup6_saving_settings)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // 關於我輸入區域
+            // About Me input section
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -134,9 +136,9 @@ fun Setup6ScreenContent(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     
-                    // 建議字數提示
+                    // Character count suggestion
                     Text(
-                        text = "建議 50-500 字",
+                        text = stringResource(R.string.setup6_char_limit_suggestion_about),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -152,7 +154,7 @@ fun Setup6ScreenContent(
                 ) {
                     OutlinedTextField(
                         value = aboutMe,
-                        onValueChange = { if (it.length <= 500) onAboutMeChange(it) },
+                        onValueChange = onAboutMeChange, // Remove character limit restriction
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(120.dp),
@@ -169,9 +171,15 @@ fun Setup6ScreenContent(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedBorderColor = if (aboutMe.length < 50 && aboutMe.isNotEmpty()) 
-                                Color(0xFFFF9800) else Color(0xFFEAECEF),
+                            unfocusedBorderColor = when {
+                                aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
+                                aboutMe.length > 450 -> Color(0xFFFF9800) // Orange when approaching limit
+                                aboutMe.length < 50 && aboutMe.isNotEmpty() -> Color(0xFFFF9800)
+                                else -> Color(0xFFEAECEF)
+                            },
                             focusedBorderColor = when {
+                                aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
+                                aboutMe.length > 450 -> Color(0xFFFF9800) // Orange when approaching limit
                                 aboutMe.length >= 50 -> Color(0xFF4CAF50)
                                 aboutMe.isNotEmpty() -> Color(0xFFFF9800)
                                 else -> Color(0xFF6B46C1).copy(alpha = 0.5f)
@@ -181,7 +189,7 @@ fun Setup6ScreenContent(
                     )
                 }
                 
-                // 字數統計和建議
+                // Character count and suggestions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -189,14 +197,16 @@ fun Setup6ScreenContent(
                 ) {
                     Text(
                         text = when {
-                            aboutMe.isEmpty() -> "開始介紹您自己吧！"
-                            aboutMe.length < 50 -> "可以再多寫一些哦（至少50字）"
-                            aboutMe.length >= 50 -> "太棒了！內容很充實"
+                            aboutMe.isEmpty() -> stringResource(R.string.setup6_start_intro)
+                            aboutMe.length > 500 -> stringResource(R.string.setup6_over_limit)
+                            aboutMe.length < 50 -> stringResource(R.string.setup6_write_more)
+                            aboutMe.length >= 50 -> stringResource(R.string.setup6_content_great)
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
                             aboutMe.isEmpty() -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
                             aboutMe.length < 50 -> Color(0xFFFF9800)
                             else -> Color(0xFF4CAF50)
                         }
@@ -206,7 +216,8 @@ fun Setup6ScreenContent(
                         text = "${aboutMe.length}/500",
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
-                            aboutMe.length > 450 -> Color(0xFFE53E3E)
+                            aboutMe.length > 500 -> Color(0xFFE53E3E) // Red when over limit
+                            aboutMe.length > 450 -> Color(0xFFFF9800) // Orange when approaching limit
                             aboutMe.length >= 50 -> Color(0xFF4CAF50)
                             else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         }
@@ -214,7 +225,7 @@ fun Setup6ScreenContent(
                 }
             }
 
-            // 我在尋找輸入區域
+            // Looking For input section
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -229,9 +240,9 @@ fun Setup6ScreenContent(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     
-                    // 建議字數提示
+                    // Character count suggestion
                     Text(
-                        text = "建議 20-300 字",
+                        text = stringResource(R.string.setup6_char_limit_suggestion_looking),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -247,7 +258,7 @@ fun Setup6ScreenContent(
                 ) {
                     OutlinedTextField(
                         value = lookingFor,
-                        onValueChange = { if (it.length <= 300) onLookingForChange(it) },
+                        onValueChange = onLookingForChange, // Remove character limit restriction
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp),
@@ -264,9 +275,15 @@ fun Setup6ScreenContent(
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedBorderColor = if (lookingFor.length < 20 && lookingFor.isNotEmpty()) 
-                                Color(0xFFFF9800) else Color(0xFFEAECEF),
+                            unfocusedBorderColor = when {
+                                lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
+                                lookingFor.length > 270 -> Color(0xFFFF9800) // Orange when approaching limit
+                                lookingFor.length < 20 && lookingFor.isNotEmpty() -> Color(0xFFFF9800)
+                                else -> Color(0xFFEAECEF)
+                            },
                             focusedBorderColor = when {
+                                lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
+                                lookingFor.length > 270 -> Color(0xFFFF9800) // Orange when approaching limit
                                 lookingFor.length >= 20 -> Color(0xFF4CAF50)
                                 lookingFor.isNotEmpty() -> Color(0xFFFF9800)
                                 else -> Color(0xFF6B46C1).copy(alpha = 0.5f)
@@ -276,7 +293,7 @@ fun Setup6ScreenContent(
                     )
                 }
                 
-                // 字數統計和建議
+                // Character count and suggestions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -284,14 +301,16 @@ fun Setup6ScreenContent(
                 ) {
                     Text(
                         text = when {
-                            lookingFor.isEmpty() -> "描述您希望認識的人"
-                            lookingFor.length < 20 -> "可以再詳細一些（至少20字）"
-                            lookingFor.length >= 20 -> "描述得很清楚！"
+                            lookingFor.isEmpty() -> stringResource(R.string.setup6_describe_looking)
+                            lookingFor.length > 300 -> stringResource(R.string.setup6_over_limit)
+                            lookingFor.length < 20 -> stringResource(R.string.setup6_more_details)
+                            lookingFor.length >= 20 -> stringResource(R.string.setup6_description_clear)
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
                             lookingFor.isEmpty() -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
                             lookingFor.length < 20 -> Color(0xFFFF9800)
                             else -> Color(0xFF4CAF50)
                         }
@@ -301,7 +320,8 @@ fun Setup6ScreenContent(
                         text = "${lookingFor.length}/300",
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
-                            lookingFor.length > 270 -> Color(0xFFE53E3E)
+                            lookingFor.length > 300 -> Color(0xFFE53E3E) // Red when over limit
+                            lookingFor.length > 270 -> Color(0xFFFF9800) // Orange when approaching limit
                             lookingFor.length >= 20 -> Color(0xFF4CAF50)
                             else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         }
@@ -309,7 +329,7 @@ fun Setup6ScreenContent(
                 }
             }
 
-            // 提示文字
+            // Hint text
             Text(
                 text = stringResource(R.string.setup6_hint),
                 style = MaterialTheme.typography.bodyMedium,
@@ -325,8 +345,8 @@ fun Setup6ScreenContent(
 fun Setup6ScreenPreview() {
     MakeItSoTheme {
         Setup6ScreenContent(
-            aboutMe = "我是一個熱愛學習新技術的軟體工程師，喜歡閱讀、旅行和攝影。平時喜歡參與開源專案，希望能透過技術讓世界變得更美好。",
-            lookingFor = "尋找志同道合的夥伴，一起討論技術、分享經驗。",
+            aboutMe = "I'm a software engineer who loves learning new technologies, enjoys reading, traveling, and photography. I like participating in open source projects and hope to make the world better through technology.",
+            lookingFor = "Looking for like-minded partners to discuss technology and share experiences together.",
             isFormValid = true,
             onAboutMeChange = { },
             onLookingForChange = { },

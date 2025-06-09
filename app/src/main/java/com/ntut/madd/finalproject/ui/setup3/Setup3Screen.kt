@@ -91,7 +91,7 @@ fun Setup3ScreenContent(
         onBackClick = onBackClick,
         onNextClick = onNextClick
     ) {
-        // 學歷選擇
+        // Education level selection
         SetupFieldLabel(
             text = stringResource(R.string.degree_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -104,7 +104,7 @@ fun Setup3ScreenContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 學校輸入
+        // School input
         SetupFieldLabel(
             text = stringResource(R.string.school_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -114,7 +114,7 @@ fun Setup3ScreenContent(
             value = school,
             onValueChange = onSchoolChange,
             placeholder = R.string.school_placeholder,
-            errorMessage = if (school.isNotBlank() && school.length < 2) "學校名稱至少需要2個字符" else null,
+            errorMessage = if (school.isNotBlank() && school.length < 2) stringResource(R.string.school_name_validation) else null,
             hasError = school.isNotBlank() && school.length < 2,
             showSuccess = school.length >= 2,
             maxLength = 100
@@ -122,7 +122,7 @@ fun Setup3ScreenContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 主修輸入
+        // Major input
         SetupFieldLabel(
             text = stringResource(R.string.major_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -132,7 +132,7 @@ fun Setup3ScreenContent(
             value = major,
             onValueChange = onMajorChange,
             placeholder = R.string.major_placeholder,
-            errorMessage = if (major.isNotBlank() && major.length < 2) "科系名稱至少需要2個字符" else null,
+            errorMessage = if (major.isNotBlank() && major.length < 2) stringResource(R.string.major_name_validation) else null,
             hasError = major.isNotBlank() && major.length < 2,
             showSuccess = major.length >= 2,
             maxLength = 100
@@ -198,7 +198,7 @@ fun DegreeOptionButtons(
 fun Setup3ScreenPreview() {
     MakeItSoTheme(darkTheme = false) {
         Setup3ScreenContent(
-            selectedDegree = "大學",
+            selectedDegree = stringResource(R.string.degree_bachelor),
             school = "",
             major = "",
             isFormValid = false,
@@ -222,7 +222,7 @@ fun DegreeOptionButtonsPreview() {
                 .padding(16.dp)
         ) {
             Text(
-                text = "最高學歷",
+                text = stringResource(R.string.degree_label),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Black,
@@ -230,7 +230,7 @@ fun DegreeOptionButtonsPreview() {
             )
 
             DegreeOptionButtons(
-                selectedDegree = "大學",
+                selectedDegree = stringResource(R.string.degree_bachelor),
                 onDegreeSelected = {}
             )
         }

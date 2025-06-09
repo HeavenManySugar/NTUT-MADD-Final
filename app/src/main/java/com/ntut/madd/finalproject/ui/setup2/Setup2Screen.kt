@@ -73,7 +73,7 @@ fun Setup2ScreenContent(
         onBackClick = onBackClick,
         onNextClick = onNextClick
     ) {
-        // 職位輸入
+        // Position input
         SetupFieldLabel(
             text = stringResource(R.string.position_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -83,7 +83,7 @@ fun Setup2ScreenContent(
             value = position,
             onValueChange = onPositionChanged,
             placeholder = R.string.position_placeholder,
-            errorMessage = if (position.isNotBlank() && position.length < 2) "職位名稱至少需要2個字符" else null,
+            errorMessage = if (position.isNotBlank() && position.length < 2) stringResource(R.string.position_validation) else null,
             hasError = position.isNotBlank() && position.length < 2,
             showSuccess = position.length >= 2,
             maxLength = 50
@@ -91,7 +91,7 @@ fun Setup2ScreenContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 公司輸入
+        // Company input
         SetupFieldLabel(
             text = stringResource(R.string.company_label),
             modifier = Modifier.padding(bottom = 8.dp)
@@ -101,7 +101,7 @@ fun Setup2ScreenContent(
             value = company,
             onValueChange = onCompanyChanged,
             placeholder = R.string.company_placeholder,
-            errorMessage = if (company.isNotBlank() && company.length < 2) "公司名稱至少需要2個字符" else null,
+            errorMessage = if (company.isNotBlank() && company.length < 2) stringResource(R.string.company_validation) else null,
             hasError = company.isNotBlank() && company.length < 2,
             showSuccess = company.length >= 2,
             maxLength = 100

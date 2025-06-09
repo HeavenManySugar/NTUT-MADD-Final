@@ -22,7 +22,7 @@ class Setup5ViewModel @Inject constructor(
     val selectedTraits: StateFlow<List<String>> = _selectedTraits.asStateFlow()
 
     override val isFormValid: StateFlow<Boolean> = selectedTraits
-        .map { traits -> traits.size >= 3 } // 至少要選擇3個特質
+        .map { traits -> traits.size >= 3 } // Must select at least 3 traits
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -38,7 +38,7 @@ class Setup5ViewModel @Inject constructor(
             val currentTraits = _selectedTraits.value.toMutableList()
             if (currentTraits.contains(trait)) {
                 currentTraits.remove(trait)
-            } else if (currentTraits.size < 5) { // 最多選擇5個
+            } else if (currentTraits.size < 5) { // Maximum 5 selections
                 currentTraits.add(trait)
             }
             _selectedTraits.value = currentTraits

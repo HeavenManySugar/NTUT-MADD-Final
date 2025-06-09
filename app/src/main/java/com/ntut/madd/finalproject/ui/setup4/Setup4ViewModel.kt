@@ -38,7 +38,7 @@ class Setup4ViewModel @Inject constructor(
             val currentInterests = _selectedInterests.value.toMutableList()
             if (currentInterests.contains(interest)) {
                 currentInterests.remove(interest)
-            } else if (currentInterests.size < 5) { // 最多選擇5個
+            } else if (currentInterests.size < 5) { // Maximum 5 selections
                 currentInterests.add(interest)
             }
             _selectedInterests.value = currentInterests

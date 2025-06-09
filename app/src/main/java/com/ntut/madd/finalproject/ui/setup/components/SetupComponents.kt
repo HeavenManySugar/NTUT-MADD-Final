@@ -74,7 +74,7 @@ fun SetupHeader(
                 IconButton(onClick = onBackClick) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "返回",
+                        contentDescription = stringResource(R.string.back_button),
                         tint = Color.White
                     )
                 }
@@ -103,7 +103,7 @@ fun SetupHeader(
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        // 空的占位符
+                        // Empty placeholder
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                 }
@@ -149,7 +149,7 @@ fun SetupProgressBar(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = "步驟 $currentStep/$totalSteps",
+                text = stringResource(R.string.setup_progress_step, currentStep, totalSteps),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.Gray,
@@ -232,7 +232,7 @@ fun SetupInputField(
                         .onFocusChanged { focusState ->
                             isFocused = focusState.isFocused
                         }
-                        .defaultMinSize(minHeight = 48.dp), // 控制最小高度
+                        .defaultMinSize(minHeight = 48.dp), // Control minimum height
                     singleLine = singleLine,
                     minLines = minLines,
                     maxLines = maxLines,
@@ -245,7 +245,7 @@ fun SetupInputField(
                     ),
                     shape = RoundedCornerShape(8.dp)
                 )
-                // 成功 icon
+                // Success icon
                 androidx.compose.animation.AnimatedVisibility(
                     visible = showSuccess,
                     enter = scaleIn() + fadeIn(),
@@ -256,7 +256,7 @@ fun SetupInputField(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = "Valid input",
+                        contentDescription = stringResource(R.string.valid_input_icon),
                         tint = Color(0xFF4CAF50),
                         modifier = Modifier.size(20.dp)
                     )
@@ -264,7 +264,7 @@ fun SetupInputField(
             }
         }
 
-        // 錯誤提示與字數顯示
+        // Error message and character count display
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -308,8 +308,8 @@ fun SetupDivider() {
 }
 
 /**
- * 通用的Setup頁面容器組件
- * 統一視覺風格並提供一致的布局結構
+ * Generic Setup page container component
+ * Provides unified visual style and consistent layout structure
  */
 @Composable
 fun SetupPageContainer(
@@ -324,7 +324,7 @@ fun SetupPageContainer(
     showBackButton: Boolean = true,
     nextButtonText: Int = R.string.next_step,
     isLoading: Boolean = false,
-    loadingText: String = "處理中...",
+    loadingText: String = stringResource(R.string.setup_default_processing),
     content: @Composable () -> Unit
 ) {
     Scaffold { innerPadding ->
@@ -334,7 +334,7 @@ fun SetupPageContainer(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // 統一的頭部區域
+            // Unified header area
             SetupHeader(
                 onBackClick = onBackClick,
                 icon = headerIcon,
@@ -342,23 +342,23 @@ fun SetupPageContainer(
                 subtitle = headerSubtitle
             )
 
-            // 統一的進度條
+            // Unified progress bar
             SetupProgressBar(
                 currentStep = currentStep,
                 totalSteps = totalSteps
             )
 
-            // 分隔線
+            // Divider line
             SetupDivider()
 
-            // 主要內容區域 - 統一樣式
+            // Main content area - unified style
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White)
                     .padding(horizontal = 24.dp, vertical = 32.dp)
             ) {
-                Spacer(modifier = Modifier.height(4.dp)) // 縮小從8dp到4dp
+                Spacer(modifier = Modifier.height(4.dp)) // Reduced from 8dp to 4dp
 
                 // Animated content entrance
                 val contentAlpha by animateFloatAsState(
@@ -369,12 +369,12 @@ fun SetupPageContainer(
 
                 Column(
                     modifier = Modifier.alpha(contentAlpha),
-                    verticalArrangement = Arrangement.spacedBy(12.dp) // 縮小從16dp到12dp
+                    verticalArrangement = Arrangement.spacedBy(12.dp) // Reduced from 16dp to 12dp
                 ) {
                     content()
                 }
 
-                Spacer(modifier = Modifier.height(16.dp)) // 縮小從24dp到16dp
+                Spacer(modifier = Modifier.height(16.dp)) // Reduced from 24dp to 16dp
             }
 
             // Bottom navigation with enhanced styling but reduced size
@@ -389,8 +389,8 @@ fun SetupPageContainer(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 16.dp), // 縮小從24dp到20dp horizontal, 16dp vertical
-                    horizontalArrangement = Arrangement.spacedBy(12.dp), // 縮小從16dp到12dp
+                        .padding(horizontal = 20.dp, vertical = 16.dp), // Reduced from 24dp to 20dp horizontal, 16dp vertical
+                    horizontalArrangement = Arrangement.spacedBy(12.dp), // Reduced from 16dp to 12dp
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (showBackButton) {
@@ -426,7 +426,7 @@ fun SetupPageContainer(
 }
 
 /**
- * 統一的導航按鈕組件
+ * Unified navigation button component
  */
 @Composable
 fun SetupNavigationButtons(
@@ -458,7 +458,7 @@ fun SetupNavigationButtons(
 }
 
 /**
- * 統一的欄位標題組件
+ * Unified field label component
  */
 @Composable
 fun SetupFieldLabel(
@@ -475,7 +475,7 @@ fun SetupFieldLabel(
 }
 
 /**
- * 統一的內容卡片組件
+ * Unified content card component
  */
 @Composable
 fun SetupContentCard(
@@ -558,7 +558,7 @@ fun CompletionCelebration(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "設定完成！",
+                        text = stringResource(R.string.setup_completion_celebration_title),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1B5E20),
@@ -568,7 +568,7 @@ fun CompletionCelebration(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "恭喜您已完成所有設定步驟！\n現在可以開始使用應用程式了。",
+                        text = stringResource(R.string.setup_completion_celebration_message),
                         fontSize = 16.sp,
                         color = Color.Gray,
                         textAlign = TextAlign.Center,
@@ -662,7 +662,7 @@ fun LoadingStateButton(
     onClick: () -> Unit,
     isLoading: Boolean,
     enabled: Boolean = true,
-    loadingText: String = "處理中...",
+    loadingText: String = stringResource(R.string.setup_default_processing),
     modifier: Modifier = Modifier
 ) {
     OutlinedButton(
