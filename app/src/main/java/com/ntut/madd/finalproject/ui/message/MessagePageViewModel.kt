@@ -30,6 +30,7 @@ class MessagePageViewModel @Inject constructor(
     val uiState: StateFlow<MessageUiState> = _uiState.asStateFlow()
 
     init {
+        println("MessagePageViewModel: Initializing...")
         loadConversations()
     }
 
@@ -37,20 +38,37 @@ class MessagePageViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             
-            chatRepository.getUserConversationsWithUserInfo().fold(
-                onSuccess = { conversationsWithUsers ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        conversationsWithUsers = conversationsWithUsers
-                    )
-                },
-                onFailure = { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = exception.message
-                    )
-                }
-            )
+            println("MessagePageViewModel: Starting to load conversations...")
+            
+            try {
+                chatRepository.getUserConversationsWithUserInfo().fold(
+                    onSuccess = { conversationsWithUsers ->
+                        println("MessagePageViewModel: Successfully loaded ${conversationsWithUsers.size} conversations")
+                        conversationsWithUsers.forEach { conversation ->
+                            println("MessagePageViewModel: Conversation ${conversation.conversation.id} with user ${conversation.otherUser?.displayName}")
+                        }
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            conversationsWithUsers = conversationsWithUsers
+                        )
+                    },
+                    onFailure = { exception ->
+                        println("MessagePageViewModel: Failed to load conversations: ${exception.message}")
+                        exception.printStackTrace()
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = exception.message ?: "Unknown error occurred"
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                println("MessagePageViewModel: Exception caught in loadConversations: ${e.message}")
+                e.printStackTrace()
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Failed to load conversations: ${e.message}"
+                )
+            }
         }
     }
 

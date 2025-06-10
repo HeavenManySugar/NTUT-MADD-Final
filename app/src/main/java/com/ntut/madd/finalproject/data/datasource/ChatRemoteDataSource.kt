@@ -21,15 +21,19 @@ class ChatRemoteDataSource @Inject constructor(
      * Create a new conversation between two users
      */
     suspend fun createConversation(user1Id: String, user2Id: String): String {
+        println("ChatRemoteDataSource: Creating conversation between $user1Id and $user2Id")
         val conversation = Conversation(
             participants = listOf(user1Id, user2Id).sorted(), // Sort for consistency
             createdAt = System.currentTimeMillis(),
             lastMessageTimestamp = System.currentTimeMillis(),
             lastMessage = "You matched! Start chatting now.",
-            lastMessageSenderId = "system"
+            lastMessageSenderId = "system",
+            isActive = true
         )
         
+        println("ChatRemoteDataSource: Conversation object: $conversation")
         val documentRef = conversationsCollection.add(conversation).await()
+        println("ChatRemoteDataSource: Created conversation with ID: ${documentRef.id}")
         
         // TODO: Add initial system message when permissions are fixed
         // Currently commented out due to Firestore permissions issue
@@ -72,7 +76,7 @@ class ChatRemoteDataSource @Inject constructor(
         val query = matchesCollection
             .whereEqualTo("user1Id", sortedIds[0])
             .whereEqualTo("user2Id", sortedIds[1])
-            .whereEqualTo("isActive", true)
+            .whereEqualTo("active", true)
         
         val documents = query.get().await()
         return !documents.isEmpty
@@ -86,7 +90,7 @@ class ChatRemoteDataSource @Inject constructor(
         val query = matchesCollection
             .whereEqualTo("user1Id", sortedIds[0])
             .whereEqualTo("user2Id", sortedIds[1])
-            .whereEqualTo("isActive", true)
+            .whereEqualTo("active", true)
         
         val documents = query.get().await()
         return if (documents.isEmpty) {
@@ -102,11 +106,11 @@ class ChatRemoteDataSource @Inject constructor(
     suspend fun getUserMatches(userId: String): List<Match> {
         val query1 = matchesCollection
             .whereEqualTo("user1Id", userId)
-            .whereEqualTo("isActive", true)
+            .whereEqualTo("active", true)
         
         val query2 = matchesCollection
             .whereEqualTo("user2Id", userId)
-            .whereEqualTo("isActive", true)
+            .whereEqualTo("active", true)
         
         val results1 = query1.get().await()
         val results2 = query2.get().await()
@@ -126,14 +130,52 @@ class ChatRemoteDataSource @Inject constructor(
      * Get conversations for a user
      */
     suspend fun getUserConversations(userId: String): List<Conversation> {
-        val query = conversationsCollection
-            .whereArrayContains("participants", userId)
-            .whereEqualTo("isActive", true)
-            .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
-        
-        val documents = query.get().await()
-        return documents.mapNotNull { doc ->
-            doc.toObject(Conversation::class.java)
+        try {
+            println("ChatRemoteDataSource: Getting conversations for user $userId")
+            
+            // First try without active filter to see if conversations exist at all
+            val queryWithoutActive = conversationsCollection
+                .whereArrayContains("participants", userId)
+                .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
+            
+            val documentsWithoutActive = queryWithoutActive.get().await()
+            println("ChatRemoteDataSource: Found ${documentsWithoutActive.size()} total conversation documents (ignoring active)")
+            
+            // Now try with active filter
+            val query = conversationsCollection
+                .whereArrayContains("participants", userId)
+                .whereEqualTo("active", true)
+                .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
+            
+            val documents = query.get().await()
+            println("ChatRemoteDataSource: Found ${documents.size()} conversation documents with active=true")
+            
+            // Log details of all conversations for debugging
+            documentsWithoutActive.forEachIndexed { index, doc ->
+                val data = doc.data
+                println("ChatRemoteDataSource: Document $index: ${doc.id}")
+                println("ChatRemoteDataSource: participants: ${data["participants"]}")
+                println("ChatRemoteDataSource: active: ${data["active"]}")
+                println("ChatRemoteDataSource: lastMessage: ${data["lastMessage"]}")
+            }
+            
+            val conversations = documents.mapNotNull { doc ->
+                try {
+                    val conversation = doc.toObject(Conversation::class.java)
+                    println("ChatRemoteDataSource: Parsed conversation ${conversation.id} with participants ${conversation.participants}")
+                    conversation
+                } catch (e: Exception) {
+                    println("ChatRemoteDataSource: Failed to parse conversation ${doc.id}: ${e.message}")
+                    null
+                }
+            }
+            
+            println("ChatRemoteDataSource: Successfully parsed ${conversations.size} conversations")
+            return conversations
+        } catch (e: Exception) {
+            println("ChatRemoteDataSource: Exception in getUserConversations: ${e.message}")
+            e.printStackTrace()
+            throw e
         }
     }
 

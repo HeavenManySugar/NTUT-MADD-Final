@@ -172,25 +172,48 @@ class ChatRepository @Inject constructor(
     suspend fun getUserConversationsWithUserInfo(): Result<List<ConversationWithUser>> {
         return try {
             val currentUser = authRepository.currentUser
+            println("ChatRepository: Current user: ${currentUser?.uid} (${currentUser?.email})")
             if (currentUser == null) {
+                println("ChatRepository: User not authenticated")
                 Result.failure(Exception("User not authenticated"))
             } else {
+                println("ChatRepository: Loading conversations for user ${currentUser.uid}")
                 val conversations = chatRemoteDataSource.getUserConversations(currentUser.uid)
+                println("ChatRepository: Found ${conversations.size} conversations")
+                
                 val conversationsWithUsers = conversations.map { conversation ->
                     // Find the other user ID (not current user)
                     val otherUserId = conversation.participants.find { it != currentUser.uid }
+                    println("ChatRepository: Processing conversation ${conversation.id}, other user: $otherUserId")
+                    
                     val otherUser = if (otherUserId != null) {
-                        userProfileRepository.getUserProfileById(otherUserId).getOrNull()
-                    } else null
+                        val userResult = userProfileRepository.getUserProfileById(otherUserId)
+                        userResult.fold(
+                            onSuccess = { user ->
+                                println("ChatRepository: Successfully loaded user ${user.displayName}")
+                                user
+                            },
+                            onFailure = { exception ->
+                                println("ChatRepository: Failed to load user $otherUserId: ${exception.message}")
+                                null
+                            }
+                        )
+                    } else {
+                        println("ChatRepository: No other user found in conversation ${conversation.id}")
+                        null
+                    }
 
                     ConversationWithUser(
                         conversation = conversation,
                         otherUser = otherUser
                     )
                 }
+                println("ChatRepository: Processed ${conversationsWithUsers.size} conversations with user info")
                 Result.success(conversationsWithUsers)
             }
         } catch (e: Exception) {
+            println("ChatRepository: Exception occurred: ${e.message}")
+            e.printStackTrace()
             Result.failure(e)
         }
     }
