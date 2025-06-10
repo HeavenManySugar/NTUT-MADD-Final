@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import kotlin.math.abs
+import kotlinx.coroutines.*
 
 import com.ntut.madd.finalproject.data.model.ErrorMessage
 import com.ntut.madd.finalproject.data.model.User
@@ -59,8 +60,8 @@ fun DiscoverPageScreen(
             uiState = uiState,
             currentRoute = currentRoute,
             onNavigate = onNavigate,
-            onReject = viewModel::onRejectProfile,
-            onApprove = viewModel::onApproveProfile,
+            onDislike = viewModel::onRejectProfile,
+            onLike = viewModel::onApproveProfile,
             onRetry = viewModel::retryLoading,
             onRefreshRecommendations = viewModel::refreshRecommendations,
             showErrorSnackbar = showErrorSnackbar
@@ -73,8 +74,8 @@ fun DiscoverPageScreenContent(
     uiState: DiscoverUiState,
     currentRoute: String = "discover",
     onNavigate: (String) -> Unit = {},
-    onReject: () -> Unit = {},
-    onApprove: () -> Unit = {},
+    onDislike: () -> Unit = {},
+    onLike: () -> Unit = {},
     onRetry: () -> Unit = {},
     onRefreshRecommendations: () -> Unit = {},
     openSettingsScreen: () -> Unit = {},
@@ -176,8 +177,8 @@ fun DiscoverPageScreenContent(
                             key(currentUser.id) {
                                 ProfileContent(
                                     user = currentUser,
-                                    onReject = onReject,
-                                    onApprove = onApprove
+                                    onDislike = onDislike,
+                                    onLike = onLike
                                 )
                             }
                         }
@@ -285,8 +286,8 @@ private fun EmptyProfilesContent(onRefresh: () -> Unit = {}) {
 @Composable
 private fun ProfileContent(
     user: User,
-    onReject: () -> Unit,
-    onApprove: () -> Unit
+    onDislike: () -> Unit,
+    onLike: () -> Unit
 ) {
     val profile = user.profile
     
@@ -304,86 +305,102 @@ private fun ProfileContent(
         return
     }
     
-    // Animation states
+    // Animation states - simplified approach
     var offsetX by remember { mutableFloatStateOf(0f) }
-    var offsetY by remember { mutableFloatStateOf(0f) }
     var rotation by remember { mutableFloatStateOf(0f) }
     var isAnimating by remember { mutableStateOf(false) }
     
-    // Animate back to center position
+    // Coroutine scope for animations
+    val coroutineScope = rememberCoroutineScope()
+    
+    // Animate offset and rotation
     val animatedOffsetX by animateFloatAsState(
-        targetValue = if (isAnimating) offsetX else 0f,
+        targetValue = offsetX,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
+            stiffness = Spring.StiffnessMedium
         ),
-        finishedListener = {
-            if (isAnimating) {
-                isAnimating = false
-                offsetX = 0f
-                offsetY = 0f
-                rotation = 0f
-            }
-        },
         label = "offsetX"
     )
     
-    val animatedOffsetY by animateFloatAsState(
-        targetValue = if (isAnimating) offsetY else 0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "offsetY"
-    )
-    
     val animatedRotation by animateFloatAsState(
-        targetValue = if (isAnimating) rotation else 0f,
+        targetValue = rotation,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
+            stiffness = Spring.StiffnessMedium
         ),
         label = "rotation"
     )
     
     // Swipe threshold
-    val swipeThreshold = 300f
+    val swipeThreshold = 150f
     
-    // Handle swipe actions
+    // Handle swipe actions - simplified
     fun handleSwipeAction(deltaX: Float) {
         when {
             deltaX > swipeThreshold -> {
-                // Right swipe - approve
+                // Right swipe - like with slide out animation
                 isAnimating = true
                 offsetX = 1000f
-                onApprove()
+                rotation = 30f
+                // Trigger action after a delay to show animation
+                coroutineScope.launch {
+                    delay(300)
+                    onLike()
+                    // Reset position for next card
+                    offsetX = 0f
+                    rotation = 0f
+                    isAnimating = false
+                }
             }
             deltaX < -swipeThreshold -> {
-                // Left swipe - reject
+                // Left swipe - dislike with slide out animation
                 isAnimating = true
                 offsetX = -1000f
-                onReject()
+                rotation = -30f
+                // Trigger action after a delay to show animation
+                coroutineScope.launch {
+                    delay(300)
+                    onDislike()
+                    // Reset position for next card
+                    offsetX = 0f
+                    rotation = 0f
+                    isAnimating = false
+                }
             }
             else -> {
                 // Return to center
-                isAnimating = true
+                offsetX = 0f
+                rotation = 0f
             }
         }
     }
     
     // Handle button actions with animation
-    fun handleReject() {
+    fun handleDislike() {
         isAnimating = true
         offsetX = -1000f
         rotation = -30f
-        onReject()
+        coroutineScope.launch {
+            delay(300)
+            onDislike()
+            offsetX = 0f
+            rotation = 0f
+            isAnimating = false
+        }
     }
     
-    fun handleApprove() {
+    fun handleLike() {
         isAnimating = true
         offsetX = 1000f
         rotation = 30f
-        onApprove()
+        coroutineScope.launch {
+            delay(300)
+            onLike()
+            offsetX = 0f
+            rotation = 0f
+            isAnimating = false
+        }
     }
     
     Column(
@@ -399,22 +416,28 @@ private fun ProfileContent(
                 .fillMaxWidth()
                 .graphicsLayer {
                     translationX = animatedOffsetX
-                    translationY = animatedOffsetY
                     rotationZ = animatedRotation
-                    val alpha = 1f - (abs(animatedOffsetX) / 1000f).coerceIn(0f, 0.7f)
+                    val alpha = 1f - (abs(animatedOffsetX) / 1000f).coerceIn(0f, 0.8f)
                     this.alpha = alpha
+                    
+                    // Add scale effect for more dramatic animation
+                    val scale = 1f - (abs(animatedOffsetX) / 2000f).coerceIn(0f, 0.1f)
+                    scaleX = scale
+                    scaleY = scale
                 }
                 .pointerInput(Unit) {
                     detectDragGestures(
+                        onDragStart = { 
+                            println("DiscoverPage: Drag started")
+                        },
                         onDragEnd = {
+                            println("DiscoverPage: Drag ended, offsetX = $offsetX")
                             handleSwipeAction(offsetX)
                         }
                     ) { _, dragAmount ->
-                        if (!isAnimating) {
-                            offsetX += dragAmount.x
-                            offsetY += dragAmount.y * 0.3f // Reduce vertical movement
-                            rotation = (offsetX / 20f).coerceIn(-30f, 30f)
-                        }
+                        offsetX += dragAmount.x
+                        rotation = (offsetX / 15f).coerceIn(-45f, 45f)
+                        println("DiscoverPage: Dragging, offsetX = $offsetX")
                     }
                 }
         ) {
@@ -451,16 +474,16 @@ private fun ProfileContent(
                 }
             }
             
-            // Swipe indicators
-            if (abs(offsetX) > 50f && !isAnimating) {
+            // Swipe indicators - make them more visible
+            if (abs(offsetX) > 30f && !isAnimating) {
                 SwipeIndicators(offsetX = offsetX)
             }
         }
         
         // Fixed buttons at bottom
         DecisionButtons(
-            onReject = ::handleReject,
-            onApprove = ::handleApprove
+            onDislike = ::handleDislike,
+            onLike = ::handleLike
         )
     }
 }
@@ -471,43 +494,43 @@ private fun SwipeIndicators(offsetX: Float) {
         modifier = Modifier.fillMaxSize()
     ) {
         // Like indicator (right swipe)
-        if (offsetX > 50f) {
+        if (offsetX > 30f) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(32.dp)
+                    .padding(24.dp)
                     .background(
-                        Color.Green.copy(alpha = (offsetX / 300f).coerceIn(0f, 0.8f)),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                        Color.Green.copy(alpha = (offsetX / 200f).coerceIn(0.3f, 0.9f)),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(25.dp)
                     )
-                    .padding(horizontal = 24.dp, vertical = 12.dp)
+                    .padding(horizontal = 32.dp, vertical = 16.dp)
             ) {
                 Text(
-                    text = "LIKE",
+                    text = "LIKE ❤️",
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 24.sp
                 )
             }
         }
         
-        // Reject indicator (left swipe)
-        if (offsetX < -50f) {
+        // Dislike indicator (left swipe)
+        if (offsetX < -30f) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(32.dp)
+                    .padding(24.dp)
                     .background(
-                        Color.Red.copy(alpha = (abs(offsetX) / 300f).coerceIn(0f, 0.8f)),
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                        Color.Red.copy(alpha = (abs(offsetX) / 200f).coerceIn(0.3f, 0.9f)),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(25.dp)
                     )
-                    .padding(horizontal = 24.dp, vertical = 12.dp)
+                    .padding(horizontal = 32.dp, vertical = 16.dp)
             ) {
                 Text(
-                    text = "NOPE",
+                    text = "💔 DISLIKE",
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 24.sp
                 )
             }
         }

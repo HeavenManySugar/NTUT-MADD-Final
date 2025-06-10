@@ -341,11 +341,11 @@ fun TraitPill(text: String) {
     }
 }
 
-/** Accept & Reject Buttom **/
+/** Like & Dislike Button **/
 @Composable
 fun DecisionButtons(
-    onReject: () -> Unit,
-    onApprove: () -> Unit
+    onDislike: () -> Unit,
+    onLike: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -356,7 +356,7 @@ fun DecisionButtons(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = onReject,
+            onClick = onDislike,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
@@ -367,10 +367,10 @@ fun DecisionButtons(
                 contentColor = Color.Black
             )
         ) {
-            Text("Rejected", fontWeight = FontWeight.Medium, fontSize = 20.sp)
+            Text("Dislike", fontWeight = FontWeight.Medium, fontSize = 20.sp)
         }
         Button(
-            onClick = onApprove,
+            onClick = onLike,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
@@ -387,7 +387,7 @@ fun DecisionButtons(
                 contentColor = Color.White
             )
         ) {
-            Text("Approved", fontWeight = FontWeight.Medium, fontSize = 20.sp)
+            Text("Like", fontWeight = FontWeight.Medium, fontSize = 20.sp)
         }
     }
 }
