@@ -126,6 +126,13 @@ class ChatRepository @Inject constructor(
     }
 
     /**
+     * Get messages for a conversation with real-time updates
+     */
+    fun getMessagesFlow(conversationId: String, limit: Int = 100): kotlinx.coroutines.flow.Flow<List<Message>> {
+        return chatRemoteDataSource.getMessagesFlow(conversationId, limit)
+    }
+
+    /**
      * Mark messages as read
      */
     suspend fun markMessagesAsRead(conversationId: String): Result<Unit> {

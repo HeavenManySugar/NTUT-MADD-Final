@@ -2,6 +2,7 @@ package com.ntut.madd.finalproject.data.datasource
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.dataObjects
 import com.ntut.madd.finalproject.data.model.Conversation
 import com.ntut.madd.finalproject.data.model.Match
 import com.ntut.madd.finalproject.data.model.Message
@@ -184,6 +185,17 @@ class ChatRemoteDataSource @Inject constructor(
         return documents.mapNotNull { doc ->
             doc.toObject(Message::class.java)
         }.reversed() // Reverse to get chronological order
+    }
+
+    /**
+     * Get messages for a conversation with real-time updates
+     */
+    fun getMessagesFlow(conversationId: String, limit: Int = 100): kotlinx.coroutines.flow.Flow<List<Message>> {
+        return messagesCollection
+            .whereEqualTo("conversationId", conversationId)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .limit(limit.toLong())
+            .dataObjects()
     }
 
     /**

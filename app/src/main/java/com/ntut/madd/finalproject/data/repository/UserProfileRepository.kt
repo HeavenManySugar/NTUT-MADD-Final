@@ -191,6 +191,13 @@ class UserProfileRepository @Inject constructor(
     }
 
     /**
+     * Get current user ID
+     */
+    fun getCurrentUserId(): String? {
+        return authRepository.currentUser?.uid
+    }
+
+    /**
      * 獲取喜歡當前用戶的用戶資料列表
      */
     suspend fun getUsersWhoLikedMe(): Result<List<User>> {

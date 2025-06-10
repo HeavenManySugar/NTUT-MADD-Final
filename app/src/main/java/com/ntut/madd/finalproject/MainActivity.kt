@@ -210,6 +210,9 @@ class MainActivity : ComponentActivity() {
                                     onBackClick = {
                                         navController.popBackStack()
                                     },
+                                    openUserProfile = { userId ->
+                                        navController.navigate(UserProfileDetailRoute(userId)) { launchSingleTop = true }
+                                    },
                                     showErrorSnackbar = { errorMessage ->
                                         val message = getErrorMessage(errorMessage)
                                         scope.launch { snackbarHostState.showSnackbar(message) }

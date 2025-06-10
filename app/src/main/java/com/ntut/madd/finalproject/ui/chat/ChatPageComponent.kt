@@ -222,13 +222,14 @@ fun ChatBubble(message: ChatMessage) {
 
 
 
-/** Iuput Bar **/
+/** Input Bar **/
 
 @Composable
 fun ChatInputBar(
     text: String,
     onTextChange: (String) -> Unit,
-    onSendClick: () -> Unit
+    onSendClick: () -> Unit,
+    isEnabled: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -253,7 +254,8 @@ fun ChatInputBar(
             ),
             textStyle = TextStyle(fontSize = 16.sp),
             maxLines = 1,
-            singleLine = true
+            singleLine = true,
+            enabled = isEnabled
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -263,19 +265,35 @@ fun ChatInputBar(
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(
-                    Brush.linearGradient(
-                        listOf(Color(0xFF3AC27D), Color(0xFF3CB4F1))
-                    )
+                    if (isEnabled && text.isNotBlank()) {
+                        Brush.linearGradient(
+                            listOf(Color(0xFF3AC27D), Color(0xFF3CB4F1))
+                        )
+                    } else {
+                        Brush.linearGradient(
+                            listOf(Color.Gray, Color.Gray)
+                        )
+                    }
                 )
-                .clickable { onSendClick() },
+                .clickable(enabled = isEnabled && text.isNotBlank()) { 
+                    onSendClick() 
+                },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Filled.Send,
-                contentDescription = "Send",
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-            )
+            if (isEnabled) {
+                Icon(
+                    imageVector = Icons.Filled.Send,
+                    contentDescription = "Send",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            }
         }
     }
 }
