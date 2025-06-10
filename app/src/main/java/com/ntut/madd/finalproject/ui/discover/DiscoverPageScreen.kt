@@ -1,22 +1,28 @@
 package com.ntut.madd.finalproject.ui.discover
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import kotlin.math.abs
 
 import com.ntut.madd.finalproject.data.model.ErrorMessage
 import com.ntut.madd.finalproject.data.model.User
@@ -166,11 +172,14 @@ fun DiscoverPageScreenContent(
                     else -> {
                         val currentUser = uiState.availableProfiles.getOrNull(uiState.currentProfileIndex)
                         if (currentUser != null) {
-                            ProfileContent(
-                                user = currentUser,
-                                onReject = onReject,
-                                onApprove = onApprove
-                            )
+                            // Use key to reset animation state when user changes
+                            key(currentUser.id) {
+                                ProfileContent(
+                                    user = currentUser,
+                                    onReject = onReject,
+                                    onApprove = onApprove
+                                )
+                            }
                         }
                     }
                 }
@@ -295,17 +304,119 @@ private fun ProfileContent(
         return
     }
     
+    // Animation states
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
+    var rotation by remember { mutableFloatStateOf(0f) }
+    var isAnimating by remember { mutableStateOf(false) }
+    
+    // Animate back to center position
+    val animatedOffsetX by animateFloatAsState(
+        targetValue = if (isAnimating) offsetX else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        finishedListener = {
+            if (isAnimating) {
+                isAnimating = false
+                offsetX = 0f
+                offsetY = 0f
+                rotation = 0f
+            }
+        },
+        label = "offsetX"
+    )
+    
+    val animatedOffsetY by animateFloatAsState(
+        targetValue = if (isAnimating) offsetY else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "offsetY"
+    )
+    
+    val animatedRotation by animateFloatAsState(
+        targetValue = if (isAnimating) rotation else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "rotation"
+    )
+    
+    // Swipe threshold
+    val swipeThreshold = 300f
+    
+    // Handle swipe actions
+    fun handleSwipeAction(deltaX: Float) {
+        when {
+            deltaX > swipeThreshold -> {
+                // Right swipe - approve
+                isAnimating = true
+                offsetX = 1000f
+                onApprove()
+            }
+            deltaX < -swipeThreshold -> {
+                // Left swipe - reject
+                isAnimating = true
+                offsetX = -1000f
+                onReject()
+            }
+            else -> {
+                // Return to center
+                isAnimating = true
+            }
+        }
+    }
+    
+    // Handle button actions with animation
+    fun handleReject() {
+        isAnimating = true
+        offsetX = -1000f
+        rotation = -30f
+        onReject()
+    }
+    
+    fun handleApprove() {
+        isAnimating = true
+        offsetX = 1000f
+        rotation = 30f
+        onApprove()
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Scrollable content area
-        Column(
+        // Swipeable card content
+        Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
+                .graphicsLayer {
+                    translationX = animatedOffsetX
+                    translationY = animatedOffsetY
+                    rotationZ = animatedRotation
+                    val alpha = 1f - (abs(animatedOffsetX) / 1000f).coerceIn(0f, 0.7f)
+                    this.alpha = alpha
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragEnd = {
+                            handleSwipeAction(offsetX)
+                        }
+                    ) { _, dragAmount ->
+                        if (!isAnimating) {
+                            offsetX += dragAmount.x
+                            offsetY += dragAmount.y * 0.3f // Reduce vertical movement
+                            rotation = (offsetX / 20f).coerceIn(-30f, 30f)
+                        }
+                    }
+                }
         ) {
             RoundedWhiteCard {
                 TopSection(user = user)
@@ -339,13 +450,67 @@ private fun ProfileContent(
                     }
                 }
             }
+            
+            // Swipe indicators
+            if (abs(offsetX) > 50f && !isAnimating) {
+                SwipeIndicators(offsetX = offsetX)
+            }
         }
         
         // Fixed buttons at bottom
         DecisionButtons(
-            onReject = onReject,
-            onApprove = onApprove
+            onReject = ::handleReject,
+            onApprove = ::handleApprove
         )
+    }
+}
+
+@Composable
+private fun SwipeIndicators(offsetX: Float) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Like indicator (right swipe)
+        if (offsetX > 50f) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(32.dp)
+                    .background(
+                        Color.Green.copy(alpha = (offsetX / 300f).coerceIn(0f, 0.8f)),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 24.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "LIKE",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+        }
+        
+        // Reject indicator (left swipe)
+        if (offsetX < -50f) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(32.dp)
+                    .background(
+                        Color.Red.copy(alpha = (abs(offsetX) / 300f).coerceIn(0f, 0.8f)),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 24.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text = "NOPE",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+        }
     }
 }
 
