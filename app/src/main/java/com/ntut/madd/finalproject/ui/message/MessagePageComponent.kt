@@ -227,7 +227,7 @@ fun MessageListWithSeparators(
                     message = msg.lastMessage,
                     timeAgo = msg.timeAgo,
                     isOnline = msg.isOnline,
-                    onClick = {} // or onChatClick(msg.chatId)
+                    onClick = { onChatClick(msg.chatId) }
                 )
             }
         }

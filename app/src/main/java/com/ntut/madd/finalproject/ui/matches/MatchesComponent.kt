@@ -84,6 +84,7 @@ fun MatchCard(
     age: Int,
     city: String,
     isOnline: Boolean,
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -93,6 +94,7 @@ fun MatchCard(
         modifier = modifier
             .width(120.dp)
             .padding(4.dp)
+            .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier
@@ -168,18 +170,27 @@ data class MatchProfile(
 )
 
 @Composable
-fun MatchesSection(matches: List<MatchProfile>) {
+fun MatchesSection(
+    matches: List<MatchProfile>,
+    users: List<com.ntut.madd.finalproject.data.model.User>,
+    onUserClick: (String) -> Unit
+) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(matches) { match ->
+        items(matches.size) { index ->
+            val match = matches[index]
+            val user = users.getOrNull(index)
             MatchCard(
                 initials = match.initials,
                 name = match.name,
                 age = match.age,
                 city = match.city,
-                isOnline = match.isOnline
+                isOnline = match.isOnline,
+                onClick = { 
+                    user?.let { onUserClick(it.id) }
+                }
             )
         }
     }
@@ -200,6 +211,7 @@ fun MatchRequestCard(
     request: MatchRequest,
     onAccept: () -> Unit,
     onReject: () -> Unit,
+    onUserClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -214,56 +226,65 @@ fun MatchRequestCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(12.dp)
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            // Clickable profile area
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .size(48.dp)
-                    .border(2.dp, Color(0xFFCBD5E0), CircleShape)
-                    .clip(CircleShape)
+                    .weight(1f)
+                    .clickable { onUserClick() }
             ) {
-                Text(
-                    text = request.initials,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF4C5C7A)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .border(2.dp, Color(0xFFCBD5E0), CircleShape)
+                        .clip(CircleShape)
+                ) {
                     Text(
-                        text = request.name,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF2D3748)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = request.age.toString(),
-                        fontSize = 14.sp,
-                        color = Color(0xFF718096)
+                        text = request.initials,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF4C5C7A)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "📍 ${request.city}",
-                        fontSize = 13.sp,
-                        color = Color(0xFF718096)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = request.timeAgo,
-                        fontSize = 13.sp,
-                        color = Color(0xFF5B72F2)
-                    )
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = request.name,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF2D3748)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = request.age.toString(),
+                            fontSize = 14.sp,
+                            color = Color(0xFF718096)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "📍 ${request.city}",
+                            fontSize = 13.sp,
+                            color = Color(0xFF718096)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = request.timeAgo,
+                            fontSize = 13.sp,
+                            color = Color(0xFF5B72F2)
+                        )
+                    }
                 }
             }
 
+            // Action buttons
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Box(
                     modifier = Modifier

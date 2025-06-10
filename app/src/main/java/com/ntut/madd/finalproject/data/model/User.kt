@@ -4,6 +4,7 @@ import com.google.firebase.firestore.DocumentId
 
 data class User(
     @DocumentId val id: String = "",
+    val ownerId: String = "",
     val email: String = "",
     val displayName: String = "",
     val isAnonymous: Boolean = true,

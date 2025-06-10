@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.ntut.madd.finalproject.data.model.ErrorMessage
-import com.ntut.madd.finalproject.ui.home.HomeRoute
-import com.ntut.madd.finalproject.ui.home.HomeScreen
+
+import com.ntut.madd.finalproject.ui.main.MainPageRoute
+import com.ntut.madd.finalproject.ui.main.MainPageScreen
 import com.ntut.madd.finalproject.ui.settings.SettingsRoute
 import com.ntut.madd.finalproject.ui.settings.SettingsScreen
 import com.ntut.madd.finalproject.ui.setup.SetupRoute
@@ -39,11 +41,14 @@ import com.ntut.madd.finalproject.ui.signin.SignInRoute
 import com.ntut.madd.finalproject.ui.signin.SignInScreen
 import com.ntut.madd.finalproject.ui.signup.SignUpRoute
 import com.ntut.madd.finalproject.ui.signup.SignUpScreen
+import com.ntut.madd.finalproject.ui.splash.SplashRoute
+import com.ntut.madd.finalproject.ui.splash.SplashScreen
+import com.ntut.madd.finalproject.ui.chat.ChatPageRoute
+import com.ntut.madd.finalproject.ui.chat.ChatPageScreen
+import com.ntut.madd.finalproject.ui.userprofile.UserProfileDetailRoute
+import com.ntut.madd.finalproject.ui.userprofile.UserProfileDetailScreen
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
-import com.ntut.madd.finalproject.ui.todoitem.TodoItemRoute
-import com.ntut.madd.finalproject.ui.todoitem.TodoItemScreen
-import com.ntut.madd.finalproject.ui.todolist.TodoListRoute
-import com.ntut.madd.finalproject.ui.todolist.TodoListScreen
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -70,25 +75,50 @@ class MainActivity : ComponentActivity() {
                     ) { innerPadding ->
                         NavHost(
                             navController = navController,
-                            startDestination = SetupRoute,
+                            startDestination = SplashRoute,
                             modifier = Modifier.padding(innerPadding)
                         ) {
-                            composable<HomeRoute> { HomeScreen(
-                                openSettingsScreen = {
-                                    navController.navigate(SettingsRoute) { launchSingleTop = true }
+                            composable<SplashRoute> { SplashScreen(
+                                onNavigateToHome = {
+                                    navController.navigate(MainPageRoute) {
+                                        popUpTo<SplashRoute> { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                onNavigateToSignIn = {
+                                    navController.navigate(SignInRoute) {
+                                        popUpTo<SplashRoute> { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                onNavigateToSetup = {
+                                    navController.navigate(SetupRoute) {
+                                        popUpTo<SplashRoute> { inclusive = true }
+                                        launchSingleTop = true
+                                    }
                                 }
                             ) }
-                            composable<TodoListRoute> { TodoListScreen(
+                            composable<MainPageRoute> { MainPageScreen(
+                                openHomeScreen = {
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
+                                },
                                 openSettingsScreen = {
                                     navController.navigate(SettingsRoute) { launchSingleTop = true }
                                 },
-                                openTodoItemScreen = { itemId ->
-                                    navController.navigate(TodoItemRoute(itemId)) { launchSingleTop = true }
+                                openChatScreen = { chatId ->
+                                    navController.navigate(ChatPageRoute(chatId)) { launchSingleTop = true }
+                                },
+                                openUserProfile = { userId ->
+                                    navController.navigate(UserProfileDetailRoute(userId)) { launchSingleTop = true }
+                                },
+                                showErrorSnackbar = { errorMessage ->
+                                    val message = getErrorMessage(errorMessage)
+                                    scope.launch { snackbarHostState.showSnackbar(message) }
                                 }
                             ) }
                             composable<SettingsRoute> { SettingsScreen(
                                 openHomeScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
@@ -96,10 +126,13 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SignInRoute> { SignInScreen(
                                 openHomeScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 openSignUpScreen = {
                                     navController.navigate(SignUpRoute) { launchSingleTop = true }
+                                },
+                                openSetupScreen = {
+                                    navController.navigate(SetupRoute) { launchSingleTop = true }
                                 },
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
@@ -108,7 +141,7 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<SignUpRoute> { SignUpScreen(
                                 openHomeScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
@@ -118,15 +151,6 @@ class MainActivity : ComponentActivity() {
                                     scope.launch { snackbarHostState.showSnackbar(message) }
                                 }
                                 ) }
-                            composable<TodoItemRoute> { TodoItemScreen(
-                                openTodoListScreen = {
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
-                                },
-                                showErrorSnackbar = { errorMessage ->
-                                    val message = getErrorMessage(errorMessage)
-                                    scope.launch { snackbarHostState.showSnackbar(message) }
-                                }
-                            ) }
                             composable<SetupRoute> { SetupScreen(
                                 onBackClick = {
                                     navController.popBackStack()
@@ -169,13 +193,41 @@ class MainActivity : ComponentActivity() {
                             ) }
                             composable<Setup6Route> { Setup6Screen(
                                 onNext = {
-                                    // 完成設定，導航到主頁面
-                                    navController.navigate(TodoListRoute) { launchSingleTop = true }
+                                    // 完成設定，導航到主頁面 (Discover page)
+                                    navController.navigate(MainPageRoute) { launchSingleTop = true }
                                 },
                                 onBack = {
                                     navController.popBackStack()
                                 }
                             ) }
+                            composable<ChatPageRoute> { backStackEntry ->
+                                val route = backStackEntry.toRoute<ChatPageRoute>()
+                                ChatPageScreen(
+                                    openHomeScreen = {
+                                        navController.navigate(MainPageRoute) { launchSingleTop = true }
+                                    },
+                                    chatId = route.chatId,
+                                    onBackClick = {
+                                        navController.popBackStack()
+                                    },
+                                    showErrorSnackbar = { errorMessage ->
+                                        val message = getErrorMessage(errorMessage)
+                                        scope.launch { snackbarHostState.showSnackbar(message) }
+                                    }
+                                )
+                            }
+                            composable<UserProfileDetailRoute> { backStackEntry ->
+                                val route = backStackEntry.toRoute<UserProfileDetailRoute>()
+                                UserProfileDetailScreen(
+                                    onBackClick = {
+                                        navController.popBackStack()
+                                    },
+                                    showErrorSnackbar = { errorMessage ->
+                                        val message = getErrorMessage(errorMessage)
+                                        scope.launch { snackbarHostState.showSnackbar(message) }
+                                    }
+                                )
+                            }
                         }
                     }
                 }

@@ -66,22 +66,6 @@ fun SetupHeader(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_button),
-                        tint = Color.White
-                    )
-                }
-
-                Spacer(modifier = Modifier.size(48.dp))
-            }
-            
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -331,7 +315,7 @@ fun SetupPageContainer(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding())
                 .verticalScroll(rememberScrollState())
         ) {
             // Unified header area
