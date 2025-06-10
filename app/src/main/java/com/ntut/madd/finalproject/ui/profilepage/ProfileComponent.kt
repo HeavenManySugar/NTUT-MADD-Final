@@ -238,13 +238,15 @@ fun InterestTag(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InterestTagSection(tags: List<String>) {
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(horizontal = 16.dp)
-    ) {
-        tags.forEach { tag ->
-            InterestTag(text = tag)
+    if (tags.isNotEmpty()) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            tags.forEach { tag ->
+                InterestTag(text = tag)
+            }
         }
     }
 }
@@ -1244,132 +1246,145 @@ fun EditableInterestTagSection(
         stringResource(R.string.interest_learning)
     )
     
-    if (isEditing) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
-            border = BorderStroke(1.dp, Color(0xFFEAECEF)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                EditableFieldLabel(
-                    text = "Interests & Hobbies",
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                
-                Text(
-                    text = "Select your interests (choose 3-5 interests):",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color(0xFF666666)
-                )
-                
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    commonInterests.forEach { interest ->
-                        FilterChip(
-                            onClick = { 
-                                val updatedTags = if (tags.contains(interest)) {
-                                    tags - interest
-                                } else if (tags.size < 5) {
-                                    tags + interest
-                                } else {
-                                    tags // Don't add more if already at max
-                                }
-                                onUpdateInterests(updatedTags)
-                            },
-                            label = { Text(interest, fontSize = 12.sp) },
-                            selected = tags.contains(interest),
-                            enabled = tags.contains(interest) || tags.size < 5, // Disable if at max and not selected
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White,
-                                containerColor = Color.White,
-                                labelColor = Color(0xFF666666),
-                                disabledContainerColor = Color(0xFFF5F5F5),
-                                disabledLabelColor = Color(0xFFBBBBBB)
-                            ),
-                            border = FilterChipDefaults.filterChipBorder(
-                                borderColor = Color(0xFFE0E0E0),
-                                selectedBorderColor = Color(0xFF667EEA),
-                                enabled = tags.contains(interest) || tags.size < 5,
-                                selected = tags.contains(interest)
-                            )
-                        )
-                    }
-                }
-                
-                // Setup-style selected count indicator
+    if (tags.isNotEmpty() || isEditing) {
+        Column {
+            SectionTitle(
+                icon = Icons.Filled.CardGiftcard,
+                title = "My Interest",
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            if (isEditing) {
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (tags.size >= 3) 
-                            Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+                    border = BorderStroke(1.dp, Color(0xFFEAECEF)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(
-                            text = if (tags.size >= 3) "✅" else "⚠️",
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(end = 12.dp)
+                        EditableFieldLabel(
+                            text = "Interests & Hobbies",
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
-                        Column {
-                            Text(
-                                text = "Selected ${tags.size} interest${if (tags.size != 1) "s" else ""}",
-                                color = if (tags.size >= 3)
-                                    Color(0xFF2E7D32) else Color(0xFFE65100),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            when {
-                                tags.size < 3 -> {
-                                    Text(
-                                        text = "Need ${3 - tags.size} more to continue",
-                                        color = Color(0xFFBF360C),
-                                        fontSize = 14.sp
+                        
+                        Text(
+                            text = "Select your interests (choose 3-5 interests):",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color(0xFF666666)
+                        )
+                        
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            commonInterests.forEach { interest ->
+                                FilterChip(
+                                    onClick = { 
+                                        val updatedTags = if (tags.contains(interest)) {
+                                            tags - interest
+                                        } else if (tags.size < 5) {
+                                            tags + interest
+                                        } else {
+                                            tags // Don't add more if already at max
+                                        }
+                                        onUpdateInterests(updatedTags)
+                                    },
+                                    label = { Text(interest, fontSize = 12.sp) },
+                                    selected = tags.contains(interest),
+                                    enabled = tags.contains(interest) || tags.size < 5, // Disable if at max and not selected
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = Color(0xFF667EEA),
+                                        selectedLabelColor = Color.White,
+                                        containerColor = Color.White,
+                                        labelColor = Color(0xFF666666),
+                                        disabledContainerColor = Color(0xFFF5F5F5),
+                                        disabledLabelColor = Color(0xFFBBBBBB)
+                                    ),
+                                    border = FilterChipDefaults.filterChipBorder(
+                                        borderColor = Color(0xFFE0E0E0),
+                                        selectedBorderColor = Color(0xFF667EEA),
+                                        enabled = tags.contains(interest) || tags.size < 5,
+                                        selected = tags.contains(interest)
                                     )
-                                }
-                                tags.size < 5 -> {
+                                )
+                            }
+                        }
+                        
+                        // Setup-style selected count indicator
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (tags.size >= 3) 
+                                    Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = if (tags.size >= 3) "✅" else "⚠️",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(end = 12.dp)
+                                )
+                                Column {
                                     Text(
-                                        text = "Can select ${5 - tags.size} more",
-                                        color = Color(0xFF1B5E20),
-                                        fontSize = 14.sp
+                                        text = "Selected ${tags.size} interest${if (tags.size != 1) "s" else ""}",
+                                        color = if (tags.size >= 3)
+                                            Color(0xFF2E7D32) else Color(0xFFE65100),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold
                                     )
-                                }
-                                else -> {
-                                    Text(
-                                        text = "Maximum interests selected",
-                                        color = Color(0xFF1B5E20),
-                                        fontSize = 14.sp
-                                    )
+                                    when {
+                                        tags.size < 3 -> {
+                                            Text(
+                                                text = "Need ${3 - tags.size} more to continue",
+                                                color = Color(0xFFBF360C),
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                        tags.size < 5 -> {
+                                            Text(
+                                                text = "Can select ${5 - tags.size} more",
+                                                color = Color(0xFF1B5E20),
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                        else -> {
+                                            Text(
+                                                text = "Maximum interests selected",
+                                                color = Color(0xFF1B5E20),
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        }
-    } else if (tags.isNotEmpty()) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) {
-            tags.forEach { tag ->
-                InterestTag(text = tag)
+            } else {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    tags.forEach { tag ->
+                        InterestTag(text = tag)
+                    }
+                }
             }
         }
     }

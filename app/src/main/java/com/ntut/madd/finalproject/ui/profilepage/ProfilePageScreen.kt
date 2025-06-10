@@ -397,11 +397,6 @@ private fun ProfileContent(
             if (profile != null) {
                 /** Interests Section **/
                 if (profile.interests.isNotEmpty() || uiState.isEditing) {
-                    SectionTitle(
-                        icon = Icons.Filled.TrackChanges,
-                        title = stringResource(R.string.my_interest),
-                        modifier = Modifier.padding(horizontal = 0.dp)
-                    )
                     EditableInterestTagSection(
                         tags = profile.interests,
                         isEditing = uiState.isEditing,
