@@ -61,6 +61,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.animation.core.*
+import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.onFocusChanged
 
 
 /** Profile Page Hashtag **/
@@ -459,6 +467,119 @@ fun PersonalityTagSection(traits: List<String>) {
 /** Editable Profile Components **/
 
 @Composable
+fun SetupStyleInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    maxLength: Int = Int.MAX_VALUE,
+    singleLine: Boolean = true,
+    minLines: Int = 1,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE
+) {
+    var isFocused by remember { mutableStateOf(false) }
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isFocused -> Color(0xFF6B46C1)
+            else -> Color(0xFFEAECEF)
+        },
+        animationSpec = tween(200),
+        label = "border_color"
+    )
+
+    val elevation by animateDpAsState(
+        targetValue = if (isFocused) 2.dp else 0.dp,
+        animationSpec = tween(200),
+        label = "elevation"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFocused) 1.01f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "scale"
+    )
+
+    Column(modifier = modifier) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scale),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+            border = BorderStroke(1.dp, borderColor),
+            elevation = CardDefaults.cardElevation(defaultElevation = elevation),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = { newValue ->
+                    if (newValue.length <= maxLength) {
+                        onValueChange(newValue)
+                    }
+                },
+                placeholder = {
+                    Text(
+                        text = label,
+                        color = Color.Gray.copy(alpha = 0.7f),
+                        fontSize = 14.sp
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        isFocused = focusState.isFocused
+                    }
+                    .defaultMinSize(minHeight = 48.dp),
+                singleLine = singleLine,
+                minLines = minLines,
+                maxLines = maxLines,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedBorderColor = Color.Transparent,
+                    cursorColor = Color(0xFF6B46C1)
+                ),
+                shape = RoundedCornerShape(8.dp)
+            )
+        }
+
+        if (maxLength != Int.MAX_VALUE) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "${value.length}/$maxLength",
+                    color = if (value.length > maxLength * 0.9) Color(0xFFFF9800)
+                    else Color.Gray.copy(alpha = 0.6f),
+                    fontSize = 12.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EditableFieldLabel(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = Color.Black,
+        modifier = modifier.padding(bottom = 8.dp)
+    )
+}
+
+@Composable
 fun EditableLocationCard(
     city: String,
     district: String,
@@ -473,27 +594,30 @@ fun EditableLocationCard(
             icon = Icons.Filled.LocationOn
         ) {
             if (isEditing) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = city,
-                        onValueChange = onUpdateCity,
-                        label = { Text("City") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column {
+                        EditableFieldLabel(
+                            text = "City",
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                    )
-                    OutlinedTextField(
-                        value = district,
-                        onValueChange = onUpdateDistrict,
-                        label = { Text("District") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                        SetupStyleInputField(
+                            value = city,
+                            onValueChange = onUpdateCity,
+                            label = "Enter your city"
                         )
-                    )
+                    }
+                    
+                    Column {
+                        EditableFieldLabel(
+                            text = "District",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        SetupStyleInputField(
+                            value = district,
+                            onValueChange = onUpdateDistrict,
+                            label = "Enter your district"
+                        )
+                    }
                 }
             } else {
                 if (city.isNotEmpty() && district.isNotEmpty()) {
@@ -523,27 +647,30 @@ fun EditableCareerCard(
             icon = Icons.Filled.Business
         ) {
             if (isEditing) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = position,
-                        onValueChange = onUpdatePosition,
-                        label = { Text("Position") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column {
+                        EditableFieldLabel(
+                            text = "Position",
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                    )
-                    OutlinedTextField(
-                        value = company,
-                        onValueChange = onUpdateCompany,
-                        label = { Text("Company") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                        SetupStyleInputField(
+                            value = position,
+                            onValueChange = onUpdatePosition,
+                            label = "Enter your job position"
                         )
-                    )
+                    }
+                    
+                    Column {
+                        EditableFieldLabel(
+                            text = "Company",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        SetupStyleInputField(
+                            value = company,
+                            onValueChange = onUpdateCompany,
+                            label = "Enter your company name"
+                        )
+                    }
                 }
             } else {
                 if (position.isNotEmpty()) {
@@ -574,37 +701,42 @@ fun EditableEducationCard(
             icon = Icons.Filled.School
         ) {
             if (isEditing) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = degree,
-                        onValueChange = onUpdateDegree,
-                        label = { Text("Degree") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column {
+                        EditableFieldLabel(
+                            text = "Degree",
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                    )
-                    OutlinedTextField(
-                        value = school,
-                        onValueChange = onUpdateSchool,
-                        label = { Text("School") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                        SetupStyleInputField(
+                            value = degree,
+                            onValueChange = onUpdateDegree,
+                            label = "Enter your degree level"
                         )
-                    )
-                    OutlinedTextField(
-                        value = major,
-                        onValueChange = onUpdateMajor,
-                        label = { Text("Major") },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                    }
+                    
+                    Column {
+                        EditableFieldLabel(
+                            text = "School",
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
-                    )
+                        SetupStyleInputField(
+                            value = school,
+                            onValueChange = onUpdateSchool,
+                            label = "Enter your school name"
+                        )
+                    }
+                    
+                    Column {
+                        EditableFieldLabel(
+                            text = "Major",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        SetupStyleInputField(
+                            value = major,
+                            onValueChange = onUpdateMajor,
+                            label = "Enter your major field"
+                        )
+                    }
                 }
             } else {
                 if (degree.isNotEmpty()) {
@@ -634,18 +766,21 @@ fun EditableAboutMeCard(
             icon = Icons.Filled.Info
         ) {
             if (isEditing) {
-                OutlinedTextField(
-                    value = aboutMe,
-                    onValueChange = onUpdateAboutMe,
-                    label = { Text("Tell us about yourself") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    maxLines = 5,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
+                Column {
+                    EditableFieldLabel(
+                        text = "About Me",
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
-                )
+                    SetupStyleInputField(
+                        value = aboutMe,
+                        onValueChange = onUpdateAboutMe,
+                        label = "Tell us about yourself",
+                        singleLine = false,
+                        minLines = 3,
+                        maxLines = 5,
+                        maxLength = 500
+                    )
+                }
             } else {
                 Text(
                     text = aboutMe,
@@ -671,18 +806,21 @@ fun EditableLookingForCard(
             icon = Icons.Filled.Favorite
         ) {
             if (isEditing) {
-                OutlinedTextField(
-                    value = lookingFor,
-                    onValueChange = onUpdateLookingFor,
-                    label = { Text("What are you looking for?") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 2,
-                    maxLines = 4,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
+                Column {
+                    EditableFieldLabel(
+                        text = "Looking For",
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
-                )
+                    SetupStyleInputField(
+                        value = lookingFor,
+                        onValueChange = onUpdateLookingFor,
+                        label = "What are you looking for?",
+                        singleLine = false,
+                        minLines = 2,
+                        maxLines = 4,
+                        maxLength = 300
+                    )
+                }
             } else {
                 Text(
                     text = lookingFor,

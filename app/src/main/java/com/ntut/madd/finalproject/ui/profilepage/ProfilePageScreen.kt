@@ -26,11 +26,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.ntut.madd.finalproject.data.model.ErrorMessage
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntut.madd.finalproject.R
 import com.ntut.madd.finalproject.ui.component.*
+import com.ntut.madd.finalproject.ui.setup.components.SetupInputField
+import com.ntut.madd.finalproject.ui.setup.components.SetupFieldLabel
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable
 import androidx.compose.foundation.rememberScrollState
@@ -38,6 +41,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Person2
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import com.ntut.madd.finalproject.data.model.User
 import com.ntut.madd.finalproject.data.model.UserProfile
 
@@ -307,27 +311,41 @@ private fun ProfileContent(
 
                 // Editable display name
                 if (uiState.isEditing) {
-                    OutlinedTextField(
-                        value = user.displayName,
-                        onValueChange = onUpdateDisplayName,
-                        label = { Text("Display Name", color = Color.White.copy(alpha = 0.7f)) },
+                    Card(
                         modifier = Modifier.fillMaxWidth(0.8f),
-                        colors = androidx.compose.material3.TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                            unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            cursorColor = Color.White,
-                            focusedIndicatorColor = Color.White,
-                            unfocusedIndicatorColor = Color.White.copy(alpha = 0.5f)
+                        colors = androidx.compose.material3.CardDefaults.cardColors(
+                            containerColor = Color.White.copy(alpha = 0.15f)
                         ),
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        ),
-                        singleLine = true
-                    )
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = user.displayName,
+                            onValueChange = onUpdateDisplayName,
+                            placeholder = { 
+                                Text(
+                                    "Enter display name", 
+                                    color = Color.White.copy(alpha = 0.6f),
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                ) 
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = androidx.compose.material3.TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                cursorColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            ),
+                            singleLine = true
+                        )
+                    }
                 } else {
                     Text(
                         text = user.displayName.ifEmpty { "Unknown User" },
