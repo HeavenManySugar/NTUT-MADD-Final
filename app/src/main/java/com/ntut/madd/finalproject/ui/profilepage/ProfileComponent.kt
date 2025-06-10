@@ -603,7 +603,8 @@ fun EditableLocationCard(
                         SetupStyleInputField(
                             value = city,
                             onValueChange = onUpdateCity,
-                            label = "Enter your city"
+                            label = "Enter your city",
+                            maxLength = 50
                         )
                     }
                     
@@ -615,7 +616,8 @@ fun EditableLocationCard(
                         SetupStyleInputField(
                             value = district,
                             onValueChange = onUpdateDistrict,
-                            label = "Enter your district"
+                            label = "Enter your district",
+                            maxLength = 50
                         )
                     }
                 }
@@ -656,7 +658,8 @@ fun EditableCareerCard(
                         SetupStyleInputField(
                             value = position,
                             onValueChange = onUpdatePosition,
-                            label = "Enter your job position"
+                            label = "Enter your job position",
+                            maxLength = 50
                         )
                     }
                     
@@ -668,7 +671,8 @@ fun EditableCareerCard(
                         SetupStyleInputField(
                             value = company,
                             onValueChange = onUpdateCompany,
-                            label = "Enter your company name"
+                            label = "Enter your company name",
+                            maxLength = 100
                         )
                     }
                 }
@@ -710,7 +714,8 @@ fun EditableEducationCard(
                         SetupStyleInputField(
                             value = degree,
                             onValueChange = onUpdateDegree,
-                            label = "Enter your degree level"
+                            label = "Enter your degree level",
+                            maxLength = 50
                         )
                     }
                     
@@ -722,7 +727,8 @@ fun EditableEducationCard(
                         SetupStyleInputField(
                             value = school,
                             onValueChange = onUpdateSchool,
-                            label = "Enter your school name"
+                            label = "Enter your school name",
+                            maxLength = 100
                         )
                     }
                     
@@ -734,7 +740,8 @@ fun EditableEducationCard(
                         SetupStyleInputField(
                             value = major,
                             onValueChange = onUpdateMajor,
-                            label = "Enter your major field"
+                            label = "Enter your major field",
+                            maxLength = 100
                         )
                     }
                 }
@@ -841,44 +848,121 @@ fun EditableInterestTagSection(
     onUpdateInterests: (List<String>) -> Unit
 ) {
     val commonInterests = listOf(
-        "🎬 Movies", "📚 Reading", "🎵 Music", "💪 Fitness", "🍳 Cooking",
-        "✈️ Travel", "🎨 Art", "🎮 Gaming", "📸 Photography", "🏃 Running",
-        "🧘 Yoga", "🌱 Gardening", "💻 Technology", "🏀 Sports", "🎪 Dancing"
+        stringResource(R.string.interest_travel),
+        stringResource(R.string.interest_food),
+        stringResource(R.string.interest_movie),
+        stringResource(R.string.interest_music),
+        stringResource(R.string.interest_reading),
+        stringResource(R.string.interest_sports),
+        stringResource(R.string.interest_fitness),
+        stringResource(R.string.interest_yoga),
+        stringResource(R.string.interest_swimming),
+        stringResource(R.string.interest_hiking),
+        stringResource(R.string.interest_photography),
+        stringResource(R.string.interest_drawing),
+        stringResource(R.string.interest_cooking),
+        stringResource(R.string.interest_coffee),
+        stringResource(R.string.interest_wine),
+        stringResource(R.string.interest_pets),
+        stringResource(R.string.interest_gardening),
+        stringResource(R.string.interest_technology),
+        stringResource(R.string.interest_gaming),
+        stringResource(R.string.interest_dancing),
+        stringResource(R.string.interest_instrument),
+        stringResource(R.string.interest_crafts),
+        stringResource(R.string.interest_investment),
+        stringResource(R.string.interest_learning)
     )
     
     if (isEditing) {
-        Column {
-            Text(
-                text = "Select your interests:",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xFF666666),
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(horizontal = 16.dp)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+            border = BorderStroke(1.dp, Color(0xFFEAECEF)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                commonInterests.forEach { interest ->
-                    FilterChip(
-                        onClick = { 
-                            val updatedTags = if (tags.contains(interest)) {
-                                tags - interest
-                            } else {
-                                tags + interest
-                            }
-                            onUpdateInterests(updatedTags)
-                        },
-                        label = { Text(interest, fontSize = 12.sp) },
-                        selected = tags.contains(interest),
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color(0xFF667EEA),
-                            selectedLabelColor = Color.White
+                EditableFieldLabel(
+                    text = "Interests & Hobbies",
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                
+                Text(
+                    text = "Select your interests (choose 3-5 interests):",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color(0xFF666666)
+                )
+                
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    commonInterests.forEach { interest ->
+                        FilterChip(
+                            onClick = { 
+                                val updatedTags = if (tags.contains(interest)) {
+                                    tags - interest
+                                } else if (tags.size < 5) {
+                                    tags + interest
+                                } else {
+                                    tags // Don't add more if already at max
+                                }
+                                onUpdateInterests(updatedTags)
+                            },
+                            label = { Text(interest, fontSize = 12.sp) },
+                            selected = tags.contains(interest),
+                            enabled = tags.contains(interest) || tags.size < 5, // Disable if at max and not selected
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color(0xFF667EEA),
+                                selectedLabelColor = Color.White,
+                                containerColor = Color.White,
+                                labelColor = Color(0xFF666666),
+                                disabledContainerColor = Color(0xFFF5F5F5),
+                                disabledLabelColor = Color(0xFFBBBBBB)
+                            ),
+                            border = FilterChipDefaults.filterChipBorder(
+                                borderColor = Color(0xFFE0E0E0),
+                                selectedBorderColor = Color(0xFF667EEA),
+                                enabled = tags.contains(interest) || tags.size < 5,
+                                selected = tags.contains(interest)
+                            )
                         )
+                    }
+                }
+                
+                // Selected count indicator
+                if (tags.isNotEmpty()) {
+                    Text(
+                        text = "Selected: ${tags.size}/5 interest${if (tags.size != 1) "s" else ""}",
+                        fontSize = 12.sp,
+                        color = when {
+                            tags.size in 3..5 -> Color(0xFF4CAF50)
+                            tags.size < 3 -> Color(0xFFFF9800)
+                            else -> Color(0xFF2196F3)
+                        },
+                        fontWeight = FontWeight.Medium
                     )
+                    
+                    if (tags.size < 3) {
+                        Text(
+                            text = "Please select at least 3 interests",
+                            fontSize = 11.sp,
+                            color = Color(0xFFFF9800),
+                            fontWeight = FontWeight.Normal
+                        )
+                    } else if (tags.size == 5) {
+                        Text(
+                            text = "Maximum interests selected",
+                            fontSize = 11.sp,
+                            color = Color(0xFF2196F3),
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
@@ -903,10 +987,24 @@ fun EditablePersonalityTagSection(
     onUpdatePersonalityTraits: (List<String>) -> Unit
 ) {
     val commonTraits = listOf(
-        "🧡 Warm & Caring", "😄 Positive & Active", "🧘 Calm & Rational",
-        "🎭 Creative & Artistic", "💪 Strong & Independent", "🤝 Social & Outgoing",
-        "📚 Intellectual", "🌟 Ambitious", "😊 Funny & Humorous", "💝 Romantic",
-        "🌿 Nature Lover", "🎯 Goal-Oriented", "🤗 Empathetic", "🚀 Adventurous"
+        stringResource(R.string.trait_humorous),
+        stringResource(R.string.trait_warm),
+        stringResource(R.string.trait_active),
+        stringResource(R.string.trait_calm),
+        stringResource(R.string.trait_creative),
+        stringResource(R.string.trait_honest),
+        stringResource(R.string.trait_independent),
+        stringResource(R.string.trait_kind),
+        stringResource(R.string.trait_passionate),
+        stringResource(R.string.trait_careful),
+        stringResource(R.string.trait_adventurous),
+        stringResource(R.string.trait_wise),
+        stringResource(R.string.trait_athletic),
+        stringResource(R.string.trait_knowledgeable),
+        stringResource(R.string.trait_social),
+        stringResource(R.string.trait_secure),
+        stringResource(R.string.trait_romantic),
+        stringResource(R.string.trait_practical)
     )
     
     if (traits.isNotEmpty() || isEditing) {
@@ -919,37 +1017,97 @@ fun EditablePersonalityTagSection(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (isEditing) {
-                Text(
-                    text = "Select your personality traits:",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF666666),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+                    border = BorderStroke(1.dp, Color(0xFFEAECEF)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    commonTraits.forEach { trait ->
-                        FilterChip(
-                            onClick = { 
-                                val updatedTraits = if (traits.contains(trait)) {
-                                    traits - trait
-                                } else {
-                                    traits + trait
-                                }
-                                onUpdatePersonalityTraits(updatedTraits)
-                            },
-                            label = { Text(trait, fontSize = 12.sp) },
-                            selected = traits.contains(trait),
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF9C88FF),
-                                selectedLabelColor = Color.White
-                            )
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        EditableFieldLabel(
+                            text = "Personality Traits",
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
+                        
+                        Text(
+                            text = "Select traits that describe you (choose 3-5 traits):",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color(0xFF666666)
+                        )
+                        
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            commonTraits.forEach { trait ->
+                                FilterChip(
+                                    onClick = { 
+                                        val updatedTraits = if (traits.contains(trait)) {
+                                            traits - trait
+                                        } else if (traits.size < 5) {
+                                            traits + trait
+                                        } else {
+                                            traits // Don't add more if already at max
+                                        }
+                                        onUpdatePersonalityTraits(updatedTraits)
+                                    },
+                                    label = { Text(trait, fontSize = 12.sp) },
+                                    selected = traits.contains(trait),
+                                    enabled = traits.contains(trait) || traits.size < 5, // Disable if at max and not selected
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = Color(0xFF9C88FF),
+                                        selectedLabelColor = Color.White,
+                                        containerColor = Color.White,
+                                        labelColor = Color(0xFF666666),
+                                        disabledContainerColor = Color(0xFFF5F5F5),
+                                        disabledLabelColor = Color(0xFFBBBBBB)
+                                    ),
+                                    border = FilterChipDefaults.filterChipBorder(
+                                        borderColor = Color(0xFFE0E0E0),
+                                        selectedBorderColor = Color(0xFF9C88FF),
+                                        enabled = traits.contains(trait) || traits.size < 5,
+                                        selected = traits.contains(trait)
+                                    )
+                                )
+                            }
+                        }
+                        
+                        // Selected count indicator
+                        if (traits.isNotEmpty()) {
+                            Text(
+                                text = "Selected: ${traits.size}/5 trait${if (traits.size != 1) "s" else ""}",
+                                fontSize = 12.sp,
+                                color = when {
+                                    traits.size in 3..5 -> Color(0xFF4CAF50)
+                                    traits.size < 3 -> Color(0xFFFF9800)
+                                    else -> Color(0xFF2196F3)
+                                },
+                                fontWeight = FontWeight.Medium
+                            )
+                            
+                            if (traits.size < 3) {
+                                Text(
+                                    text = "Please select at least 3 traits",
+                                    fontSize = 11.sp,
+                                    color = Color(0xFFFF9800),
+                                    fontWeight = FontWeight.Normal
+                                )
+                            } else if (traits.size == 5) {
+                                Text(
+                                    text = "Maximum traits selected",
+                                    fontSize = 11.sp,
+                                    color = Color(0xFF2196F3),
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+                        }
                     }
                 }
             } else {
