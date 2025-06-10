@@ -1,0 +1,27 @@
+修改後的Firestore規則（messages部分）：
+
+// Messages collection (assuming it's a root-level collection)
+match /messages/{messageId} {
+  allow create: if isSignedIn() && 
+    ((request.resource.data.senderId == request.auth.uid && isUserInConversation(request.resource.data.conversationId))
+    || (request.resource.data.senderId == "system" && isUserInConversation(request.resource.data.conversationId)));
+
+  allow read: if isSignedIn() && isUserInConversation(resource.data.conversationId);
+
+  allow update, delete: if false; // Prevent editing/deleting messages
+}
+
+// 改善的 isUserInConversation 函數
+function isUserInConversation(conversationId) {
+  return isSignedIn() && 
+         exists(/databases/$(database)/documents/conversations/$(conversationId)) &&
+         get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants
+         .hasAny([request.auth.uid]);
+}
+
+// 或者更簡單的替代方案（臨時修復）：
+match /messages/{messageId} {
+  allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+  allow read: if isSignedIn();
+  allow update, delete: if false;
+}

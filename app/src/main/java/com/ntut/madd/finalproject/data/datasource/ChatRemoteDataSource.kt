@@ -31,7 +31,9 @@ class ChatRemoteDataSource @Inject constructor(
         
         val documentRef = conversationsCollection.add(conversation).await()
         
-        // Add initial system message
+        // TODO: Add initial system message when permissions are fixed
+        // Currently commented out due to Firestore permissions issue
+        /*
         val systemMessage = Message(
             conversationId = documentRef.id,
             senderId = "system",
@@ -39,6 +41,7 @@ class ChatRemoteDataSource @Inject constructor(
             messageType = MessageType.SYSTEM
         )
         messagesCollection.add(systemMessage).await()
+        */
         
         return documentRef.id
     }
@@ -150,26 +153,36 @@ class ChatRemoteDataSource @Inject constructor(
      * Send a message in a conversation
      */
     suspend fun sendMessage(conversationId: String, senderId: String, content: String): Message {
-        val message = Message(
-            conversationId = conversationId,
-            senderId = senderId,
-            content = content,
-            timestamp = System.currentTimeMillis()
-        )
-        
-        val documentRef = messagesCollection.add(message).await()
-        val messageWithId = message.copy(id = documentRef.id)
-        
-        // Update conversation's last message
-        conversationsCollection.document(conversationId).update(
-            mapOf(
-                "lastMessage" to content,
-                "lastMessageSenderId" to senderId,
-                "lastMessageTimestamp" to System.currentTimeMillis()
+        try {
+            println("ChatRemoteDataSource: Attempting to send message - conversationId: $conversationId, senderId: $senderId")
+            
+            val message = Message(
+                conversationId = conversationId,
+                senderId = senderId,
+                content = content,
+                timestamp = System.currentTimeMillis()
             )
-        ).await()
-        
-        return messageWithId
+            
+            val documentRef = messagesCollection.add(message).await()
+            val messageWithId = message.copy(id = documentRef.id)
+            
+            println("ChatRemoteDataSource: Message sent successfully with ID: ${documentRef.id}")
+            
+            // Update conversation's last message
+            conversationsCollection.document(conversationId).update(
+                mapOf(
+                    "lastMessage" to content,
+                    "lastMessageSenderId" to senderId,
+                    "lastMessageTimestamp" to System.currentTimeMillis()
+                )
+            ).await()
+            
+            println("ChatRemoteDataSource: Conversation updated successfully")
+            return messageWithId
+        } catch (e: Exception) {
+            println("ChatRemoteDataSource: Failed to send message: ${e.message}")
+            throw e
+        }
     }
 
     /**

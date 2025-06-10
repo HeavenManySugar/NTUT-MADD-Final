@@ -6,6 +6,7 @@ import com.ntut.madd.finalproject.data.model.User
 import com.ntut.madd.finalproject.data.repository.UserProfileRepository
 import com.ntut.madd.finalproject.data.repository.UserInteractionRepository
 import com.ntut.madd.finalproject.data.repository.ChatRepository
+import com.ntut.madd.finalproject.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,8 @@ data class MatchesUiState(
 class MatchesPageViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
     private val userInteractionRepository: UserInteractionRepository,
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
+    private val authRepository: AuthRepository
 ) : MainViewModel() {
     
     private val _shouldRestartApp = MutableStateFlow(false)
@@ -149,14 +151,19 @@ class MatchesPageViewModel @Inject constructor(
      */
     private fun createMatchAndChat(otherUserId: String) {
         viewModelScope.launch {
-            chatRepository.createMatch("", otherUserId).fold(
-                onSuccess = { match ->
-                    println("MatchesPageViewModel: Successfully created match with conversation ID: ${match.conversationId}")
-                },
-                onFailure = { exception ->
-                    println("MatchesPageViewModel: Failed to create match: ${exception.message}")
-                }
-            )
+            val currentUser = authRepository.currentUser
+            if (currentUser != null) {
+                chatRepository.createMatch(currentUser.uid, otherUserId).fold(
+                    onSuccess = { match ->
+                        println("MatchesPageViewModel: Successfully created match with conversation ID: ${match.conversationId}")
+                    },
+                    onFailure = { exception ->
+                        println("MatchesPageViewModel: Failed to create match: ${exception.message}")
+                    }
+                )
+            } else {
+                println("MatchesPageViewModel: Failed to create match: User not authenticated")
+            }
         }
     }
 
@@ -182,15 +189,21 @@ class MatchesPageViewModel @Inject constructor(
      */
     fun canChatWithUser(userId: String, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-            chatRepository.areUsersMatched("", userId).fold(
-                onSuccess = { isMatched ->
-                    callback(isMatched)
-                },
-                onFailure = { exception ->
-                    println("MatchesPageViewModel: Failed to check match status: ${exception.message}")
-                    callback(false)
-                }
-            )
+            val currentUser = authRepository.currentUser
+            if (currentUser != null) {
+                chatRepository.areUsersMatched(currentUser.uid, userId).fold(
+                    onSuccess = { isMatched ->
+                        callback(isMatched)
+                    },
+                    onFailure = { exception ->
+                        println("MatchesPageViewModel: Failed to check match status: ${exception.message}")
+                        callback(false)
+                    }
+                )
+            } else {
+                println("MatchesPageViewModel: Failed to check match status: User not authenticated")
+                callback(false)
+            }
         }
     }
 }
