@@ -175,6 +175,22 @@ class UserProfileRepository @Inject constructor(
     }
 
     /**
+     * 獲取特定用戶的個人資料（用於查看其他用戶資料）
+     */
+    suspend fun getUserProfileById(userId: String): Result<User> {
+        return try {
+            val user = userProfileRemoteDataSource.getUserProfile(userId)
+            if (user != null) {
+                Result.success(user)
+            } else {
+                Result.failure(Exception("User profile not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
      * 獲取喜歡當前用戶的用戶資料列表
      */
     suspend fun getUsersWhoLikedMe(): Result<List<User>> {

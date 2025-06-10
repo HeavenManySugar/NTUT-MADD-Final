@@ -19,6 +19,7 @@ fun MainPageScreen(
     openHomeScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
     openChatScreen: (String) -> Unit,
+    openUserProfile: (String) -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     viewModel: MainPageViewModel = hiltViewModel()
 ) {
@@ -34,6 +35,7 @@ fun MainPageScreen(
             openHomeScreen = openHomeScreen,
             openSettingsScreen = openSettingsScreen,
             openChatScreen = openChatScreen,
+            openUserProfile = openUserProfile,
             showErrorSnackbar = showErrorSnackbar
         )
     }
@@ -46,6 +48,7 @@ private fun MainPageContent(
     openHomeScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
     openChatScreen: (String) -> Unit,
+    openUserProfile: (String) -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit
 ) {
     when (currentRoute) {
@@ -57,6 +60,7 @@ private fun MainPageContent(
         )
         "matches" -> MatchesPageScreen(
             openHomeScreen = openHomeScreen,
+            openUserProfile = openUserProfile,
             showErrorSnackbar = showErrorSnackbar,
             currentRoute = currentRoute,
             onNavigate = onNavigate

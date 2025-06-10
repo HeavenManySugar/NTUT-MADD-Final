@@ -45,6 +45,8 @@ import com.ntut.madd.finalproject.ui.splash.SplashRoute
 import com.ntut.madd.finalproject.ui.splash.SplashScreen
 import com.ntut.madd.finalproject.ui.chat.ChatPageRoute
 import com.ntut.madd.finalproject.ui.chat.ChatPageScreen
+import com.ntut.madd.finalproject.ui.userprofile.UserProfileDetailRoute
+import com.ntut.madd.finalproject.ui.userprofile.UserProfileDetailScreen
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -105,6 +107,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 openChatScreen = { chatId ->
                                     navController.navigate(ChatPageRoute(chatId)) { launchSingleTop = true }
+                                },
+                                openUserProfile = { userId ->
+                                    navController.navigate(UserProfileDetailRoute(userId)) { launchSingleTop = true }
                                 },
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
@@ -202,6 +207,18 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate(MainPageRoute) { launchSingleTop = true }
                                     },
                                     chatId = route.chatId,
+                                    onBackClick = {
+                                        navController.popBackStack()
+                                    },
+                                    showErrorSnackbar = { errorMessage ->
+                                        val message = getErrorMessage(errorMessage)
+                                        scope.launch { snackbarHostState.showSnackbar(message) }
+                                    }
+                                )
+                            }
+                            composable<UserProfileDetailRoute> { backStackEntry ->
+                                val route = backStackEntry.toRoute<UserProfileDetailRoute>()
+                                UserProfileDetailScreen(
                                     onBackClick = {
                                         navController.popBackStack()
                                     },

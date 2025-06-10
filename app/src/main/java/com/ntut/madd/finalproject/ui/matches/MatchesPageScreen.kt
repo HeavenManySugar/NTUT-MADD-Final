@@ -37,6 +37,7 @@ object MatchesPagePageRoute
 @Composable
 fun MatchesPageScreen(
     openHomeScreen: () -> Unit,
+    openUserProfile: (String) -> Unit = {},
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "matches",
     onNavigate: (String) -> Unit = {},
@@ -55,6 +56,7 @@ fun MatchesPageScreen(
             onAcceptUser = viewModel::acceptUser,
             onRejectUser = viewModel::rejectUser,
             onRefresh = viewModel::refresh,
+            openUserProfile = openUserProfile,
             showErrorSnackbar = showErrorSnackbar
         )
     }
@@ -68,6 +70,7 @@ fun MatchesPageScreenContent(
     onAcceptUser: (User) -> Unit = {},
     onRejectUser: (User) -> Unit = {},
     onRefresh: () -> Unit = {},
+    openUserProfile: (String) -> Unit = {},
     showErrorSnackbar: (ErrorMessage) -> Unit = {}
 ) {
     // Show error if any
@@ -110,15 +113,19 @@ fun MatchesPageScreenContent(
             if (uiState.mutualMatches.isEmpty()) {
                 EmptyMatchesMessage(message = "No new matches yet. Keep swiping!")
             } else {
-                MatchesSection(matches = uiState.mutualMatches.map { user ->
-                    MatchProfile(
-                        initials = user.displayName.take(1).uppercase(),
-                        name = user.displayName,
-                        age = 25, // Age can be calculated from profile if available
-                        city = user.profile?.city ?: "Unknown",
-                        isOnline = false // Can be implemented later if needed
-                    )
-                })
+                MatchesSection(
+                    matches = uiState.mutualMatches.map { user ->
+                        MatchProfile(
+                            initials = user.displayName.take(1).uppercase(),
+                            name = user.displayName,
+                            age = 25, // Age can be calculated from profile if available
+                            city = user.profile?.city ?: "Unknown",
+                            isOnline = false // Can be implemented later if needed
+                        )
+                    },
+                    users = uiState.mutualMatches,
+                    onUserClick = openUserProfile
+                )
             }
 
             SectionTitle(
@@ -138,7 +145,8 @@ fun MatchesPageScreenContent(
                 RealMatchRequestList(
                     users = uiState.usersWhoLikedMe,
                     onAccept = onAcceptUser,
-                    onReject = onRejectUser
+                    onReject = onRejectUser,
+                    onUserClick = openUserProfile
                 )
             }
         }
@@ -188,7 +196,8 @@ private fun LoadingMatchesMessage() {
 private fun RealMatchRequestList(
     users: List<User>,
     onAccept: (User) -> Unit,
-    onReject: (User) -> Unit
+    onReject: (User) -> Unit,
+    onUserClick: (String) -> Unit
 ) {
     Column {
         users.forEach { user ->
@@ -203,7 +212,8 @@ private fun RealMatchRequestList(
                         timeAgo = "Recently" // Can be calculated from interaction timestamp
                     ),
                     onAccept = { onAccept(user) },
-                    onReject = { onReject(user) }
+                    onReject = { onReject(user) },
+                    onUserClick = { onUserClick(user.id) }
                 )
             }
         }
@@ -234,6 +244,7 @@ fun MatchesPageScreenPreview() {
                 onAcceptUser = {},
                 onRejectUser = {},
                 onRefresh = {},
+                openUserProfile = {},
                 showErrorSnackbar = {}
             )
         }
