@@ -146,6 +146,9 @@ class MainActivity : ComponentActivity() {
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute) { launchSingleTop = true }
                                 },
+                                openSetupScreen = {
+                                    navController.navigate(SetupRoute) { launchSingleTop = true }
+                                },
                                 showErrorSnackbar = { errorMessage ->
                                     val message = getErrorMessage(errorMessage)
                                     scope.launch { snackbarHostState.showSnackbar(message) }
