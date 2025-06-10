@@ -3,6 +3,7 @@ package com.ntut.madd.finalproject.ui.discover
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ fun DiscoverPageScreen(
             onReject = viewModel::onRejectProfile,
             onApprove = viewModel::onApproveProfile,
             onRetry = viewModel::retryLoading,
+            onRefreshRecommendations = viewModel::refreshRecommendations,
             showErrorSnackbar = showErrorSnackbar
         )
     }
@@ -68,6 +70,7 @@ fun DiscoverPageScreenContent(
     onReject: () -> Unit = {},
     onApprove: () -> Unit = {},
     onRetry: () -> Unit = {},
+    onRefreshRecommendations: () -> Unit = {},
     openSettingsScreen: () -> Unit = {},
     showErrorSnackbar: (ErrorMessage) -> Unit = {}
 ) {
@@ -91,6 +94,30 @@ fun DiscoverPageScreenContent(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    // Settings button on the top right
+                    IconButton(
+                        onClick = openSettingsScreen,
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.Black
+                        )
+                    }
+                    
+                    // Refresh button on the top left
+                    IconButton(
+                        onClick = onRefreshRecommendations,
+                        modifier = Modifier.align(Alignment.TopStart)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh Recommendations",
+                            tint = Color.Black
+                        )
+                    }
+                    
                     // Centered content
                     Column(
                         modifier = Modifier
@@ -134,7 +161,7 @@ fun DiscoverPageScreenContent(
                         )
                     }
                     uiState.availableProfiles.isEmpty() -> {
-                        EmptyProfilesContent()
+                        EmptyProfilesContent(onRefresh = onRefreshRecommendations)
                     }
                     else -> {
                         val currentUser = uiState.availableProfiles.getOrNull(uiState.currentProfileIndex)
@@ -213,7 +240,7 @@ private fun ErrorContent(
 }
 
 @Composable
-private fun EmptyProfilesContent() {
+private fun EmptyProfilesContent(onRefresh: () -> Unit = {}) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -222,22 +249,26 @@ private fun EmptyProfilesContent() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "🔍",
+                text = "✨",
                 fontSize = 48.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "No profiles available",
+                text = "All caught up!",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Check back later for new profiles",
+                text = "You've seen all available profiles.\nCheck back later for new recommendations!",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
             )
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(onClick = onRefresh) {
+                Text("Refresh Recommendations")
+            }
         }
     }
 }
@@ -374,7 +405,8 @@ fun DiscoverPageScreenPreview() {
             DiscoverPageScreenContent(
                 uiState = sampleUiState,
                 currentRoute = "discover",
-                onNavigate = {}
+                onNavigate = {},
+                onRefreshRecommendations = {}
             )
         }
     }
