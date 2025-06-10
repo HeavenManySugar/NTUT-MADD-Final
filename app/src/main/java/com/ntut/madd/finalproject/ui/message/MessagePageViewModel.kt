@@ -1,30 +1,60 @@
 package com.ntut.madd.finalproject.ui.message
 
-
+import androidx.lifecycle.viewModelScope
 import com.ntut.madd.finalproject.MainViewModel
+import com.ntut.madd.finalproject.data.model.Conversation
+import com.ntut.madd.finalproject.data.repository.ChatRepository
+import com.ntut.madd.finalproject.data.repository.ConversationWithUser
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MessagePageViewModel @Inject constructor(
-    // 如果 Profile 要用 repository 可注入
-) : MainViewModel() {
-    private val _shouldRestartApp = MutableStateFlow(false)
-    val shouldRestartApp: StateFlow<Boolean>
-        get() = _shouldRestartApp.asStateFlow()
-    private val _currentRoute = MutableStateFlow("profile")
-    val currentRoute: StateFlow<String> = _currentRoute.asStateFlow()
+data class MessageUiState(
+    val isLoading: Boolean = false,
+    val conversationsWithUsers: List<ConversationWithUser> = emptyList(),
+    val errorMessage: String? = null
+)
 
-    fun navigateTo(route: String) {
-        _currentRoute.value = route
+@HiltViewModel
+class MessagePageViewModel @Inject constructor(
+    private val chatRepository: ChatRepository
+) : MainViewModel() {
+    
+    private val _shouldRestartApp = MutableStateFlow(false)
+    val shouldRestartApp: StateFlow<Boolean> = _shouldRestartApp.asStateFlow()
+    
+    private val _uiState = MutableStateFlow(MessageUiState())
+    val uiState: StateFlow<MessageUiState> = _uiState.asStateFlow()
+
+    init {
+        loadConversations()
     }
 
-    // 你可以額外加一些 Profile 狀態
-    private val _username = MutableStateFlow("匿名使用者")
-    val username: StateFlow<String> = _username.asStateFlow()
+    private fun loadConversations() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            
+            chatRepository.getUserConversationsWithUserInfo().fold(
+                onSuccess = { conversationsWithUsers ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        conversationsWithUsers = conversationsWithUsers
+                    )
+                },
+                onFailure = { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = exception.message
+                    )
+                }
+            )
+        }
+    }
 
-    fun setUsername(name: String) {
-        _username.value = name
+    fun refreshConversations() {
+        loadConversations()
     }
 }

@@ -38,6 +38,7 @@ object MatchesPagePageRoute
 fun MatchesPageScreen(
     openHomeScreen: () -> Unit,
     openUserProfile: (String) -> Unit = {},
+    openChatScreen: (String) -> Unit = {},
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "matches",
     onNavigate: (String) -> Unit = {},
@@ -57,7 +58,9 @@ fun MatchesPageScreen(
             onRejectUser = viewModel::rejectUser,
             onRefresh = viewModel::refresh,
             openUserProfile = openUserProfile,
-            showErrorSnackbar = showErrorSnackbar
+            openChatScreen = openChatScreen,
+            showErrorSnackbar = showErrorSnackbar,
+            viewModel = viewModel
         )
     }
 }
@@ -71,7 +74,9 @@ fun MatchesPageScreenContent(
     onRejectUser: (User) -> Unit = {},
     onRefresh: () -> Unit = {},
     openUserProfile: (String) -> Unit = {},
-    showErrorSnackbar: (ErrorMessage) -> Unit = {}
+    openChatScreen: (String) -> Unit = {},
+    showErrorSnackbar: (ErrorMessage) -> Unit = {},
+    viewModel: MatchesPageViewModel? = null
 ) {
     // Show error if any
     uiState.errorMessage?.let { message ->
@@ -124,7 +129,15 @@ fun MatchesPageScreenContent(
                         )
                     },
                     users = uiState.mutualMatches,
-                    onUserClick = openUserProfile
+                    onUserClick = openUserProfile,
+                    onChatClick = { userId ->
+                        // Get conversation ID for the user and open chat
+                        viewModel?.getChatId(userId) { conversationId ->
+                            conversationId?.let { 
+                                openChatScreen(it)
+                            }
+                        }
+                    }
                 )
             }
 
@@ -245,6 +258,7 @@ fun MatchesPageScreenPreview() {
                 onRejectUser = {},
                 onRefresh = {},
                 openUserProfile = {},
+                openChatScreen = {},
                 showErrorSnackbar = {}
             )
         }

@@ -5,6 +5,7 @@ import com.ntut.madd.finalproject.MainViewModel
 import com.ntut.madd.finalproject.data.model.User
 import com.ntut.madd.finalproject.data.repository.UserProfileRepository
 import com.ntut.madd.finalproject.data.repository.UserInteractionRepository
+import com.ntut.madd.finalproject.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,8 @@ data class MatchesUiState(
 @HiltViewModel
 class MatchesPageViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
-    private val userInteractionRepository: UserInteractionRepository
+    private val userInteractionRepository: UserInteractionRepository,
+    private val chatRepository: ChatRepository
 ) : MainViewModel() {
     
     private val _shouldRestartApp = MutableStateFlow(false)
@@ -111,6 +113,8 @@ class MatchesPageViewModel @Inject constructor(
             userInteractionRepository.recordApproval(user.id).fold(
                 onSuccess = {
                     println("MatchesPageViewModel: Successfully accepted user ${user.id}")
+                    // 創建匹配和聊天對話
+                    createMatchAndChat(user.id)
                     // 重新載入數據以更新互相匹配列表
                     loadUsersWhoLikedMe()
                 },
@@ -135,6 +139,56 @@ class MatchesPageViewModel @Inject constructor(
                 },
                 onFailure = { exception ->
                     println("MatchesPageViewModel: Failed to reject user: ${exception.message}")
+                }
+            )
+        }
+    }
+
+    /**
+     * 創建匹配和聊天對話
+     */
+    private fun createMatchAndChat(otherUserId: String) {
+        viewModelScope.launch {
+            chatRepository.createMatch("", otherUserId).fold(
+                onSuccess = { match ->
+                    println("MatchesPageViewModel: Successfully created match with conversation ID: ${match.conversationId}")
+                },
+                onFailure = { exception ->
+                    println("MatchesPageViewModel: Failed to create match: ${exception.message}")
+                }
+            )
+        }
+    }
+
+    /**
+     * 獲取與指定用戶的聊天對話ID
+     */
+    fun getChatId(userId: String, callback: (String?) -> Unit) {
+        viewModelScope.launch {
+            chatRepository.getConversationIdForUser(userId).fold(
+                onSuccess = { conversationId ->
+                    callback(conversationId)
+                },
+                onFailure = { exception ->
+                    println("MatchesPageViewModel: Failed to get conversation ID: ${exception.message}")
+                    callback(null)
+                }
+            )
+        }
+    }
+
+    /**
+     * 檢查是否可以與指定用戶聊天 (是否為互相匹配)
+     */
+    fun canChatWithUser(userId: String, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            chatRepository.areUsersMatched("", userId).fold(
+                onSuccess = { isMatched ->
+                    callback(isMatched)
+                },
+                onFailure = { exception ->
+                    println("MatchesPageViewModel: Failed to check match status: ${exception.message}")
+                    callback(false)
                 }
             )
         }

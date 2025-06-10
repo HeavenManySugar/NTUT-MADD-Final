@@ -56,11 +56,13 @@ private fun MainPageContent(
             openHomeScreen = openHomeScreen,
             showErrorSnackbar = showErrorSnackbar,
             currentRoute = currentRoute,
-            onNavigate = onNavigate
+            onNavigate = onNavigate,
+            openChatScreen = openChatScreen
         )
         "matches" -> MatchesPageScreen(
             openHomeScreen = openHomeScreen,
             openUserProfile = openUserProfile,
+            openChatScreen = openChatScreen,
             showErrorSnackbar = showErrorSnackbar,
             currentRoute = currentRoute,
             onNavigate = onNavigate

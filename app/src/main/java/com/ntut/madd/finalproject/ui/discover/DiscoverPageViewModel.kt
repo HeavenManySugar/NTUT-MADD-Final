@@ -5,6 +5,7 @@ import com.ntut.madd.finalproject.MainViewModel
 import com.ntut.madd.finalproject.data.model.User
 import com.ntut.madd.finalproject.data.repository.UserProfileRepository
 import com.ntut.madd.finalproject.data.repository.UserInteractionRepository
+import com.ntut.madd.finalproject.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,13 +18,16 @@ data class DiscoverUiState(
     val currentUser: User? = null,
     val availableProfiles: List<User> = emptyList(),
     val currentProfileIndex: Int = 0,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val showMatchNotification: Boolean = false,
+    val matchedUser: User? = null
 )
 
 @HiltViewModel
 class DiscoverPageViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
-    private val userInteractionRepository: UserInteractionRepository
+    private val userInteractionRepository: UserInteractionRepository,
+    private val chatRepository: ChatRepository
 ) : MainViewModel() {
     
     private val _uiState = MutableStateFlow(DiscoverUiState())
@@ -190,6 +194,9 @@ class DiscoverPageViewModel @Inject constructor(
                 userInteractionRepository.recordApproval(currentProfile.id).fold(
                     onSuccess = {
                         println("DiscoverPageViewModel: Successfully recorded approval for user ${currentProfile.id}")
+                        
+                        // 檢查是否為互相喜歡 (mutual match)
+                        checkForMutualMatch(currentProfile.id)
                     },
                     onFailure = { exception ->
                         println("DiscoverPageViewModel: Failed to record approval: ${exception.message}")
@@ -198,6 +205,86 @@ class DiscoverPageViewModel @Inject constructor(
             }
         }
         moveToNextProfile()
+    }
+
+    /**
+     * 檢查是否為互相喜歡，如果是則創建 Match 和 Conversation
+     */
+    private fun checkForMutualMatch(targetUserId: String) {
+        viewModelScope.launch {
+            // 檢查對方是否也喜歡我們
+            userInteractionRepository.getUsersWhoLikedMe().fold(
+                onSuccess = { usersWhoLikedMeIds ->
+                    if (usersWhoLikedMeIds.contains(targetUserId)) {
+                        // 這是一個互相匹配！創建 match 和 conversation
+                        println("DiscoverPageViewModel: Mutual match detected with user $targetUserId")
+                        createMatch(targetUserId)
+                    } else {
+                        println("DiscoverPageViewModel: Approval recorded, but no mutual match yet with user $targetUserId")
+                    }
+                },
+                onFailure = { exception ->
+                    println("DiscoverPageViewModel: Failed to check for mutual match: ${exception.message}")
+                }
+            )
+        }
+    }
+
+    /**
+     * 創建 Match 和對應的聊天對話
+     */
+    private fun createMatch(otherUserId: String) {
+        viewModelScope.launch {
+            chatRepository.createMatch(_uiState.value.currentUser?.id ?: "", otherUserId).fold(
+                onSuccess = { match ->
+                    println("DiscoverPageViewModel: Successfully created match with conversation ID: ${match.conversationId}")
+                    
+                    // Find the matched user from available profiles
+                    val matchedUser = _uiState.value.availableProfiles.find { it.id == otherUserId }
+                    
+                    // Show "It's a Match!" notification
+                    _uiState.value = _uiState.value.copy(
+                        showMatchNotification = true,
+                        matchedUser = matchedUser
+                    )
+                },
+                onFailure = { exception ->
+                    println("DiscoverPageViewModel: Failed to create match: ${exception.message}")
+                }
+            )
+        }
+    }
+
+    /**
+     * Dismiss the match notification
+     */
+    fun dismissMatchNotification() {
+        _uiState.value = _uiState.value.copy(
+            showMatchNotification = false,
+            matchedUser = null
+        )
+    }
+
+    /**
+     * Get conversation ID for the matched user to navigate to chat
+     */
+    fun getChatIdForMatchedUser(callback: (String?) -> Unit) {
+        val matchedUser = _uiState.value.matchedUser
+        if (matchedUser != null) {
+            viewModelScope.launch {
+                chatRepository.getConversationIdForUser(matchedUser.id).fold(
+                    onSuccess = { conversationId ->
+                        callback(conversationId)
+                    },
+                    onFailure = { exception ->
+                        println("DiscoverPageViewModel: Failed to get conversation ID: ${exception.message}")
+                        callback(null)
+                    }
+                )
+            }
+        } else {
+            callback(null)
+        }
     }
 
     private fun moveToNextProfile() {

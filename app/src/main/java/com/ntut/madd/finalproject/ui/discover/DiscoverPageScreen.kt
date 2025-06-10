@@ -48,6 +48,7 @@ fun DiscoverPageScreen(
     showErrorSnackbar: (ErrorMessage) -> Unit,
     currentRoute: String = "discover",
     onNavigate: (String) -> Unit = {},
+    openChatScreen: (String) -> Unit = {},
     viewModel: DiscoverPageViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
@@ -64,7 +65,16 @@ fun DiscoverPageScreen(
             onLike = viewModel::onApproveProfile,
             onRetry = viewModel::retryLoading,
             onRefreshRecommendations = viewModel::refreshRecommendations,
-            showErrorSnackbar = showErrorSnackbar
+            showErrorSnackbar = showErrorSnackbar,
+            onDismissMatchNotification = viewModel::dismissMatchNotification,
+            onOpenChatWithMatch = {
+                // Get conversation ID for the matched user and navigate to chat
+                viewModel.getChatIdForMatchedUser { conversationId ->
+                    conversationId?.let { 
+                        openChatScreen(it)
+                    }
+                }
+            }
         )
     }
 }
@@ -79,7 +89,9 @@ fun DiscoverPageScreenContent(
     onRetry: () -> Unit = {},
     onRefreshRecommendations: () -> Unit = {},
     openSettingsScreen: () -> Unit = {},
-    showErrorSnackbar: (ErrorMessage) -> Unit = {}
+    showErrorSnackbar: (ErrorMessage) -> Unit = {},
+    onDismissMatchNotification: () -> Unit = {},
+    onOpenChatWithMatch: () -> Unit = {}
 ) {
     Scaffold(
         bottomBar = {
@@ -174,6 +186,16 @@ fun DiscoverPageScreenContent(
                 }
             }
         }
+    }
+    
+    // Show match notification dialog
+    if (uiState.showMatchNotification && uiState.matchedUser != null) {
+        MatchNotificationDialog(
+            matchedUser = uiState.matchedUser,
+            onDismiss = onDismissMatchNotification,
+            onSendMessage = onOpenChatWithMatch,
+            onKeepSwiping = onDismissMatchNotification
+        )
     }
 }
 

@@ -28,6 +28,8 @@ import com.ntut.madd.finalproject.ui.messages.TopFadeOverlay
 import com.ntut.madd.finalproject.ui.component.*
 import com.ntut.madd.finalproject.ui.theme.MakeItSoTheme
 import kotlinx.serialization.Serializable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
 
 @Serializable
 object MessagePageRoute
@@ -42,23 +44,30 @@ fun MessagePageScreen(
     viewModel: MessagePageViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (shouldRestartApp) {
         openHomeScreen()
     } else {
         MessagePageScreenContent(
+            uiState = uiState,
             currentRoute = currentRoute,
             onNavigate = onNavigate,
-            openChatScreen = openChatScreen
+            openChatScreen = openChatScreen,
+            showErrorSnackbar = showErrorSnackbar,
+            onRefresh = viewModel::refreshConversations
         )
     }
 }
 
 @Composable
 fun MessagePageScreenContent(
+    uiState: MessageUiState,
     currentRoute: String = "messages",
     onNavigate: (String) -> Unit = {},
-    openChatScreen: (String) -> Unit = {}
+    openChatScreen: (String) -> Unit = {},
+    showErrorSnackbar: (ErrorMessage) -> Unit = {},
+    onRefresh: () -> Unit = {}
 ) {
 
     var query by remember { mutableStateOf("") }
@@ -108,16 +117,74 @@ fun MessagePageScreenContent(
                 FilterChips(selected = selectedFilter, onSelect = { selectedFilter = it })
             }
             TopFadeOverlay()
-            MessageListWithSeparators(
-                messages = listOf(
-                    MessagePreview("chat1", "E", "Emily", "Hey! How was your day? 😊", "2 min ago", true),
-                    MessagePreview("chat2", "A", "Alex", "Let's catch up tomorrow!", "10 min ago", false),
-                    MessagePreview("chat3", "M", "Maggie", "I'll send the files later", "1 hr ago", true),
-                    MessagePreview("chat4", "L", "Liam", "Got it, thanks!", "2 hr ago", false)
-                ),
-                onChatClick = { chatId -> openChatScreen(chatId) }
-            )
+            
+            // Show error if any
+            uiState.errorMessage?.let { message ->
+                showErrorSnackbar(ErrorMessage.StringError(message))
+            }
+            
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (uiState.conversationsWithUsers.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "No conversations yet",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.Gray
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Start matching to chat with people!",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            } else {
+                MessageListWithSeparators(
+                    messages = uiState.conversationsWithUsers.map { conversationWithUser ->
+                        val conversation = conversationWithUser.conversation
+                        val otherUser = conversationWithUser.otherUser
+                        MessagePreview(
+                            chatId = conversation.id,
+                            initials = otherUser?.displayName?.take(1)?.uppercase() ?: "?",
+                            userName = otherUser?.displayName ?: "Unknown User",
+                            lastMessage = conversation.lastMessage.ifEmpty { "Say hello!" },
+                            timeAgo = formatTimestamp(conversation.lastMessageTimestamp),
+                            isOnline = false // Can be enhanced later
+                        )
+                    },
+                    onChatClick = { chatId -> openChatScreen(chatId) }
+                )
+            }
         }
+    }
+}
+
+/**
+ * Format timestamp to relative time string
+ */
+private fun formatTimestamp(timestamp: Long): String {
+    val now = System.currentTimeMillis()
+    val diff = now - timestamp
+    
+    return when {
+        diff < 60 * 1000 -> "Just now"
+        diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)} min ago"
+        diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)} hr ago"
+        diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)} days ago"
+        else -> "Long ago"
     }
 }
 
@@ -131,9 +198,16 @@ fun MessagePageScreenPreview() {
                 .height(1200.dp)
         ) {
             MessagePageScreenContent(
+                uiState = MessageUiState(
+                    isLoading = false,
+                    conversationsWithUsers = emptyList(),
+                    errorMessage = null
+                ),
                 currentRoute = "messages",
                 onNavigate = {},
-                openChatScreen = {}
+                openChatScreen = {},
+                showErrorSnackbar = {},
+                onRefresh = {}
             )
         }
     }

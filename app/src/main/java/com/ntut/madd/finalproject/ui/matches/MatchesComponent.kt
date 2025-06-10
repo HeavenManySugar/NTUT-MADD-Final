@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.clickable
@@ -173,7 +175,8 @@ data class MatchProfile(
 fun MatchesSection(
     matches: List<MatchProfile>,
     users: List<com.ntut.madd.finalproject.data.model.User>,
-    onUserClick: (String) -> Unit
+    onUserClick: (String) -> Unit,
+    onChatClick: (String) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 2.dp),
@@ -182,14 +185,17 @@ fun MatchesSection(
         items(matches.size) { index ->
             val match = matches[index]
             val user = users.getOrNull(index)
-            MatchCard(
+            MutualMatchCard(
                 initials = match.initials,
                 name = match.name,
                 age = match.age,
                 city = match.city,
                 isOnline = match.isOnline,
-                onClick = { 
+                onProfileClick = { 
                     user?.let { onUserClick(it.id) }
+                },
+                onChatClick = {
+                    user?.let { onChatClick(it.id) }
                 }
             )
         }
@@ -321,6 +327,111 @@ fun MatchRequestList(requests: List<MatchRequest>) {
                 onAccept = { println("Accepted ${request.name}") },
                 onReject = { println("Rejected ${request.name}") }
             )
+        }
+    }
+}
+
+/** Mutual Match Card with Chat Button **/
+@Composable
+fun MutualMatchCard(
+    initials: String,
+    name: String,
+    age: Int,
+    city: String,
+    isOnline: Boolean,
+    onProfileClick: () -> Unit,
+    onChatClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = modifier
+            .width(140.dp)
+            .padding(4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clickable { onProfileClick() },
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .border(
+                            width = 2.dp,
+                            color = Color(0xFFC8D2F6),
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape)
+                ) {
+                    Text(
+                        text = initials,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF667EEA)
+                    )
+                }
+
+                if (isOnline) {
+                    Box(
+                        modifier = Modifier
+                            .offset(x = 4.dp, y = (-4).dp)
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF38C976))
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = name,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = Color(0xFF2D3748),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                modifier = Modifier.clickable { onProfileClick() }
+            )
+            Text(
+                text = "${age}y • $city",
+                fontSize = 11.sp,
+                color = Color(0xFF718096),
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Chat Button
+            Button(
+                onClick = onChatClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(32.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF667EEA)
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(
+                    text = "💬 Chat",
+                    fontSize = 12.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }
