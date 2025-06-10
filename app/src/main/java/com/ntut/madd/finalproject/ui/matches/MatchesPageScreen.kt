@@ -56,6 +56,8 @@ fun MatchesPageScreen(
             onNavigate = onNavigate,
             onAcceptUser = viewModel::acceptUser,
             onRejectUser = viewModel::rejectUser,
+            onAcceptMutualMatch = viewModel::acceptMutualMatch,
+            onRejectMutualMatch = viewModel::rejectMutualMatch,
             onRefresh = viewModel::refresh,
             openUserProfile = openUserProfile,
             openChatScreen = openChatScreen,
@@ -72,6 +74,8 @@ fun MatchesPageScreenContent(
     onNavigate: (String) -> Unit = {},
     onAcceptUser: (User) -> Unit = {},
     onRejectUser: (User) -> Unit = {},
+    onAcceptMutualMatch: (User) -> Unit = {},
+    onRejectMutualMatch: (User) -> Unit = {},
     onRefresh: () -> Unit = {},
     openUserProfile: (String) -> Unit = {},
     openChatScreen: (String) -> Unit = {},
@@ -108,18 +112,18 @@ fun MatchesPageScreenContent(
 
             SectionTitle(
                 icon = Icons.Filled.AutoAwesome,
-                title = "New Matches",
+                title = "Latest Matches",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 fontSize = 26.sp,
                 iconSize = 26.dp
             )
 
-            // Show mutual matches (users who liked each other)
+            // Show mutual matches (users who liked each other) - only show top 3
             if (uiState.mutualMatches.isEmpty()) {
                 EmptyMatchesMessage(message = "No new matches yet. Keep swiping!")
             } else {
                 MatchesSection(
-                    matches = uiState.mutualMatches.map { user ->
+                    matches = uiState.mutualMatches.take(3).map { user ->
                         MatchProfile(
                             initials = user.displayName.take(1).uppercase(),
                             name = user.displayName,
@@ -128,16 +132,10 @@ fun MatchesPageScreenContent(
                             isOnline = false // Can be implemented later if needed
                         )
                     },
-                    users = uiState.mutualMatches,
+                    users = uiState.mutualMatches.take(3),
                     onUserClick = openUserProfile,
-                    onChatClick = { userId ->
-                        // Get conversation ID for the user and open chat
-                        viewModel?.getChatId(userId) { conversationId ->
-                            conversationId?.let { 
-                                openChatScreen(it)
-                            }
-                        }
-                    }
+                    onAcceptUser = onAcceptMutualMatch,
+                    onRejectUser = onRejectMutualMatch
                 )
             }
 
@@ -250,12 +248,14 @@ fun MatchesPageScreenPreview() {
                 errorMessage = null
             )
             
-            MatchesPageScreenContent(
+                        MatchesPageScreenContent(
                 uiState = sampleUiState,
                 currentRoute = "matches",
                 onNavigate = {},
                 onAcceptUser = {},
                 onRejectUser = {},
+                onAcceptMutualMatch = {},
+                onRejectMutualMatch = {},
                 onRefresh = {},
                 openUserProfile = {},
                 openChatScreen = {},

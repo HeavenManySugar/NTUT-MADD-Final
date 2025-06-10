@@ -36,7 +36,7 @@ fun MyMatchesStats(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "My Matches",
+            text = "New Matches (Latest 3)",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF2C2C2C)
@@ -176,16 +176,17 @@ fun MatchesSection(
     matches: List<MatchProfile>,
     users: List<com.ntut.madd.finalproject.data.model.User>,
     onUserClick: (String) -> Unit,
-    onChatClick: (String) -> Unit
+    onAcceptUser: (com.ntut.madd.finalproject.data.model.User) -> Unit,
+    onRejectUser: (com.ntut.madd.finalproject.data.model.User) -> Unit
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(matches.size) { index ->
+        items(matches.take(3).size) { index -> // 只显示最新的3个
             val match = matches[index]
             val user = users.getOrNull(index)
-            MutualMatchCard(
+            TopMatchCard(
                 initials = match.initials,
                 name = match.name,
                 age = match.age,
@@ -194,8 +195,11 @@ fun MatchesSection(
                 onProfileClick = { 
                     user?.let { onUserClick(it.id) }
                 },
-                onChatClick = {
-                    user?.let { onChatClick(it.id) }
+                onAccept = {
+                    user?.let { onAcceptUser(it) }
+                },
+                onReject = {
+                    user?.let { onRejectUser(it) }
                 }
             )
         }
@@ -327,6 +331,125 @@ fun MatchRequestList(requests: List<MatchRequest>) {
                 onAccept = { println("Accepted ${request.name}") },
                 onReject = { println("Rejected ${request.name}") }
             )
+        }
+    }
+}
+
+/** Top Match Card with Like/Dislike buttons instead of Chat **/
+@Composable
+fun TopMatchCard(
+    initials: String,
+    name: String,
+    age: Int,
+    city: String,
+    isOnline: Boolean,
+    onProfileClick: () -> Unit,
+    onAccept: () -> Unit,
+    onReject: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = modifier
+            .width(140.dp)
+            .padding(4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clickable { onProfileClick() },
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .border(
+                            width = 2.dp,
+                            color = Color(0xFFC8D2F6),
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape)
+                ) {
+                    Text(
+                        text = initials,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF667EEA)
+                    )
+                }
+
+                if (isOnline) {
+                    Box(
+                        modifier = Modifier
+                            .offset(x = 4.dp, y = (-4).dp)
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF38C976))
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = name,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = Color(0xFF2D3748),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                modifier = Modifier.clickable { onProfileClick() }
+            )
+            Text(
+                text = "${age}y • $city",
+                fontSize = 11.sp,
+                color = Color(0xFF718096),
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Like/Dislike Buttons
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Dislike button
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFFF6B6B))
+                        .clickable { onReject() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("✕", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Like button
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF4CAF50))
+                        .clickable { onAccept() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("💖", fontSize = 14.sp)
+                }
+            }
         }
     }
 }

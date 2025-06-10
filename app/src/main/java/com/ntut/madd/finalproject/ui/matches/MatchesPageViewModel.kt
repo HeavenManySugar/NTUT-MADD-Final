@@ -147,6 +147,36 @@ class MatchesPageViewModel @Inject constructor(
     }
 
     /**
+     * 從互相匹配列表中移除用戶（用於頂部匹配卡片的拒絕功能）
+     */
+    fun rejectMutualMatch(user: User) {
+        viewModelScope.launch {
+            userInteractionRepository.recordRejection(user.id).fold(
+                onSuccess = {
+                    println("MatchesPageViewModel: Successfully rejected mutual match ${user.id}")
+                    // 從互相匹配列表中移除該用戶
+                    val updatedMutualMatches = _uiState.value.mutualMatches.filter { it.id != user.id }
+                    _uiState.value = _uiState.value.copy(mutualMatches = updatedMutualMatches)
+                },
+                onFailure = { exception ->
+                    println("MatchesPageViewModel: Failed to reject mutual match: ${exception.message}")
+                }
+            )
+        }
+    }
+
+    /**
+     * 接受互相匹配的用戶（用於頂部匹配卡片的喜歡功能，創建聊天室）
+     */
+    fun acceptMutualMatch(user: User) {
+        viewModelScope.launch {
+            // 創建聊天對話
+            createMatchAndChat(user.id)
+            println("MatchesPageViewModel: Created chat for mutual match ${user.id}")
+        }
+    }
+
+    /**
      * 創建匹配和聊天對話
      */
     private fun createMatchAndChat(otherUserId: String) {
