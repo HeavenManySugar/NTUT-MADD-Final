@@ -20,7 +20,15 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun signUp(email: String, password: String) {
-       authRemoteDataSource.linkAccount(email, password)
+        val currentUser = authRemoteDataSource.currentUser
+        
+        if (currentUser != null && currentUser.isAnonymous) {
+            // 如果已經有匿名帳號，則連結帳號
+            authRemoteDataSource.linkAccount(email, password)
+        } else {
+            // 如果沒有匿名帳號，則創建新帳號
+            authRemoteDataSource.createAccount(email, password)
+        }
     }
 
     fun signOut() {

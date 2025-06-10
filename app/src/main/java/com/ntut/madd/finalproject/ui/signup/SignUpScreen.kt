@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -82,20 +83,32 @@ object SignUpRoute
 fun SignUpScreen(
     openHomeScreen: () -> Unit,
     openSignInScreen: () -> Unit,
+    openSetupScreen: () -> Unit,
     showErrorSnackbar: (ErrorMessage) -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
+    val shouldNavigateToSetup by viewModel.shouldNavigateToSetup.collectAsStateWithLifecycle()
 
-    if (shouldRestartApp) {
-        openHomeScreen()
-    } else {
-        SignUpScreenContent(
-            openSignInScreen = openSignInScreen,
-            signUp = viewModel::signUp,
-            showErrorSnackbar = showErrorSnackbar
-        )
+    LaunchedEffect(shouldRestartApp) {
+        if (shouldRestartApp) {
+            viewModel.onNavigationHandled()
+            openHomeScreen()
+        }
     }
+    
+    LaunchedEffect(shouldNavigateToSetup) {
+        if (shouldNavigateToSetup) {
+            viewModel.onNavigationHandled()
+            openSetupScreen()
+        }
+    }
+
+    SignUpScreenContent(
+        openSignInScreen = openSignInScreen,
+        signUp = viewModel::signUp,
+        showErrorSnackbar = showErrorSnackbar
+    )
 }
 
 @Composable
