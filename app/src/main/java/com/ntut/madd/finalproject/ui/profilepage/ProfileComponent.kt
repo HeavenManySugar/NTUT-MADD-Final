@@ -61,6 +61,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.height
 import androidx.compose.animation.core.*
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
@@ -473,14 +482,23 @@ fun SetupStyleInputField(
     label: String,
     modifier: Modifier = Modifier,
     maxLength: Int = Int.MAX_VALUE,
+    minLength: Int = 0,
     singleLine: Boolean = true,
     minLines: Int = 1,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    
+    // Setup-style validation logic: only show error when field has content and is invalid
+    val hasError = value.isNotBlank() && value.length < minLength
+    val isWarning = value.isNotEmpty() && maxLength != Int.MAX_VALUE && value.length > maxLength * 0.9
+    val showSuccess = value.length >= minLength && value.isNotEmpty()
 
     val borderColor by animateColorAsState(
         targetValue = when {
+            hasError -> Color(0xFFE53E3E)
+            isWarning -> Color(0xFFFF9800)
+            showSuccess -> Color(0xFF4CAF50)
             isFocused -> Color(0xFF6B46C1)
             else -> Color(0xFFEAECEF)
         },
@@ -513,53 +531,305 @@ fun SetupStyleInputField(
             elevation = CardDefaults.cardElevation(defaultElevation = elevation),
             shape = RoundedCornerShape(12.dp)
         ) {
+            Box {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { newValue ->
+                        if (newValue.length <= maxLength) {
+                            onValueChange(newValue)
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            text = label,
+                            color = Color.Gray.copy(alpha = 0.7f),
+                            fontSize = 14.sp
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            isFocused = focusState.isFocused
+                        }
+                        .defaultMinSize(minHeight = 48.dp),
+                    singleLine = singleLine,
+                    minLines = minLines,
+                    maxLines = maxLines,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        cursorColor = Color(0xFF6B46C1)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                
+                // Success icon (setup-style)
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = showSuccess,
+                    enter = scaleIn() + fadeIn(),
+                    exit = scaleOut() + fadeOut(),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Valid input",
+                        tint = Color(0xFF4CAF50),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
+
+        // Error message and character count (setup-style)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Only show error message when field has content and is invalid (setup-style)
+            androidx.compose.animation.AnimatedVisibility(
+                visible = hasError,
+                enter = slideInVertically() + fadeIn(),
+                exit = slideOutVertically() + fadeOut()
+            ) {
+                Text(
+                    text = if (minLength >= 20) {
+                        "Please write at least $minLength characters"
+                    } else {
+                        "Minimum $minLength characters required"
+                    },
+                    color = Color(0xFFE53E3E),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            // Character count (setup-style)
+            if (maxLength != Int.MAX_VALUE) {
+                Text(
+                    text = "${value.length}/$maxLength",
+                    color = when {
+                        hasError -> Color(0xFFE53E3E)
+                        isWarning -> Color(0xFFFF9800)
+                        showSuccess -> Color(0xFF4CAF50)
+                        else -> Color.Gray.copy(alpha = 0.6f)
+                    },
+                    fontSize = 12.sp
+                )
+            }
+        }
+    }
+}
+
+/** Setup-style City Dropdown Component **/
+@Composable
+fun CityDropdown(
+    selectedCity: String,
+    onCitySelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
+
+    val allCities = listOf(
+        stringResource(R.string.city_taipei),
+        stringResource(R.string.city_new_taipei),
+        stringResource(R.string.city_taoyuan),
+        stringResource(R.string.city_taichung),
+        stringResource(R.string.city_tainan),
+        stringResource(R.string.city_kaohsiung),
+        stringResource(R.string.city_keelung),
+        stringResource(R.string.city_hsinchu_city),
+        stringResource(R.string.city_chiayi_city),
+        stringResource(R.string.city_hsinchu_county),
+        stringResource(R.string.city_miaoli),
+        stringResource(R.string.city_changhua),
+        stringResource(R.string.city_nantou),
+        stringResource(R.string.city_yunlin),
+        stringResource(R.string.city_chiayi_county),
+        stringResource(R.string.city_pingtung),
+        stringResource(R.string.city_yilan),
+        stringResource(R.string.city_hualien),
+        stringResource(R.string.city_taitung),
+        stringResource(R.string.city_penghu),
+        stringResource(R.string.city_kinmen),
+        stringResource(R.string.city_lienchiang)
+    )
+
+    val popularCities = listOf(
+        stringResource(R.string.city_taipei),
+        stringResource(R.string.city_new_taipei),
+        stringResource(R.string.city_taoyuan),
+        stringResource(R.string.city_taichung),
+        stringResource(R.string.city_tainan),
+        stringResource(R.string.city_kaohsiung)
+    )
+
+    val filteredCities = if (searchText.isEmpty()) {
+        allCities
+    } else {
+        allCities.filter { it.contains(searchText, ignoreCase = true) }
+    }
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { expanded = true },
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF8F9FA)),
+        border = BorderStroke(1.dp, Color(0xFFEAECEF)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Box {
             OutlinedTextField(
-                value = value,
-                onValueChange = { newValue ->
-                    if (newValue.length <= maxLength) {
-                        onValueChange(newValue)
-                    }
-                },
+                value = selectedCity,
+                onValueChange = { },
+                readOnly = true,
+                enabled = false, // Disable TextField interaction
+                modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(
-                        text = label,
+                        text = stringResource(R.string.city_placeholder),
                         color = Color.Gray.copy(alpha = 0.7f),
                         fontSize = 14.sp
                     )
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged { focusState ->
-                        isFocused = focusState.isFocused
-                    }
-                    .defaultMinSize(minHeight = 48.dp),
-                singleLine = singleLine,
-                minLines = minLines,
-                maxLines = maxLines,
+                trailingIcon = {
+                    Icon(
+                        Icons.Filled.ArrowDropDown,
+                        contentDescription = "Dropdown arrow",
+                        tint = Color.Gray
+                    )
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = Color.Transparent,
                     focusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
                     unfocusedBorderColor = Color.Transparent,
                     focusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    disabledTextColor = Color.Black,
                     cursorColor = Color(0xFF6B46C1)
                 ),
                 shape = RoundedCornerShape(8.dp)
             )
-        }
 
-        if (maxLength != Int.MAX_VALUE) {
-            Row(
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                    searchText = ""
+                },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.End
+                    .fillMaxWidth(0.9f)
+                    .height(400.dp)
             ) {
-                Text(
-                    text = "${value.length}/$maxLength",
-                    color = if (value.length > maxLength * 0.9) Color(0xFFFF9800)
-                    else Color.Gray.copy(alpha = 0.6f),
-                    fontSize = 12.sp
+                // Search box
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    placeholder = {
+                        Text(
+                            "Search city...",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color(0xFFE2E8F0),
+                        focusedBorderColor = Color(0xFF6B46C1)
+                    )
                 )
+
+                // If no search, display popular cities
+                if (searchText.isEmpty()) {
+                    Text(
+                        text = "Popular Cities",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color(0xFF6B46C1),
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    popularCities.forEach { city ->
+                        DropdownMenuItem(
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Filled.LocationOn,
+                                        contentDescription = null,
+                                        tint = Color(0xFF6B46C1),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = city,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onCitySelected(city)
+                                expanded = false
+                                searchText = ""
+                            },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+                        color = Color(0xFFE2E8F0)
+                    )
+
+                    Text(
+                        text = "All Cities",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Color(0xFF718096),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                // Show filtered cities
+                filteredCities.forEach { city ->
+                    DropdownMenuItem(
+                        text = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = city,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF2D3748)
+                                )
+                            }
+                        },
+                        onClick = {
+                            onCitySelected(city)
+                            expanded = false
+                            searchText = ""
+                        },
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                }
             }
         }
     }
@@ -600,11 +870,9 @@ fun EditableLocationCard(
                             text = "City",
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
-                        SetupStyleInputField(
-                            value = city,
-                            onValueChange = onUpdateCity,
-                            label = "Enter your city",
-                            maxLength = 50
+                        CityDropdown(
+                            selectedCity = city,
+                            onCitySelected = onUpdateCity
                         )
                     }
                     
@@ -617,7 +885,8 @@ fun EditableLocationCard(
                             value = district,
                             onValueChange = onUpdateDistrict,
                             label = "Enter your district",
-                            maxLength = 50
+                            maxLength = 50,
+                            minLength = 2
                         )
                     }
                 }
@@ -659,7 +928,8 @@ fun EditableCareerCard(
                             value = position,
                             onValueChange = onUpdatePosition,
                             label = "Enter your job position",
-                            maxLength = 50
+                            maxLength = 50,
+                            minLength = 2
                         )
                     }
                     
@@ -672,7 +942,8 @@ fun EditableCareerCard(
                             value = company,
                             onValueChange = onUpdateCompany,
                             label = "Enter your company name",
-                            maxLength = 100
+                            maxLength = 100,
+                            minLength = 2
                         )
                     }
                 }
@@ -715,7 +986,8 @@ fun EditableEducationCard(
                             value = degree,
                             onValueChange = onUpdateDegree,
                             label = "Enter your degree level",
-                            maxLength = 50
+                            maxLength = 50,
+                            minLength = 2
                         )
                     }
                     
@@ -728,7 +1000,8 @@ fun EditableEducationCard(
                             value = school,
                             onValueChange = onUpdateSchool,
                             label = "Enter your school name",
-                            maxLength = 100
+                            maxLength = 100,
+                            minLength = 2
                         )
                     }
                     
@@ -741,7 +1014,8 @@ fun EditableEducationCard(
                             value = major,
                             onValueChange = onUpdateMajor,
                             label = "Enter your major field",
-                            maxLength = 100
+                            maxLength = 100,
+                            minLength = 2
                         )
                     }
                 }
@@ -773,11 +1047,23 @@ fun EditableAboutMeCard(
             icon = Icons.Filled.Info
         ) {
             if (isEditing) {
-                Column {
-                    EditableFieldLabel(
-                        text = "About Me",
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        EditableFieldLabel(
+                            text = "About Me",
+                            modifier = Modifier.padding(bottom = 0.dp)
+                        )
+                        Text(
+                            text = "50-500 chars",
+                            fontSize = 12.sp,
+                            color = Color.Gray.copy(alpha = 0.6f)
+                        )
+                    }
+                    
                     SetupStyleInputField(
                         value = aboutMe,
                         onValueChange = onUpdateAboutMe,
@@ -785,8 +1071,44 @@ fun EditableAboutMeCard(
                         singleLine = false,
                         minLines = 3,
                         maxLines = 5,
-                        maxLength = 500
+                        maxLength = 500,
+                        minLength = 50
                     )
+                    
+                    // Setup6-style detailed feedback
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = when {
+                                aboutMe.isEmpty() -> "Start writing your introduction"
+                                aboutMe.length > 500 -> "Too long! Please shorten your text"
+                                aboutMe.length < 50 -> "Write more to tell others about yourself"
+                                aboutMe.length >= 50 -> "Great! Your content looks good"
+                                else -> ""
+                            },
+                            fontSize = 12.sp,
+                            color = when {
+                                aboutMe.isEmpty() -> Color.Gray.copy(alpha = 0.6f)
+                                aboutMe.length > 500 -> Color(0xFFE53E3E)
+                                aboutMe.length < 50 -> Color(0xFFFF9800)
+                                else -> Color(0xFF4CAF50)
+                            }
+                        )
+                        
+                        Text(
+                            text = "${aboutMe.length}/500",
+                            fontSize = 12.sp,
+                            color = when {
+                                aboutMe.length > 500 -> Color(0xFFE53E3E)
+                                aboutMe.length > 450 -> Color(0xFFFF9800)
+                                aboutMe.length >= 50 -> Color(0xFF4CAF50)
+                                else -> Color.Gray.copy(alpha = 0.6f)
+                            }
+                        )
+                    }
                 }
             } else {
                 Text(
@@ -813,11 +1135,23 @@ fun EditableLookingForCard(
             icon = Icons.Filled.Favorite
         ) {
             if (isEditing) {
-                Column {
-                    EditableFieldLabel(
-                        text = "Looking For",
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        EditableFieldLabel(
+                            text = "Looking For",
+                            modifier = Modifier.padding(bottom = 0.dp)
+                        )
+                        Text(
+                            text = "20-300 chars",
+                            fontSize = 12.sp,
+                            color = Color.Gray.copy(alpha = 0.6f)
+                        )
+                    }
+                    
                     SetupStyleInputField(
                         value = lookingFor,
                         onValueChange = onUpdateLookingFor,
@@ -825,8 +1159,44 @@ fun EditableLookingForCard(
                         singleLine = false,
                         minLines = 2,
                         maxLines = 4,
-                        maxLength = 300
+                        maxLength = 300,
+                        minLength = 20
                     )
+                    
+                    // Setup6-style detailed feedback
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = when {
+                                lookingFor.isEmpty() -> "Describe what you're looking for"
+                                lookingFor.length > 300 -> "Too long! Please shorten your text"
+                                lookingFor.length < 20 -> "Add more details about your preferences"
+                                lookingFor.length >= 20 -> "Perfect! Clear and concise"
+                                else -> ""
+                            },
+                            fontSize = 12.sp,
+                            color = when {
+                                lookingFor.isEmpty() -> Color.Gray.copy(alpha = 0.6f)
+                                lookingFor.length > 300 -> Color(0xFFE53E3E)
+                                lookingFor.length < 20 -> Color(0xFFFF9800)
+                                else -> Color(0xFF4CAF50)
+                            }
+                        )
+                        
+                        Text(
+                            text = "${lookingFor.length}/300",
+                            fontSize = 12.sp,
+                            color = when {
+                                lookingFor.length > 300 -> Color(0xFFE53E3E)
+                                lookingFor.length > 270 -> Color(0xFFFF9800)
+                                lookingFor.length >= 20 -> Color(0xFF4CAF50)
+                                else -> Color.Gray.copy(alpha = 0.6f)
+                            }
+                        )
+                    }
                 }
             } else {
                 Text(
@@ -935,33 +1305,59 @@ fun EditableInterestTagSection(
                     }
                 }
                 
-                // Selected count indicator
-                if (tags.isNotEmpty()) {
-                    Text(
-                        text = "Selected: ${tags.size}/5 interest${if (tags.size != 1) "s" else ""}",
-                        fontSize = 12.sp,
-                        color = when {
-                            tags.size in 3..5 -> Color(0xFF4CAF50)
-                            tags.size < 3 -> Color(0xFFFF9800)
-                            else -> Color(0xFF2196F3)
-                        },
-                        fontWeight = FontWeight.Medium
-                    )
-                    
-                    if (tags.size < 3) {
+                // Setup-style selected count indicator
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (tags.size >= 3) 
+                            Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = "Please select at least 3 interests",
-                            fontSize = 11.sp,
-                            color = Color(0xFFFF9800),
-                            fontWeight = FontWeight.Normal
+                            text = if (tags.size >= 3) "✅" else "⚠️",
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 12.dp)
                         )
-                    } else if (tags.size == 5) {
-                        Text(
-                            text = "Maximum interests selected",
-                            fontSize = 11.sp,
-                            color = Color(0xFF2196F3),
-                            fontWeight = FontWeight.Normal
-                        )
+                        Column {
+                            Text(
+                                text = "Selected ${tags.size} interest${if (tags.size != 1) "s" else ""}",
+                                color = if (tags.size >= 3)
+                                    Color(0xFF2E7D32) else Color(0xFFE65100),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            when {
+                                tags.size < 3 -> {
+                                    Text(
+                                        text = "Need ${3 - tags.size} more to continue",
+                                        color = Color(0xFFBF360C),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                                tags.size < 5 -> {
+                                    Text(
+                                        text = "Can select ${5 - tags.size} more",
+                                        color = Color(0xFF1B5E20),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                                else -> {
+                                    Text(
+                                        text = "Maximum interests selected",
+                                        color = Color(0xFF1B5E20),
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1079,33 +1475,61 @@ fun EditablePersonalityTagSection(
                             }
                         }
                         
-                        // Selected count indicator
-                        if (traits.isNotEmpty()) {
-                            Text(
-                                text = "Selected: ${traits.size}/5 trait${if (traits.size != 1) "s" else ""}",
-                                fontSize = 12.sp,
-                                color = when {
-                                    traits.size in 3..5 -> Color(0xFF4CAF50)
-                                    traits.size < 3 -> Color(0xFFFF9800)
-                                    else -> Color(0xFF2196F3)
-                                },
-                                fontWeight = FontWeight.Medium
-                            )
-                            
-                            if (traits.size < 3) {
+                        // Setup-style selected count indicator
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (traits.size >= 3)
+                                    Color(0xFFE8F5E8) else Color(0xFFFFF3E0)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    text = "Please select at least 3 traits",
-                                    fontSize = 11.sp,
-                                    color = Color(0xFFFF9800),
-                                    fontWeight = FontWeight.Normal
+                                    text = if (traits.size >= 3) "✅" else "💡",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(end = 12.dp)
                                 )
-                            } else if (traits.size == 5) {
-                                Text(
-                                    text = "Maximum traits selected",
-                                    fontSize = 11.sp,
-                                    color = Color(0xFF2196F3),
-                                    fontWeight = FontWeight.Normal
-                                )
+                                Column {
+                                    Text(
+                                        text = "Selected ${traits.size} trait${if (traits.size != 1) "s" else ""}",
+                                        color = if (traits.size >= 3)
+                                            Color(0xFF2E7D32) else Color(0xFFE65100),
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    when {
+                                        traits.size < 3 -> {
+                                            Text(
+                                                text = "Need ${3 - traits.size} more to continue",
+                                                color = if (traits.size >= 3)
+                                                    Color(0xFF2E7D32) else Color(0xFFE65100),
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                        traits.size < 5 -> {
+                                            Text(
+                                                text = "Can select ${5 - traits.size} more",
+                                                color = Color(0xFF1B5E20),
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                        else -> {
+                                            Text(
+                                                text = "Maximum traits selected",
+                                                color = Color(0xFF1B5E20),
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

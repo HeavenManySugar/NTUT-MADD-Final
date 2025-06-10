@@ -173,6 +173,15 @@ class ProfilePageViewModel @Inject constructor(
         val editableProfile = _uiState.value.editableProfile ?: return
         val currentUser = _uiState.value.user ?: return
         
+        // Validate profile before saving
+        val validationErrors = validateProfile(editableProfile)
+        if (validationErrors.isNotEmpty()) {
+            _uiState.value = _uiState.value.copy(
+                errorMessage = validationErrors.joinToString("\n")
+            )
+            return
+        }
+        
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSaving = true)
             
@@ -193,5 +202,55 @@ class ProfilePageViewModel @Inject constructor(
                 }
             )
         }
+    }
+    
+    private fun validateProfile(profile: UserProfile): List<String> {
+        val errors = mutableListOf<String>()
+        
+        // Validate text fields with minimum character requirements
+        if (profile.aboutMe.isNotEmpty() && profile.aboutMe.length < 50) {
+            errors.add("About Me must be at least 50 characters (current: ${profile.aboutMe.length})")
+        }
+        
+        if (profile.lookingFor.isNotEmpty() && profile.lookingFor.length < 20) {
+            errors.add("Looking For must be at least 20 characters (current: ${profile.lookingFor.length})")
+        }
+        
+        // Validate required field lengths (at least 2 characters for non-empty fields)
+        if (profile.city.isNotEmpty() && profile.city.length < 2) {
+            errors.add("City must be at least 2 characters")
+        }
+        
+        if (profile.district.isNotEmpty() && profile.district.length < 2) {
+            errors.add("District must be at least 2 characters")
+        }
+        
+        if (profile.position.isNotEmpty() && profile.position.length < 2) {
+            errors.add("Position must be at least 2 characters")
+        }
+        
+        if (profile.company.isNotEmpty() && profile.company.length < 2) {
+            errors.add("Company must be at least 2 characters")
+        }
+        
+        if (profile.school.isNotEmpty() && profile.school.length < 2) {
+            errors.add("School must be at least 2 characters")
+        }
+        
+        if (profile.major.isNotEmpty() && profile.major.length < 2) {
+            errors.add("Major must be at least 2 characters")
+        }
+        
+        // Validate interests selection (3-5 required)
+        if (profile.interests.isNotEmpty() && profile.interests.size < 3) {
+            errors.add("Please select at least 3 interests (current: ${profile.interests.size})")
+        }
+        
+        // Validate personality traits selection (3-5 required)
+        if (profile.personalityTraits.isNotEmpty() && profile.personalityTraits.size < 3) {
+            errors.add("Please select at least 3 personality traits (current: ${profile.personalityTraits.size})")
+        }
+        
+        return errors
     }
 }

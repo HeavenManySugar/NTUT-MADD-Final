@@ -280,4 +280,16 @@
     <string name="finding_love">Finding True Love</string>
 
     <string name="my_interest">My Interest</string>
+    
+    <!-- Profile Validation Messages -->
+    <string name="validation_min_chars">Minimum %1$d characters required</string>
+    <string name="validation_approaching_limit">Approaching character limit</string>
+    <string name="validation_valid">✓ Valid</string>
+    <string name="validation_about_me_min">About Me must be at least 50 characters (current: %1$d)</string>
+    <string name="validation_looking_for_min">Looking For must be at least 20 characters (current: %1$d)</string>
+    <string name="validation_interests_min">Please select at least 3 interests (current: %1$d)</string>
+    <string name="validation_traits_min">Please select at least 3 personality traits (current: %1$d)</string>
+    <string name="validation_field_min_chars">%1$s must be at least 2 characters</string>
+    <string name="validation_prompt_write_chars">Please write at least %1$d characters</string>
+    <string name="validation_prompt_min_chars">Minimum %1$d characters required</string>
 </resources>
