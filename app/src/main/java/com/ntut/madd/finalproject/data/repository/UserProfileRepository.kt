@@ -69,6 +69,20 @@ class UserProfileRepository @Inject constructor(
         }
     }
 
+    suspend fun updateUserProfileAndDisplayName(profile: UserProfile, displayName: String): Result<Unit> {
+        return try {
+            val currentUser = authRepository.currentUser
+            if (currentUser == null) {
+                Result.failure(Exception("User not authenticated"))
+            } else {
+                userProfileRemoteDataSource.updateUserProfileAndDisplayName(currentUser.uid, profile, displayName)
+                Result.success(Unit)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun getDiscoverableUsers(limit: Int = 10): Result<List<User>> {
         return try {
             val currentUser = authRepository.currentUser

@@ -13,8 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.TrackChanges
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -58,7 +65,22 @@ fun ProfilePageScreen(
             currentRoute = currentRoute,
             onNavigate = onNavigate,
             onRefresh = viewModel::refreshProfile,
-            showErrorSnackbar = showErrorSnackbar
+            showErrorSnackbar = showErrorSnackbar,
+            onStartEditing = viewModel::startEditing,
+            onCancelEditing = viewModel::cancelEditing,
+            onSaveProfile = viewModel::saveProfile,
+            onUpdateDisplayName = viewModel::updateDisplayName,
+            onUpdateCity = viewModel::updateCity,
+            onUpdateDistrict = viewModel::updateDistrict,
+            onUpdatePosition = viewModel::updatePosition,
+            onUpdateCompany = viewModel::updateCompany,
+            onUpdateDegree = viewModel::updateDegree,
+            onUpdateSchool = viewModel::updateSchool,
+            onUpdateMajor = viewModel::updateMajor,
+            onUpdateAboutMe = viewModel::updateAboutMe,
+            onUpdateLookingFor = viewModel::updateLookingFor,
+            onUpdateInterests = viewModel::updateInterests,
+            onUpdatePersonalityTraits = viewModel::updatePersonalityTraits
         )
     }
 }
@@ -70,7 +92,22 @@ fun ProfilePageScreenContent(
     currentRoute: String = "profile",
     onNavigate: (String) -> Unit = {},
     onRefresh: () -> Unit = {},
-    showErrorSnackbar: (ErrorMessage) -> Unit = {}
+    showErrorSnackbar: (ErrorMessage) -> Unit = {},
+    onStartEditing: () -> Unit = {},
+    onCancelEditing: () -> Unit = {},
+    onSaveProfile: () -> Unit = {},
+    onUpdateDisplayName: (String) -> Unit = {},
+    onUpdateCity: (String) -> Unit = {},
+    onUpdateDistrict: (String) -> Unit = {},
+    onUpdatePosition: (String) -> Unit = {},
+    onUpdateCompany: (String) -> Unit = {},
+    onUpdateDegree: (String) -> Unit = {},
+    onUpdateSchool: (String) -> Unit = {},
+    onUpdateMajor: (String) -> Unit = {},
+    onUpdateAboutMe: (String) -> Unit = {},
+    onUpdateLookingFor: (String) -> Unit = {},
+    onUpdateInterests: (List<String>) -> Unit = {},
+    onUpdatePersonalityTraits: (List<String>) -> Unit = {}
 ) {
     Scaffold(
         bottomBar = {
@@ -119,9 +156,24 @@ fun ProfilePageScreenContent(
             }
             uiState.user != null -> {
                 ProfileContent(
-                    user = uiState.user,
+                    uiState = uiState,
                     openSettingsScreen = openSettingsScreen,
-                    innerPadding = innerPadding
+                    innerPadding = innerPadding,
+                    onStartEditing = onStartEditing,
+                    onCancelEditing = onCancelEditing,
+                    onSaveProfile = onSaveProfile,
+                    onUpdateDisplayName = onUpdateDisplayName,
+                    onUpdateCity = onUpdateCity,
+                    onUpdateDistrict = onUpdateDistrict,
+                    onUpdatePosition = onUpdatePosition,
+                    onUpdateCompany = onUpdateCompany,
+                    onUpdateDegree = onUpdateDegree,
+                    onUpdateSchool = onUpdateSchool,
+                    onUpdateMajor = onUpdateMajor,
+                    onUpdateAboutMe = onUpdateAboutMe,
+                    onUpdateLookingFor = onUpdateLookingFor,
+                    onUpdateInterests = onUpdateInterests,
+                    onUpdatePersonalityTraits = onUpdatePersonalityTraits
                 )
             }
             else -> {
@@ -153,11 +205,27 @@ fun ProfilePageScreenContent(
 
 @Composable
 private fun ProfileContent(
-    user: User,
+    uiState: ProfileUiState,
     openSettingsScreen: () -> Unit,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    onStartEditing: () -> Unit,
+    onCancelEditing: () -> Unit,
+    onSaveProfile: () -> Unit,
+    onUpdateDisplayName: (String) -> Unit,
+    onUpdateCity: (String) -> Unit,
+    onUpdateDistrict: (String) -> Unit,
+    onUpdatePosition: (String) -> Unit,
+    onUpdateCompany: (String) -> Unit,
+    onUpdateDegree: (String) -> Unit,
+    onUpdateSchool: (String) -> Unit,
+    onUpdateMajor: (String) -> Unit,
+    onUpdateAboutMe: (String) -> Unit,
+    onUpdateLookingFor: (String) -> Unit,
+    onUpdateInterests: (List<String>) -> Unit,
+    onUpdatePersonalityTraits: (List<String>) -> Unit
 ) {
-    val profile = user.profile
+    val user = uiState.user!!
+    val profile = uiState.editableProfile ?: user.profile
     val scrollState = rememberScrollState()
 
     Column(
@@ -167,16 +235,60 @@ private fun ProfileContent(
             .verticalScroll(scrollState)
     ) {
         GradientBackgroundBox {
-            // Settings button in top right
-            IconButton(
-                onClick = openSettingsScreen,
-                modifier = Modifier.align(Alignment.TopEnd)
+            // Settings button and Edit/Save controls in top row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    tint = Color.White
-                )
+                // Edit/Save/Cancel buttons on the left
+                if (uiState.isEditing) {
+                    Row {
+                        IconButton(onClick = onCancelEditing) {
+                            Icon(
+                                imageVector = Icons.Default.Cancel,
+                                contentDescription = "Cancel",
+                                tint = Color.White
+                            )
+                        }
+                        IconButton(
+                            onClick = onSaveProfile,
+                            enabled = !uiState.isSaving
+                        ) {
+                            if (uiState.isSaving) {
+                                androidx.compose.material3.CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Save,
+                                    contentDescription = "Save",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    IconButton(onClick = onStartEditing) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Profile",
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                // Settings button on the right
+                IconButton(onClick = openSettingsScreen) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White
+                    )
+                }
             }
 
             // Profile content centered
@@ -193,12 +305,37 @@ private fun ProfileContent(
                 InitialAvatar(initial = initial)
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = user.displayName.ifEmpty { "Unknown User" },
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
+                // Editable display name
+                if (uiState.isEditing) {
+                    OutlinedTextField(
+                        value = user.displayName,
+                        onValueChange = onUpdateDisplayName,
+                        label = { Text("Display Name", color = Color.White.copy(alpha = 0.7f)) },
+                        modifier = Modifier.fillMaxWidth(0.8f),
+                        colors = androidx.compose.material3.TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White.copy(alpha = 0.1f),
+                            unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.White.copy(alpha = 0.5f)
+                        ),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        ),
+                        singleLine = true
+                    )
+                } else {
+                    Text(
+                        text = user.displayName.ifEmpty { "Unknown User" },
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Display location info
@@ -241,38 +378,70 @@ private fun ProfileContent(
 
             if (profile != null) {
                 /** Interests Section **/
-                if (profile.interests.isNotEmpty()) {
+                if (profile.interests.isNotEmpty() || uiState.isEditing) {
                     SectionTitle(
                         icon = Icons.Filled.TrackChanges,
                         title = stringResource(R.string.my_interest),
                         modifier = Modifier.padding(horizontal = 0.dp)
                     )
-                    InterestTagSection(tags = profile.interests)
+                    EditableInterestTagSection(
+                        tags = profile.interests,
+                        isEditing = uiState.isEditing,
+                        onUpdateInterests = onUpdateInterests
+                    )
                 }
 
                 /** Personality Traits Section **/
-                if (profile.personalityTraits.isNotEmpty()) {
-                    PersonalityTagSection(traits = profile.personalityTraits)
+                if (profile.personalityTraits.isNotEmpty() || uiState.isEditing) {
+                    EditablePersonalityTagSection(
+                        traits = profile.personalityTraits,
+                        isEditing = uiState.isEditing,
+                        onUpdatePersonalityTraits = onUpdatePersonalityTraits
+                    )
                 }
 
                 /** Location Card **/
-                LocationCard(city = profile.city, district = profile.district)
+                EditableLocationCard(
+                    city = profile.city,
+                    district = profile.district,
+                    isEditing = uiState.isEditing,
+                    onUpdateCity = onUpdateCity,
+                    onUpdateDistrict = onUpdateDistrict
+                )
 
                 /** Career Card **/
-                CareerCard(position = profile.position, company = profile.company)
+                EditableCareerCard(
+                    position = profile.position,
+                    company = profile.company,
+                    isEditing = uiState.isEditing,
+                    onUpdatePosition = onUpdatePosition,
+                    onUpdateCompany = onUpdateCompany
+                )
 
                 /** Education Card **/
-                EducationCard(
+                EditableEducationCard(
                     degree = profile.degree,
                     school = profile.school,
-                    major = profile.major
+                    major = profile.major,
+                    isEditing = uiState.isEditing,
+                    onUpdateDegree = onUpdateDegree,
+                    onUpdateSchool = onUpdateSchool,
+                    onUpdateMajor = onUpdateMajor
                 )
 
                 /** About Me Card **/
-                AboutMeCard(aboutMe = profile.aboutMe)
+                EditableAboutMeCard(
+                    aboutMe = profile.aboutMe,
+                    isEditing = uiState.isEditing,
+                    onUpdateAboutMe = onUpdateAboutMe
+                )
 
                 /** Looking For Card **/
-                LookingForCard(lookingFor = profile.lookingFor)
+                EditableLookingForCard(
+                    lookingFor = profile.lookingFor,
+                    isEditing = uiState.isEditing,
+                    onUpdateLookingFor = onUpdateLookingFor
+                )
             } else {
                 // If no profile data, show a message
                 Card(
@@ -359,7 +528,22 @@ fun ProfilePageScreenPreview() {
                 openSettingsScreen = {},
                 onNavigate = {},
                 onRefresh = {},
-                showErrorSnackbar = {}
+                showErrorSnackbar = {},
+                onStartEditing = {},
+                onCancelEditing = {},
+                onSaveProfile = {},
+                onUpdateDisplayName = {},
+                onUpdateCity = {},
+                onUpdateDistrict = {},
+                onUpdatePosition = {},
+                onUpdateCompany = {},
+                onUpdateDegree = {},
+                onUpdateSchool = {},
+                onUpdateMajor = {},
+                onUpdateAboutMe = {},
+                onUpdateLookingFor = {},
+                onUpdateInterests = {},
+                onUpdatePersonalityTraits = {}
             )
         }
     }

@@ -77,6 +77,17 @@ class UserProfileRemoteDataSource @Inject constructor(
             .await()
     }
 
+    suspend fun updateUserProfileAndDisplayName(userId: String, profile: UserProfile, displayName: String) {
+        usersCollection.document(userId)
+            .update(
+                mapOf(
+                    "profile" to profile,
+                    "displayName" to displayName
+                )
+            )
+            .await()
+    }
+
     suspend fun getDiscoverableUsers(currentUserId: String, limit: Int = 10): List<User> {
         return try {
             val query = usersCollection

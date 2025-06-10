@@ -50,6 +50,17 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import com.ntut.madd.finalproject.ui.component.SectionTitle
+import androidx.compose.material3.TextField
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 
 
 /** Profile Page Hashtag **/
@@ -439,6 +450,379 @@ fun PersonalityTagSection(traits: List<String>) {
             ) {
                 traits.forEach { trait ->
                     PersonalityTag(text = trait)
+                }
+            }
+        }
+    }
+}
+
+/** Editable Profile Components **/
+
+@Composable
+fun EditableLocationCard(
+    city: String,
+    district: String,
+    isEditing: Boolean,
+    onUpdateCity: (String) -> Unit,
+    onUpdateDistrict: (String) -> Unit
+) {
+    if (city.isNotEmpty() || district.isNotEmpty() || isEditing) {
+        ProfileCard(
+            title = "Location",
+            backgroundColor = Color(0xFFE3F2FD),
+            icon = Icons.Filled.LocationOn
+        ) {
+            if (isEditing) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = city,
+                        onValueChange = onUpdateCity,
+                        label = { Text("City") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                    OutlinedTextField(
+                        value = district,
+                        onValueChange = onUpdateDistrict,
+                        label = { Text("District") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                }
+            } else {
+                if (city.isNotEmpty() && district.isNotEmpty()) {
+                    InfoRow("📍", "Address", "$district, $city")
+                } else if (city.isNotEmpty()) {
+                    InfoRow("📍", "City", city)
+                } else if (district.isNotEmpty()) {
+                    InfoRow("📍", "District", district)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditableCareerCard(
+    position: String,
+    company: String,
+    isEditing: Boolean,
+    onUpdatePosition: (String) -> Unit,
+    onUpdateCompany: (String) -> Unit
+) {
+    if (position.isNotEmpty() || company.isNotEmpty() || isEditing) {
+        ProfileCard(
+            title = "Career",
+            backgroundColor = Color(0xFFF5F5DC),
+            icon = Icons.Filled.Business
+        ) {
+            if (isEditing) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = position,
+                        onValueChange = onUpdatePosition,
+                        label = { Text("Position") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                    OutlinedTextField(
+                        value = company,
+                        onValueChange = onUpdateCompany,
+                        label = { Text("Company") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                }
+            } else {
+                if (position.isNotEmpty()) {
+                    InfoRow("💼", "Position", position)
+                }
+                if (company.isNotEmpty()) {
+                    InfoRow("🏢", "Company", company)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditableEducationCard(
+    degree: String,
+    school: String,
+    major: String,
+    isEditing: Boolean,
+    onUpdateDegree: (String) -> Unit,
+    onUpdateSchool: (String) -> Unit,
+    onUpdateMajor: (String) -> Unit
+) {
+    if (degree.isNotEmpty() || school.isNotEmpty() || major.isNotEmpty() || isEditing) {
+        ProfileCard(
+            title = "Education",
+            backgroundColor = Color(0xFFFFF8DC),
+            icon = Icons.Filled.School
+        ) {
+            if (isEditing) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = degree,
+                        onValueChange = onUpdateDegree,
+                        label = { Text("Degree") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                    OutlinedTextField(
+                        value = school,
+                        onValueChange = onUpdateSchool,
+                        label = { Text("School") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                    OutlinedTextField(
+                        value = major,
+                        onValueChange = onUpdateMajor,
+                        label = { Text("Major") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
+                }
+            } else {
+                if (degree.isNotEmpty()) {
+                    InfoRow("🎓", "Degree", degree)
+                }
+                if (school.isNotEmpty()) {
+                    InfoRow("🏫", "School", school)
+                }
+                if (major.isNotEmpty()) {
+                    InfoRow("📚", "Major", major)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditableAboutMeCard(
+    aboutMe: String,
+    isEditing: Boolean,
+    onUpdateAboutMe: (String) -> Unit
+) {
+    if (aboutMe.isNotEmpty() || isEditing) {
+        ProfileCard(
+            title = "About Me",
+            backgroundColor = Color(0xFFFFF0F5),
+            icon = Icons.Filled.Info
+        ) {
+            if (isEditing) {
+                OutlinedTextField(
+                    value = aboutMe,
+                    onValueChange = onUpdateAboutMe,
+                    label = { Text("Tell us about yourself") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    maxLines = 5,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    )
+                )
+            } else {
+                Text(
+                    text = aboutMe,
+                    fontSize = 14.sp,
+                    color = Color(0xFF666666),
+                    lineHeight = 20.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EditableLookingForCard(
+    lookingFor: String,
+    isEditing: Boolean,
+    onUpdateLookingFor: (String) -> Unit
+) {
+    if (lookingFor.isNotEmpty() || isEditing) {
+        ProfileCard(
+            title = "Looking For",
+            backgroundColor = Color(0xFFE6E6FA),
+            icon = Icons.Filled.Favorite
+        ) {
+            if (isEditing) {
+                OutlinedTextField(
+                    value = lookingFor,
+                    onValueChange = onUpdateLookingFor,
+                    label = { Text("What are you looking for?") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 2,
+                    maxLines = 4,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    )
+                )
+            } else {
+                Text(
+                    text = lookingFor,
+                    fontSize = 14.sp,
+                    color = Color(0xFF666666),
+                    lineHeight = 20.sp
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EditableInterestTagSection(
+    tags: List<String>,
+    isEditing: Boolean,
+    onUpdateInterests: (List<String>) -> Unit
+) {
+    val commonInterests = listOf(
+        "🎬 Movies", "📚 Reading", "🎵 Music", "💪 Fitness", "🍳 Cooking",
+        "✈️ Travel", "🎨 Art", "🎮 Gaming", "📸 Photography", "🏃 Running",
+        "🧘 Yoga", "🌱 Gardening", "💻 Technology", "🏀 Sports", "🎪 Dancing"
+    )
+    
+    if (isEditing) {
+        Column {
+            Text(
+                text = "Select your interests:",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF666666),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                commonInterests.forEach { interest ->
+                    FilterChip(
+                        onClick = { 
+                            val updatedTags = if (tags.contains(interest)) {
+                                tags - interest
+                            } else {
+                                tags + interest
+                            }
+                            onUpdateInterests(updatedTags)
+                        },
+                        label = { Text(interest, fontSize = 12.sp) },
+                        selected = tags.contains(interest),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF667EEA),
+                            selectedLabelColor = Color.White
+                        )
+                    )
+                }
+            }
+        }
+    } else if (tags.isNotEmpty()) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            tags.forEach { tag ->
+                InterestTag(text = tag)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EditablePersonalityTagSection(
+    traits: List<String>,
+    isEditing: Boolean,
+    onUpdatePersonalityTraits: (List<String>) -> Unit
+) {
+    val commonTraits = listOf(
+        "🧡 Warm & Caring", "😄 Positive & Active", "🧘 Calm & Rational",
+        "🎭 Creative & Artistic", "💪 Strong & Independent", "🤝 Social & Outgoing",
+        "📚 Intellectual", "🌟 Ambitious", "😊 Funny & Humorous", "💝 Romantic",
+        "🌿 Nature Lover", "🎯 Goal-Oriented", "🤗 Empathetic", "🚀 Adventurous"
+    )
+    
+    if (traits.isNotEmpty() || isEditing) {
+        Column {
+            SectionTitle(
+                icon = Icons.Filled.Psychology,
+                title = "Personality",
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (isEditing) {
+                Text(
+                    text = "Select your personality traits:",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF666666),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    commonTraits.forEach { trait ->
+                        FilterChip(
+                            onClick = { 
+                                val updatedTraits = if (traits.contains(trait)) {
+                                    traits - trait
+                                } else {
+                                    traits + trait
+                                }
+                                onUpdatePersonalityTraits(updatedTraits)
+                            },
+                            label = { Text(trait, fontSize = 12.sp) },
+                            selected = traits.contains(trait),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color(0xFF9C88FF),
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                    }
+                }
+            } else {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    traits.forEach { trait ->
+                        PersonalityTag(text = trait)
+                    }
                 }
             }
         }
