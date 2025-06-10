@@ -101,18 +101,6 @@ fun DiscoverPageScreenContent(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Settings button on the top right
-                    IconButton(
-                        onClick = openSettingsScreen,
-                        modifier = Modifier.align(Alignment.TopEnd)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = Color.Black
-                        )
-                    }
-                    
                     // Refresh button on the top left
                     IconButton(
                         onClick = onRefreshRecommendations,
