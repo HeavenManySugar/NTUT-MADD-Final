@@ -45,20 +45,31 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val shouldRestartApp by viewModel.shouldRestartApp.collectAsStateWithLifecycle()
+    val shouldNavigateToSignIn by viewModel.shouldNavigateToSignIn.collectAsStateWithLifecycle()
 
-    if (shouldRestartApp) {
-        openHomeScreen()
-    } else {
-        val isAnonymous by viewModel.isAnonymous.collectAsStateWithLifecycle()
-
-        SettingsScreenContent(
-            loadCurrentUser = viewModel::loadCurrentUser,
-            openSignInScreen = openSignInScreen,
-            signOut = viewModel::signOut,
-            deleteAccount = viewModel::deleteAccount,
-            isAnonymous = isAnonymous
-        )
+    LaunchedEffect(shouldRestartApp) {
+        if (shouldRestartApp) {
+            viewModel.onNavigationHandled()
+            openHomeScreen()
+        }
     }
+
+    LaunchedEffect(shouldNavigateToSignIn) {
+        if (shouldNavigateToSignIn) {
+            viewModel.onNavigationHandled()
+            openSignInScreen()
+        }
+    }
+
+    val isAnonymous by viewModel.isAnonymous.collectAsStateWithLifecycle()
+
+    SettingsScreenContent(
+        loadCurrentUser = viewModel::loadCurrentUser,
+        openSignInScreen = openSignInScreen,
+        signOut = viewModel::signOut,
+        deleteAccount = viewModel::deleteAccount,
+        isAnonymous = isAnonymous
+    )
 }
 
 @Composable

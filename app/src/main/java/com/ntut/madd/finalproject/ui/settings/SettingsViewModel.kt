@@ -16,6 +16,10 @@ class SettingsViewModel @Inject constructor(
     val shouldRestartApp: StateFlow<Boolean>
         get() = _shouldRestartApp.asStateFlow()
 
+    private val _shouldNavigateToSignIn = MutableStateFlow(false)
+    val shouldNavigateToSignIn: StateFlow<Boolean>
+        get() = _shouldNavigateToSignIn.asStateFlow()
+
     private val _isAnonymous = MutableStateFlow(true)
     val isAnonymous: StateFlow<Boolean>
         get() = _isAnonymous.asStateFlow()
@@ -30,14 +34,21 @@ class SettingsViewModel @Inject constructor(
     fun signOut() {
         launchCatching {
             authRepository.signOut()
-            _shouldRestartApp.value = true
+            // 登出後直接導航到登入頁面，而不是重啟應用
+            _shouldNavigateToSignIn.value = true
         }
     }
 
     fun deleteAccount() {
         launchCatching {
             authRepository.deleteAccount()
-            _shouldRestartApp.value = true
+            // 刪除帳戶後也導航到登入頁面
+            _shouldNavigateToSignIn.value = true
         }
+    }
+
+    fun onNavigationHandled() {
+        _shouldRestartApp.value = false
+        _shouldNavigateToSignIn.value = false
     }
 }
