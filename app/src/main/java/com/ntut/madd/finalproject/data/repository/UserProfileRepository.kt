@@ -173,4 +173,50 @@ class UserProfileRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    /**
+     * 獲取喜歡當前用戶的用戶資料列表
+     */
+    suspend fun getUsersWhoLikedMe(): Result<List<User>> {
+        return try {
+            val currentUser = authRepository.currentUser
+            if (currentUser == null) {
+                println("UserProfileRepository: User not authenticated")
+                Result.failure(Exception("User not authenticated"))
+            } else {
+                println("UserProfileRepository: Getting users who liked current user ${currentUser.uid}")
+                
+                // 獲取喜歡當前用戶的用戶ID列表
+                val usersWhoLikedMeIds = userInteractionRepository.getUsersWhoLikedMe().getOrElse { 
+                    println("UserProfileRepository: Failed to get users who liked me")
+                    return Result.success(emptyList())
+                }
+                
+                println("UserProfileRepository: Found ${usersWhoLikedMeIds.size} users who liked current user")
+                
+                if (usersWhoLikedMeIds.isEmpty()) {
+                    return Result.success(emptyList())
+                }
+                
+                // 獲取這些用戶的完整資料
+                val userProfiles = mutableListOf<User>()
+                for (userId in usersWhoLikedMeIds) {
+                    try {
+                        val user = userProfileRemoteDataSource.getUserProfile(userId)
+                        if (user != null && user.profile != null) {
+                            userProfiles.add(user)
+                        }
+                    } catch (e: Exception) {
+                        println("UserProfileRepository: Failed to get profile for user $userId: ${e.message}")
+                    }
+                }
+                
+                println("UserProfileRepository: Successfully loaded ${userProfiles.size} profiles of users who liked current user")
+                Result.success(userProfiles)
+            }
+        } catch (e: Exception) {
+            println("UserProfileRepository: Error in getUsersWhoLikedMe: ${e.message}")
+            Result.failure(e)
+        }
+    }
 }

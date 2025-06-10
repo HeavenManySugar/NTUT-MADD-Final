@@ -95,6 +95,25 @@ class UserInteractionRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * 獲取喜歡當前用戶的用戶ID列表 (targetUserId 是當前用戶)
+     */
+    suspend fun getUsersWhoLikedMe(currentUserId: String): Set<String> {
+        return try {
+            val query = interactionsCollection
+                .whereEqualTo("targetUserId", currentUserId)
+                .whereEqualTo("action", InteractionType.APPROVE.name)
+            
+            val documents = query.get().await()
+            documents.mapNotNull { document ->
+                document.toObject(UserInteraction::class.java)?.userId
+            }.toSet()
+        } catch (e: Exception) {
+            println("UserInteractionRemoteDataSource: Failed to get users who liked me: ${e.message}")
+            emptySet()
+        }
+    }
+
     private fun generateSessionId(): String {
         return "session_${System.currentTimeMillis()}_${(1000..9999).random()}"
     }

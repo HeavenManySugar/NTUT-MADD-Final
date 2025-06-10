@@ -104,4 +104,21 @@ class UserInteractionRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    /**
+     * 獲取喜歡當前用戶的用戶ID集合
+     */
+    suspend fun getUsersWhoLikedMe(): Result<Set<String>> {
+        return try {
+            val currentUser = authRepository.currentUser
+            if (currentUser == null) {
+                Result.failure(Exception("User not authenticated"))
+            } else {
+                val usersWhoLikedMe = userInteractionRemoteDataSource.getUsersWhoLikedMe(currentUser.uid)
+                Result.success(usersWhoLikedMe)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
